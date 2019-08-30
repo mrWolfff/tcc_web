@@ -1,0 +1,36 @@
+{% extends 'principal/base.html'%}
+{% block titulo %}Principal {% endblock%}
+{% block demanda%}{%endblock%}
+
+{% block conteudo %}
+<h5>Bem vindo, {{user.username}}</h5>
+<form method="POST" action="{% url 'indexP' %}">
+  {% csrf_token %}
+  <input class="form-control form-control-lg" type="text" placeholder="Digite para procurar uma demanda de serviço..." name="pesquisa">
+  <input type="submit" value="Pesquisar" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
+</form><br>
+{% for query in querys %}
+<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+  <div mdl-card mdl-cell mdl-cell--12-col></div>
+  <div class="mdl-card mdl-cell mdl-cell--12-col-desktop">
+    <div class="mdl-card__supporting-text">
+      <h4>{{query.titulo_demanda}}</h4>
+      <p>{{query.data_demanda}}<br>
+       {{query.descricao_demanda}}<br>
+       {{query.usuario_demanda}}<br>
+       {{query.categoria}}
+     </p>
+   </div>
+   <div class="mdl-card__actions">
+     <a href="{% url 'detalhes_demandas oferta.id'  %}">
+      <button class="btn waves-effect waves-light" type="submit" name="action">Ver detalhes
+        <i class="material-icons right">send</i>
+      </button>
+    </a>
+  </div>
+</div>
+</section><br>
+{% endfor %}
+
+
+{% endblock %}

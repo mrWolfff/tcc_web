@@ -1,0 +1,45 @@
+{% extends 'registration/baselogin.html' %}
+{% block titulo %}Entrar! {% endblock %}
+{% block conteudo %}
+{% load crispy_forms_tags %}
+<br><br><br><br><br>
+
+
+<form method="POST" enctype="multipart/form-data">
+	{% csrf_token %}
+	<div class="row">
+		<div class="col-3">
+		</div>
+		<div class="col-6">
+			<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--3dp">
+				<div class="mdl-card mdl-cell mdl-cell--11-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
+					<div class="mdl-card__supporting-text">
+						{{ form|crispy }}
+						<div class="row">
+							<div class="col-2"></div>
+							<div class="col-6">
+								<button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">Entrar <i class="material-icons">
+									input
+								</i></button> <br><br>
+							</div>
+							<div class="col-3"></div>
+						</div>
+						<a href="{% url 'signup.html' %}" class="stretched-link"> <i class="material-icons">
+							forward
+						</i>Ainda não possui conta? Registre-se.</a><br><br>
+						<a href="{% url 'password_reset' %}" class="stretched-link"> <i class="material-icons">
+							info
+						</i>Esqueci minha senha ):</a>
+					</div>
+				</div>
+			</section>
+		</div>
+		<div class="col-3">
+		</div>
+	</div>
+</form>
+</div>
+</div>
+
+
+{% endblock %}

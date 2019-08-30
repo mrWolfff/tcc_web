@@ -1,0 +1,13 @@
+{% extends 'principal/base.html'%}
+{% block titulo %}aaa{% endblock%}
+{% block conteudo %}
+{% if user.categoria == 'Prestador' %}
+<script language= "JavaScript">
+	location.href="{%  url 'indexP' %}";
+</script>
+{% else %}
+<script language= "JavaScript">
+	location.href="{%  url 'indexC' %}";
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'principal/basecadastro.html'%}
+{% block titulo %}Cadastro Demanda{% endblock%}
+{% block conteudo %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+{% load static %}
+<form method="POST" enctype="multipart/form-data">
+	{% csrf_token %}
+	{% crispy form %}
+</form>
+
+{% endblock %}
