@@ -9,39 +9,63 @@
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script type="text/javascript" src=""></script>
 
-
-	<!-- Compiled and minified CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	{% load static %}
+	{% load staticfiles %}
+	{% block import %}
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
-	<!-- Compiled and minified JavaScript -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
+	{% endblock %}
 
 
 	<title>{% block titulo %}Base{% endblock %}</title>
 </head>
 <body>
-	<div class="demo-layout-waterfall mdl-layout mdl-js-layout">
+	<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
 		<header class="mdl-layout__header" >
 			<div class="mdl-layout__header-row">
-				<span class="mdl-layout-title" >{{ user.username }}</span>
+				<span class="mdl-layout-title" ><i class="material-icons">
+					account_circle
+				</i> {{ user.first_name }}</span>
 				<div class="mdl-layout-spacer"></div>
-				<div class="mdl-layout__drawer" >
-					<span class="mdl-layout-title">{{ user.username }}</span>
-					<div class="mdl-navigation mdl-layout--large-screen-only">
-						<a class="mdl-navigation__link" href="{% url 'demandas' %}">Suas Demandas</a>
-						<a class="mdl-navigation__link" href="{% url 'ofertas' %}">Suas Ofertas</a>
-						<a class="mdl-navigation__link" href="{% url 'servicos' %}">Serviços</a>
+				<div class="mdl-navigation mdl-layout--large-screen-only">
+					
+					{% if request.user.categoria == 'Consumidor'%}<a class="mdl-navigation__link" href="{% url 'cadastro_demanda' %}"><i class="material-icons">
+						add
+					</i> Criar uma nova demanda</a>{% endif %}
+					{% if request.user.categoria == 'Prestador'%}<a class="mdl-navigation__link" href="{% url 'cadastro_ofertas' %}"><i class="material-icons">
+						add
+					</i> Criar uma nova Oferta</a>{% endif %}
+					<a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						{{ user.username }}
+					</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="{% url 'conta' 	request.user.id %}">Meu Perfil</a>
+						<a class="dropdown-item" href="#">Configurações</a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item" href="{% url 'logout' %}">Sair</a>
 					</div>
 				</div>
-			</div>
+
+			</div>	
 		</header>
 		<div class="mdl-layout__drawer" >
-			<span class="mdl-layout-title">{{ user.username }}</span>
+			<div class="user-view">
+				<a href="#user"><img class="circle" src="https://images.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" style="width: 75px; height: 75px;"></a>
+				<a href="#name"><span class="black-text name">{{ user.first_name }}</span></a>
+				<a href="#name"><span class="black-text name">{{ user.last_name }}</span></a>
+				<a href="#email"><span class="black-text email">{{ user.email }}</span></a>
+				<span class="mdl-layout-title"></span>
+			</div>
+
+
 			<div class="mdl-navigation">
+				<div class="divider"></div>
 				<a class="mdl-navigation__link" href="{% url 'index' %}">Home</a>
-				
+
 				{% block demanda%}<a class="mdl-navigation__link" href="{% url 'demandas' %}">Minhas Demandas</a>{% endblock %}
 				{% block oferta%}<a class="mdl-navigation__link" href="{% url 'ofertas' %}">Minhas Ofertas</a>{% endblock %}
 				<a class="mdl-navigation__link" href="{% url 'servicos' %}">Serviços</a>
@@ -49,27 +73,29 @@
 				<form method="POST" action="{% url 'index'%}">
 					{% csrf_token %}
 					<input type="hidden" name="troca_user_P" value="troca_user_P">
-					<button type="submit">
+					<!--<button type="submit">
 						<a class="mdl-navigation__link">Também quero solicitar demandas!</a>
-					</button>
+					</button>-->
 				</form>
 				{% endif %}
 				{% if user.categoria == 'Consumidor' %}
 				<form method="POST" action="{% url 'index'%}">
 					{% csrf_token %}
 					<input type="hidden" name="troca_user_C" value="troca_user_C">
-					<button type="submit">
+					<!--<button type="submit">
 						<a class="mdl-navigation__link">Também quero ser prestador de serviços!</a>
-					</button>
+					</button>-->
 				</form>
 				{% endif %}
+				<div class="divider"></div>
 				<a class="mdl-navigation__link" href="{% url 'logout' %}">Logout</a>
+				<div class="divider"></div>
 			</div>
 		</div>
 		<main class="mdl-layout__content">
 			<div class="page-content">
 				<div class="container">
-					<br><br><br>
+					<br>
 					{% block conteudo %}
 					{% endblock %}
 				</div>

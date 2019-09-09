@@ -5,6 +5,8 @@ urlpatterns = [
 path('', views.index, name='index'),
 path('indexC/', views.indexC, name='indexC'),
 path('indexP/', views.indexP, name='indexP'),
+
+path('baselogin/', views.baseLogin, name='baselogin'),
 path('base/', views.base, name='base'),
 
 path('demanda/', views.demandaRender, name='demandas'),
@@ -18,7 +20,7 @@ path('deletarofertas/<int:id>/', views.deletarOfertas, name='deletar_ofertas'),
 path('editarofertas/<int:id>/', views.editarOfertas, name='editar_ofertas'),
 
 
-
+path('atualizar/', views.atualizarDados, name='atualizar_dados'),
 path('servicos/', views.servicosRender, name='servicos'),
 
 

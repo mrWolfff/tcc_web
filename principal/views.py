@@ -10,7 +10,11 @@ from accounts.forms import TrocaCategoria
 from accounts.models import CustomUser
 from django.urls import reverse_lazy
 from django.views import generic
+from accounts.forms import CustomUserChangeForm, ContaForm
 
+
+def baseLogin(request):
+	return render(request, 'registration/baselogin.html')
 
 @login_required
 def index(request): 
@@ -32,6 +36,7 @@ def index(request):
 def indexC(request):
 	ofertas = Ofertas.objects.all()
 	querys =''
+	user = request.user
 	if request.POST != None:
 		busca = request.POST.get('pesquisa')
 		if busca:
@@ -42,8 +47,9 @@ def indexC(request):
 @login_required
 def indexP(request):
 	demandas = Demandas.objects.all()
-	querys =''
-	if request.POST != None:
+	querys = demandas
+	user = request.user
+	if request.POST:
 		busca = request.POST.get('pesquisa')
 		if busca:
 			querys = demandas.filter(titulo_demanda__icontains=busca)
@@ -170,8 +176,22 @@ def deletarServicos(request, id):
 
 def detalhes_demanda(request, id):
 	demanda = Demandas.objects.get(id=id)
-	return render(request, 'principal/detalhes_demandas.html', {'demanda', demanda})
+	return render(request, 'principal/detalhes_demandas.html', {'demanda': demanda})
 
 def detalhes_oferta(request, id):
 	oferta = Ofertas.objects.get(id=id)
-	return render(request, 'principal/detalhes_oferta.html', {'oferta', oferta})
+	return render(request, 'principal/detalhes_oferta.html', {'oferta': oferta})
+
+
+@login_required
+def atualizarDados(request):
+	form = ''
+	user = request.user
+	if request.POST != None: 
+		form = CustomUserChangeForm(request.POST, request.FILES or None, instance=user)
+		if form.is_valid():
+			form.save()
+			return redirect('indexP')
+	else:
+		form = CustomUserChangeForm()
+	return render(request, 'principal/atualizar_dados.html', {'form': form, 'user': user})

@@ -1,12 +1,30 @@
-{% extends 'principal/basecadastro.html'%}
+{% extends 'principal/base.html'%}
 {% block titulo %}Cadastro Demanda{% endblock%}
+
 {% block conteudo %}
 {% load crispy_forms_tags %}
 {% load staticfiles %}
+							
 {% load static %}
-<form method="POST" enctype="multipart/form-data">
+<form method="POST" enctype="multipart/form-data" class="form-group">
 	{% csrf_token %}
-	{% crispy form %}
+	<div class="row">
+		<div class="col-1">
+		</div>
+		<div class="col-10">
+			<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--3dp">
+				<div class="mdl-card mdl-cell mdl-cell--11-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
+					<div class="mdl-card__supporting-text">
+						<div class="form-group">
+							{% crispy form %}
+						</div>	
+					</div>
+				</div>
+			</section>
+		</div>
+		<div class="col-1">
+		</div>
+	</div>
 </form>
 
 {% endblock %}

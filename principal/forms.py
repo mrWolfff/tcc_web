@@ -1,5 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django import forms
+from django.contrib.auth.models import User
 from .models import Demandas, Ofertas, Servicos
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column, Reset
@@ -9,9 +10,9 @@ class DemandasForm(forms.ModelForm):
 
 	class Meta:
 		model = Demandas
-		fields = ('titulo_demanda', 'descricao_demanda', 'categoria', 'imagem_demanda', 'requisitos_demanda', 'anexo_demanda','usuario_demanda')
-		widgets = {'usuario_demanda': forms.TextInput(attrs={'type': 'hidden',})}
-		widgets = {'descricao_demanda': forms.Textarea(attrs={'rows': '4'})}
+		fields = ( 'titulo_demanda', 'descricao_demanda', 'categoria', 'imagem_demanda', 'anexo_demanda','usuario_demanda')
+		widgets = {'usuario_demanda': forms.TextInput(attrs={'type': 'hidden'})}
+		widgets = {'descricao_demanda': forms.Textarea(attrs={'class': 'materialize-textarea', 'data-length':'250'})}
 
 	def __init__(self, *args, **kwargs):
 		super(DemandasForm, self).__init__(*args, **kwargs)
@@ -19,17 +20,16 @@ class DemandasForm(forms.ModelForm):
 		self.helper.form_method = 'post'
 		self.helper.layout = Layout(
         	Row(
-           		Column('titulo_demanda', css_class='form-group col-md-6 mb-0'),
-           		Column('categoria', css_class='form-group col-md-6 mb-0'),
-           		css_class='form-row'
+        		Column('titulo_demanda', css_class="form-group col-md-6"),
+           		Column('categoria', css_class='form-group col-md-6'),
         	),
         	Row(
-           		Column('descricao_demanda', css_class='form-group col-md-8'),
-           		Column('imagem_demanda', css_class='form-group col-md-3'),
+           		Column('descricao_demanda', css_class='form-group col-md-12',),
+           		
         	),
         	Row(
-           		Column('requisitos_demanda', css_class='form-group col-md-8'),
-           		Column('anexo_demanda', css_class='form-group col-md-3'),
+        		Column('imagem_demanda', css_class='form-group col-md-6'),
+           		Column('anexo_demanda', css_class='form-group col-md-6'),
         	),
         )
 		self.helper.add_input(Submit('submit', 'Cadastrar', css_class='mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect'))
@@ -62,3 +62,8 @@ class OfertasForm(forms.ModelForm):
 		self.helper.add_input(Reset('reset', 'Limpar', css_class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent'))
 
 
+class SignupForm(UserCreationForm):
+    email = forms.EmailField(max_length=200, help_text='Required')
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password1', 'password2')
