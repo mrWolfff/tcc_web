@@ -31,8 +31,9 @@ class CustomUserCreationForm(UserCreationForm):
 class CustomUserChangeForm(UserChangeForm):
 	class Meta:
 		model = CustomUser
-		fields = ('first_name', 'last_name', 'cpf_cnpj', 'sexo', 'data_nasc', 'telefone', 'celular', 'site', 'estado', 'cidade', 'endereço', 'descricao', 'imagem', 'categoria_servico',)
-		widgets = {'descricao': forms.Textarea(attrs={'rows': '4'})}
+		fields = ('first_name', 'last_name', 'cpf_cnpj', 'telefone', 'celular', 'site', 'estado', 'cidade', 'endereço', 'descricao', 'imagem', 'categoria_servico',)
+		widgets = {'descricao': forms.Textarea(attrs={'rows': '4'}),
+    'cpf_cnpj': forms.TextInput(attrs={'required':'True'})}
 		fieldsets = (
 			('Informações Pessoais', {
 				'fields': ('cpf_cnpj', 'sexo', 'data_nasc',)
@@ -64,19 +65,9 @@ class CustomUserChangeForm(UserChangeForm):
 		self.fields['imagem'].help_text = "Essa será a sua imagem de perfil que aparecerá para todos os usuários."
 		self.fields['categoria_servico'].help_text = "Escolha a categoria de serviço que você realiza."
 		self.helper.layout = Layout(
-			Row(
-           		Column('first_name', css_class='form-group col-md-6 mb-0'),
-           		Column('last_name', css_class='form-group col-md-6 mb-0'),
-           		css_class='form-row'
-        	),
         	Row(
            		Column('cpf_cnpj', css_class='form-group col-md-10 	'),
 
-           		css_class='form-row'
-        	),
-        	Row(
-           		Column('sexo', css_class='form-group col-md-6 mb-0'),
-           		Column('data_nasc', css_class='form-group col-md-6 mb-0'),
            		css_class='form-row'
         	),
         	Row(
@@ -106,6 +97,7 @@ class CustomUserChangeForm(UserChangeForm):
         		Column('categoria_servico', css_class='form-group col-md-10')
         		)
         )
+
 class TrocaCategoria(UserChangeForm):
 
     class Meta:

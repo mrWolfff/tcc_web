@@ -2,11 +2,7 @@
 {% block titulo %}Cadastro{% endblock%}
 {% block conteudo %}
 {% load crispy_forms_tags %}
-{% if request.user.categoria == 'Consumidor' %}
-<script language= "JavaScript">
-  location.href="{%  url 'index' %}";
-</script>
-{% endif %}
+
 <br><br><br>
 <form method="POST" enctype="multipart/form-data">
   {% csrf_token %}

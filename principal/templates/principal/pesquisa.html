@@ -1,0 +1,48 @@
+{% extends 'principal/base.html'%}
+{% block titulo %}Principal{% endblock%}
+{% block oferta %}{% endblock %}
+{% block conteudo %}
+{% if request.user.categoria == 'Prestador' %}
+<script language= "JavaScript">
+	location.href="{%  url 'index' %}";
+</script>
+{% endif %}
+<br>
+{% for result in results %}
+<section class="section mdl-grid mdl-grid--no-spacing mdl-shadow--3dp">
+	<div class= "mdl-card mdl-cell--2-col-desktop"><img src="{{result.imagem}}" style="height: 200px;width: 150px;"></div>
+	<div class="mdl-card mdl-cell mdl-cell--8-col-desktop">
+		<div class="mdl-card__supporting-text">
+			<h5>Usuarios:</h5>
+			<p>{{result.username}}</p><br>
+		</div>
+		<div class="mdl-card__actions">
+			<a class="waves-effect waves-light btn modal-trigger" href="#{{result.username}}">Ver Ofertas</a>
+			<script type="text/javascript">
+				document.addEventListener('DOMContentLoaded', function() {
+					var elems = document.querySelectorAll('.modal');
+					var instances = M.Modal.init(elems, options);
+				});
+
+
+				$(document).ready(function(){
+					$('.modal').modal();
+				});
+			</script>
+		</div>
+	</div>
+</section><br>
+<div id="{{result.username}}" class="modal modal-fixed-footer">
+	<div class="modal-content">
+		<h4>{{result.username}}</h4>
+		<p><b>Publicado em:</b> {{result.username}}.
+			<br>{{result.username}}.<br><bR>
+			<b>Usuário:</b> {{result.username}}.<br>
+			<b>Categoria de Serviço:</b> {{result.username}}.
+		</p>
+	</div>
+	<div class="modal-footer">
+	</div>
+</div>
+{% endfor %}
+{% endblock %}

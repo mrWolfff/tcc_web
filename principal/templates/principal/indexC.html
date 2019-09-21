@@ -4,7 +4,7 @@
 {% block conteudo %}
 {% if request.user.categoria == 'Prestador' %}
 <script language= "JavaScript">
-  location.href="{%  url 'index' %}";
+	location.href="{%  url 'index' %}";
 </script>
 {% endif %}
 
@@ -22,55 +22,21 @@
 	</div>
 </nav>
 <br>
-{%for query in querys%}
 <div class="row">
-	<div class="col-6"><br>
-		<h5 class="container">Usuarios</h5><br>
-		<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp mdl-cell--11-col">
-			<div class= "mdl-card something-else mdl-cell mdl-cell--8-col mdl-cell--4-col-desktop"></div>
-			<div class="mdl-card mdl-cell mdl-cell--6-col-desktop">
+	{%for categoria in categorias%}
+	<div class="col-3"><br>
+		<a href="{% url 'pesquisa' categoria.id %}">
+		<section class="section mdl-grid mdl-grid--no-spacing mdl-shadow--3dp">
+			<div class= "mdl-card mdl-cell--2-col-desktop"></div>
+			<div class="mdl-card mdl-cell mdl-cell--8-col-desktop">
 				<div class="mdl-card__supporting-text">
-					<h4>{{query.username}}</h4>
-					<p>{{query.email}}<br>
-						{{query.descricao_demanda}}<br>
-						{{query.usuario_demanda}}<br>
-						{{query.categoria}}
-					</p>
-				</div>
-				<div class="mdl-card__actions">
-					<button class="btn waves-effect waves-light" type="submit" name="action">Ver detalhes
-						<i class="material-icons right">send</i>
-					</button>
+					<h5>Categoria:</h5>
+					<p>{{categoria.categoria_servico}}</p><br>
 				</div>
 			</div>
 		</section><br>
 	</div>
+	</a>
 	{%endfor%}
-	{%for oferta in ofertas%}
-	<div class="col-6"><br>
-		<h5 class="container">Ofertas</h5><br>
-		<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp mdl-cell--11-col">
-			<div class= "mdl-card something-else mdl-cell mdl-cell--8-col mdl-cell--4-col-desktop"></div>
-			<div class="mdl-card mdl-cell mdl-cell--6-col-desktop">
-				<div class="mdl-card__supporting-text">
-					<h4>{{oferta.titulo_demanda}}</h4>
-					<p>{{oferta.data_demanda}}<br>
-						{{oferta.descricao_demanda}}<br>
-						{{oferta.usuario_demanda}}<br>
-						{{oferta.categoria}}
-					</p>
-				</div>
-				<div class="mdl-card__actions">
-					<a href="">
-						<button class="btn waves-effect waves-light" type="submit" name="action">Ver detalhes
-							<i class="material-icons right">send</i>
-						</button>
-					</a>
-				</div>
-			</div>
-		</section><br>
-	</div>
 </div>
-{%endfor%}
-
 {% endblock %}

@@ -29,9 +29,22 @@
   </div>
 </nav>
 <br>
-{{request.user.cidade}}
+<div class="row">
+  <div class="col-11">
+    <h5>Resultados de acordo com a categoria: {{request.user.categoria_servico}}</h5>
+  </div>
+  <div class="col-1">
+   <a class='dropdown-trigger btn' href='#' data-target='dropdown1'> <i class="material-icons">sort</i> </a>
+   <ul id='dropdown1' class='dropdown-content'>
+    <li><a href="#!">Mais Recentes</a></li>
+    <li><a href="#!">Ordem Alfabética</a></li>
+    <li><a href="#!">outro...</a></li>
+  </ul>  
+</div>
+</div>
+
 {% for query in querys %}
-{% if request.user.categoria == query.categoria %}
+{% if query.categoria == user.categoria_servico %}
 <div class="mdl-layout__tab-panel is-active" id="overview">
   <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
     <header class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">
@@ -78,7 +91,7 @@
         edit
       </i></a>
       {% endif %}
-      {% if request.user.categoria == 'PRESTADOR' %}
+      {% if request.user.categoria == 'Prestador' %}
       <a href="#!" class="modal-close waves-effect waves-green btn-flat">ADICIONAR AOS MEUS INTERESSES <i class="material-icons">
         beenhere
       </i></a>
@@ -93,6 +106,7 @@
 <br>
 {% endif %}
 {% endfor %}
+
 
 
 {% endblock %}

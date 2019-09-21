@@ -7,17 +7,18 @@ from .models import Demandas, Servicos, Ofertas
 from .forms import DemandasForm, OfertasForm
 from django.contrib.auth.decorators import login_required
 from accounts.forms import TrocaCategoria
-from accounts.models import CustomUser
+from accounts.models import CustomUser, Servicos_Categoria
 from django.urls import reverse_lazy
 from django.views import generic
 from accounts.forms import CustomUserChangeForm, ContaForm
 
-
+from django.contrib.auth import get_user_model
 def baseLogin(request):
 	return render(request, 'registration/baselogin.html')
 
 @login_required
 def index(request): 
+
 	if request.POST.get('troca_user_P'):
 		token = request.GET.get('csrfmiddlewaretoken')
 		string = {'csrfmiddlewaretoken': token, 'categoria': 'Consumidor'}
@@ -35,6 +36,7 @@ def index(request):
 @login_required
 def indexC(request):
 	ofertas = Ofertas.objects.all()
+	categorias = Servicos_Categoria.objects.all()
 	querys =''
 	user = request.user
 	if request.POST != None:
@@ -42,18 +44,34 @@ def indexC(request):
 		if busca:
 			ofertas = ofertas.filter(titulo_ofertas__icontains=busca)
 			querys = CustomUser.objects.filter(username__icontains=busca)
-	return render(request, 'principal/indexC.html', {'querys': querys, 'ofertas':ofertas})
+	return render(request, 'principal/indexC.html', {'querys': querys, 'ofertas':ofertas, 'categorias':categorias})
 
 @login_required
 def indexP(request):
+	userid = get_user_model()
 	demandas = Demandas.objects.all()
+	categorias = Servicos_Categoria.objects.all()
 	querys = demandas
 	user = request.user
+
 	if request.POST:
 		busca = request.POST.get('pesquisa')
 		if busca:
 			querys = demandas.filter(titulo_demanda__icontains=busca)
-	return render(request, 'principal/indexP.html', {'querys': querys})
+	else:
+		querys = demandas.prefetch_related('categoria')
+		#querys = demandas.filter(categoria_id__icontains=user.categoria_servico)
+	return render(request, 'principal/indexP.html', {'querys': querys, 'userid':userid})		
+
+
+@login_required
+def pesquisa(request, id):
+	users = CustomUser.objects.all()
+	results = users.filter(categoria_servico__id=id)
+	querys = Ofertas.objects.all()
+	return render(request, 'principal/pesquisa.html', {'results': results})
+
+
 
 @login_required
 def base(request):
@@ -187,11 +205,11 @@ def detalhes_oferta(request, id):
 def atualizarDados(request):
 	form = ''
 	user = request.user
-	if request.POST != None: 
-		form = CustomUserChangeForm(request.POST, request.FILES or None, instance=user)
+	if request.POST != None:
+		form = CustomUserChangeForm(request.POST or None, request.FILES or None, instance=user)
 		if form.is_valid():
 			form.save()
 			return redirect('indexP')
-	else:
-		form = CustomUserChangeForm()
 	return render(request, 'principal/atualizar_dados.html', {'form': form, 'user': user})
+
+

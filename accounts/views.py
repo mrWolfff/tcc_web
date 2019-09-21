@@ -17,18 +17,19 @@ from django.core.mail import EmailMessage
 from django.contrib.auth import get_user_model
 
 
-class SignUp(generic.CreateView):
-	form_class = CustomUserCreationForm
-	success_url = reverse_lazy('login')
-	template_name = 'signup.html'		
+#class SignUp(generic.CreateView):
+#	form_class = CustomUserCreationForm
+#	success_url = reverse_lazy('login')
+#	template_name = 'signup.html'		
 
 def minhaConta(request, id):
 	user = CustomUser.objects.get(id=id)
 	form = ''
 	if request.POST != None:
-		form = ContaForm(request.POST, request.FILES or None, instance=user)
+		form = ContaForm(request.POST or None, request.FILES or None, instance=user)
 		if form.is_valid():
 			form.save()
+			redirect('index')
 	return render(request, 'principal/conta.html', {'user':user, 'form': form})
 
 def editar_conta(request):
@@ -44,7 +45,7 @@ def signup(request):
 			user = form.save(commit=False)
 			user.is_active = False
 			user.save()
-			current_site = get_current_site(request)
+			#current_site = get_current_site(request)
 			mail_subject = 'Ative seu E-mail no Sistema.'
 			message = render_to_string('acc_active_email.html', {
 				'user': user,
@@ -68,7 +69,7 @@ def activate(request, uidb64, token, backend='django.contrib.auth.backends.Model
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = CustomUser.objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+    except(TypeError, ValueError, OverflowError, user.DoesNotExist):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True

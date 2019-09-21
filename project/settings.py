@@ -45,7 +45,13 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'chat',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
+    'channels',
 ]
+
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
@@ -80,7 +86,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'project.wsgi.application'
-
+ASGI_APPLICATION = 'project.routing.application'  
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}  
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
@@ -142,8 +156,8 @@ LOGOUT_REDIRECT_URL = '/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-#EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'

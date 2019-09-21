@@ -13,6 +13,7 @@ path('demanda/', views.demandaRender, name='demandas'),
 path('cadastrodemanda/', views.cadastroDemanda, name='cadastro_demanda'),
 path('deletardemanda/<int:id>/', views.deletarDemanda, name='deletar_demanda'),
 path('editardemanda/<int:id>/', views.editarDemanda, name='editar_demanda'),
+path('pesquisa/<int:id>/', views.pesquisa, name='pesquisa'),
 
 path('ofertas/', views.ofertasRender, name='ofertas'),
 path('cadastroofertas/', views.cadastroOfertas, name='cadastro_ofertas'),

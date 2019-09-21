@@ -26,6 +26,9 @@ urlpatterns = [
     path('', include('accounts.urls',)),
     path('accounts/', include('django.contrib.auth.urls')),  
     path('', LoginView.as_view(template_name='login.html'), name="login"),
+    path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.authtoken')),
+    path('', include('chat.urls')),
     
 ]
 urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
