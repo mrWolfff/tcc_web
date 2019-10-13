@@ -1,39 +1,106 @@
- {% extends 'principal/base.html'%}
- {% block titulo %}Ofertas{% endblock%}
- {% block conteudo %}
+{% extends 'principal/base.html'%}
+{% block titulo %}Ofertas{% endblock%}
+{% block conteudo %}
 
-
- <!-- Colored FAB button with ripple -->
- <a href="{% url 'cadastro_ofertas' %}">
-  <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
-    <i class="material-icons">add</i>
-  </button>
-</a>
-<span class="mdl-chip">
-  <span class="mdl-chip__text">Criar nova Oferta!</span>
-</span><br><br>
-{% for query in querys %}
-<div class="mdl-layout__tab-panel is-active" id="overview">
-  <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
-    <header class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">
-      <img src="{{ query.imagem_oferta }}" style="width: 180px;height: 250px;">
-    </header>
-    <div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
-      <div class="mdl-card__supporting-text">
-        <h4>{{query.titulo_ofertas}}</h4>
-        <p>{{query.descricao_ofertas}}<br>
-         {{query.data_oferta}}<br>
-         {{query.usuario_demanda}}
-       </p>
-     </div>
-     <div class="mdl-card__actions">
-       <button class="btn waves-effect waves-light" type="submit" name="action">Ver detalhes
-        <i class="material-icons right">send</i>
-      </button>
+<div class="row">
+  <div class="col-3">
+    <div class="card">
+      <article class="card-group-item">
+        <header class="card-header">
+          <h6 class="title">Ofertas </h6>
+        </header>
+        <div class="filter-content">
+          <div class="list-group list-group-flush">
+            <a href="{% url 'cadastro_demanda' %}" class="list-group-item">Criar uma nova oferta </a>
+            <a href="{% url ''" class="list-group-item">Meus Interesses <span
+                class="float-right badge badge-light round">3</span> </a>
+            <a href="#" class="list-group-item">Mensagens <span
+                class="float-right badge badge-light round">32</span> </a>
+          </div> <!-- list-group .// -->
+        </div>
+      </article> <!-- card-group-item.// -->
+      <article class="card-group-item">
+        <header class="card-header">
+          <h6 class="title">Serviços</h6>
+        </header>
+        <div class="filter-content">
+          <div class="list-group list-group-flush">
+              <a href="{% url 'cadastro_demanda' %}" class="list-group-item">Serviços em processo </a>
+            <a href="{% url 'cadastro_demanda' %}" class="list-group-item">Serviços Realizados </a>
+          </div> <!-- card-body.// -->
+        </div>
+      </article> <!-- card-group-item.// -->
     </div>
   </div>
-</section>
+  <div class="col-9">
+    {% for query in querys %}
+    <div class="mdl-layout__tab-panel is-active" id="overview">
+      <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+        <header
+          class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">
+          <img src="{{ query.imagem_oferta }}" style="max-width: 180px;max-height: 250px;">
+        </header>
+        <div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--10-col-tablet mdl-cell--4-col-phone">
+          <div class="mdl-card__supporting-text">
+            <h4>{{query.titulo_ofertas}}</h4>
+            <p>
+              {{query.descricao_ofertas}}.<br><bR>
+            </p>
+          </div>
+          <div class="mdl-card__actions">
+            <a class="waves-effect waves-light btn modal-trigger" href="#{{query.titulo_ofertas}}">Ver Detalhes</a>
+            <script type="text/javascript">
+              document.addEventListener('DOMContentLoaded', function () {
+                var elems = document.querySelectorAll('.modal');
+                var instances = M.Modal.init(elems, options);
+              });
+
+
+              $(document).ready(function () {
+                $('.modal').modal();
+              });
+            </script>
+          </div> 
+        </div>
+        <div id="{{query.titulo_ofertas}}" class="modal modal-fixed-footer">
+          <div class="modal-content">
+            <h4>{{query.titulo_ofertas}}</h4>
+            <p><b>Publicado em:</b> {{query.data_oferta}}.
+              <br>{{query.descricao_demanda}}.<br><bR>
+              <b>Datas: </b>Esse serviço deve ser realizado nos dias {{data_inicio}} à {{ data_fim }}.<bR>
+              <b>Usuário:</b> {{query.usuario_demanda}}.<br>
+              <b>Categoria de Serviço:</b> {{query.categoria}}.
+            </p>
+            <b>Fotos:</b><br>
+            <img src="{{ query.imagem_oferta }}" style="max-height: 100px;max-width: 100px;">
+          </div>
+          <div class="modal-footer">
+            {% if request.user == query.usuario_oferta %}
+            <a href="{% url 'editar_oferta' query.id %}" class="modal-close waves-effect waves-green btn-flat">EDITAR <i class="material-icons align-text-center">
+                edit
+              </i></a>
+              <a href="{% url 'deletar_oferta' query.id %}" class="modal-close waves-effect waves-green btn-flat">DELETAR <i class="material-icons align-text-center">
+                delete_forever
+              </i></a>
+            {% endif %}
+            {% if request.user.categoria == 'CONSUMIDOR' %}
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">ADICIONAR AOS MEUS INTERESSES <i
+                class="material-icons align-text-center">
+                beenhere
+              </i></a>
+              
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">ENVIAR MENSAGEM <i
+                class="material-icons align-text-center">
+                local_post_office
+              </i></a>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+    </div>
+    <br>
+    {% endfor %}
+  </div>
 </div>
-<br>
-{% endfor %}
+
 {% endblock %}

@@ -157,3 +157,4 @@ class SignupForm(UserCreationForm):
         css_class='form-row'  
       ),
     )
+

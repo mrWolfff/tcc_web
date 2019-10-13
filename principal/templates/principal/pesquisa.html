@@ -3,46 +3,96 @@
 {% block oferta %}{% endblock %}
 {% block conteudo %}
 {% if request.user.categoria == 'Prestador' %}
-<script language= "JavaScript">
-	location.href="{%  url 'index' %}";
+<script language="JavaScript">
+	location.href = "{%  url 'index' %}";
 </script>
 {% endif %}
 <br>
-{% for result in results %}
-<section class="section mdl-grid mdl-grid--no-spacing mdl-shadow--3dp">
-	<div class= "mdl-card mdl-cell--2-col-desktop"><img src="{{result.imagem}}" style="height: 200px;width: 150px;"></div>
-	<div class="mdl-card mdl-cell mdl-cell--8-col-desktop">
-		<div class="mdl-card__supporting-text">
-			<h5>Usuarios:</h5>
-			<p>{{result.username}}</p><br>
-		</div>
-		<div class="mdl-card__actions">
-			<a class="waves-effect waves-light btn modal-trigger" href="#{{result.username}}">Ver Ofertas</a>
-			<script type="text/javascript">
-				document.addEventListener('DOMContentLoaded', function() {
-					var elems = document.querySelectorAll('.modal');
-					var instances = M.Modal.init(elems, options);
-				});
-
-
-				$(document).ready(function(){
-					$('.modal').modal();
-				});
-			</script>
+<div class="row">
+	<div class="col-3">
+		<div class="card">
+			<article class="card-group-item">
+				<header class="card-header">
+					<h6 class="title">Demandas </h6>
+				</header>
+				<div class="filter-content">
+					<div class="list-group list-group-flush">
+						<a href="{% url 'cadastro_demanda' %}" class="list-group-item">Criar uma nova demanda </a>
+						<a href="{% url ''" class="list-group-item">Meus Interesses <span
+                  class="float-right badge badge-light round"></span> </a>
+              <a href="{% url 'box_message' %}" class="list-group-item">Mensagens <span
+								class="float-right badge badge-light round"></span> </a>
+					</div> <!-- list-group .// -->
+				</div>
+			</article> <!-- card-group-item.// -->
+			<article class="card-group-item">
+				<header class="card-header">
+					<h6 class="title">Serviços</h6>
+				</header>
+				<div class="filter-content">
+					<div class="list-group list-group-flush">
+						<a href="{% url 'cadastro_demanda' %}" class="list-group-item">Serviços em processo </a>
+						<a href="{% url 'cadastro_demanda' %}" class="list-group-item">Serviços Realizados </a>
+					</div> <!-- card-body.// -->
+				</div>
+			</article> <!-- card-group-item.// -->
 		</div>
 	</div>
-</section><br>
-<div id="{{result.username}}" class="modal modal-fixed-footer">
-	<div class="modal-content">
-		<h4>{{result.username}}</h4>
-		<p><b>Publicado em:</b> {{result.username}}.
-			<br>{{result.username}}.<br><bR>
-			<b>Usuário:</b> {{result.username}}.<br>
-			<b>Categoria de Serviço:</b> {{result.username}}.
-		</p>
-	</div>
-	<div class="modal-footer">
+	<div class="col-9">
+		{% for result in results %}
+		<section class="section mdl-grid mdl-grid--no-spacing mdl-shadow--3dp">
+			<div class="mdl-card mdl-cell--2-col-desktop"><a href="{% url 'conta' result.id %}"><img
+						src="../{{result.imagem}}" style="height: 200px;width: 150px;"></div></a>
+			<div class="mdl-card mdl-cell mdl-cell--8-col-desktop">
+				<div class="mdl-card__supporting-text">
+					<h5>Usuarios:</h5>
+					<a href="{% url 'conta' result.id %}">
+						<p>{{result.username}}</p><br>
+					</a>
+				</div>
+				<div class="mdl-card__actions">
+					<a class="waves-effect waves-light btn modal-trigger" href="#{{result.username}}">Ver Ofertas</a>
+					<script type="text/javascript">
+						document.addEventListener('DOMContentLoaded', function () {
+							var elems = document.querySelectorAll('.modal');
+							var instances = M.Modal.init(elems, options);
+						});
+						$(document).ready(function () {
+							$('.modal').modal();
+						});
+						$(document).ready(function () {
+							$("button").click(function () {
+								$("#w3s").attr("href", "https://www.w3schools.com/jquery/");
+							});
+						});
+					</script>
+				</div>
+			</div>
+		</section><br>
+		<div id="{{result.username}}" class="modal modal-fixed-footer">
+			<div class="modal-content">
+				<h4>{{result.username}}</h4>
+				<p><b>Publicado em:</b> {{aa}}.
+					<br>{{result.username}}.<br><bR>
+					<b>Usuário:</b> <a href="{% url 'conta' result.id %}">{{result.username}}.<br></a>
+					<b>Categoria de Serviço:</b> {{result.categoria_servico}}.
+				</p>
+			</div>
+			<div class="modal-footer">
+				{% if request.user.categoria == 'Consumidor' %}
+				<a href="{% url 'newInteresse' result.id %}"
+					class="modal-close waves-effect waves-green btn-flat">ADICIONAR USUÁRIO AOS MEUS INTERESSES <i
+						class="material-icons">
+						beenhere
+					</i></a>
+				<a href="{% url 'send_message' result.id %}" class="modal-close waves-effect waves-green btn-flat"
+					id="message">ENVIAR MENSAGEM <i class="material-icons">
+						local_post_office
+					</i></a>
+				{% endif %}
+			</div>
+		</div>
+		{% endfor %}
 	</div>
 </div>
-{% endfor %}
 {% endblock %}

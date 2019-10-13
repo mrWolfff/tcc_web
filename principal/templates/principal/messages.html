@@ -1,0 +1,119 @@
+{% extends 'principal/base.html'%}
+{% block titulo %}Caixa de Mensagens {% endblock%}
+{% block conteudo %}
+<div class="row">
+    <div class="col-3">
+            {% if request.user.categoria == 'Consumidor' %}
+            <div class="card">
+                <article class="card-group-item">
+                    <header class="card-header">
+                        <h6 class="title">Demandas</h6>
+                    </header>
+                    <div class="filter-content">
+                        <div class="list-group list-group-flush">
+                            <a href="{% url 'cadastro_demanda' %}" class="list-group-item">Criar uma nova demanda </a>
+                            <a href="{% url 'demandas' %}" class="list-group-item">Minhas Demandas <span
+                                    class="float-right badge badge-light round"></span> </a>
+                            <a href="#" class="list-group-item">Meus Interesses <span
+                                    class="float-right badge badge-light round"></span> </a>
+                            <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
+                                    class="float-right badge badge-light round"></span>
+                            </a>
+                            <a href="{% url 'box_message_send' %}" class="list-group-item">Mensagens Enviadas<span
+                                    class="float-right badge badge-light round"></span>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            {% endif %}
+        {% if request.user.categoria == 'Prestador' %}
+        <div class="card">
+            <article class="card-group-item">
+                <header class="card-header">
+                    <h6 class="title">Ofertas</h6>
+                </header>
+                <div class="filter-content">
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'cadastro_ofertas' %}" class="list-group-item">Criar uma nova oferta </a>
+                        <a href="{% url 'ofertas' %}" class="list-group-item">Minhas Ofertas <span
+                                class="float-right badge badge-light round"></span> </a>
+                        <a href="#" class="list-group-item">Meus Interesses <span
+                                class="float-right badge badge-light round"></span> </a>
+                        <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
+                                class="float-right badge badge-light round"></span>
+                        </a>
+                        <a href="{% url 'box_message_send' %}" class="list-group-item">Mensagens Enviadas<span
+                                class="float-right badge badge-light round"></span>
+                        </a>
+                    </div>
+                </div>
+            </article>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-9">
+        <section class="section mdl-grid mdl-grid--no-spacing mdl-shadow--3dp">
+            <div class="mdl-card mdl-cell--2-col-desktop"></div>
+            <div class="mdl-card mdl-cell mdl-cell--10-col-desktop">
+                <div class="mdl-card__supporting-text">
+                    <div id="email-list">
+                        <ul class="collection">
+                            <li class="collection-item avatar">
+                                {% if to_user != request.user %}
+                                <a href="{% url 'conta' to_user.id %}"><img
+                                        src="data:image/jpeg;base64,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"
+                                        alt="" class="circle">
+                                    <span class="email-title">{{ to_user }}</span></a>
+                                {% endif %}
+                                {% if to_user == request.user %}
+                                
+                                <a href="{% url 'conta' session_user.id %}"><img
+                                        src="data:image/jpeg;base64,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"
+                                        alt="" class="circle">
+                                    <span class="email-title">{{ session_user }}</span></a>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="row">
+                        {% for message in messages %}
+                        <div class="col-9">
+                            <span class="mdl-chip">
+                                <span class="mdl-chip__text"><b>{{message.from_user}}: </b> {{message.message}}</span>
+                            </span>
+                        </div>
+                        <div class="col-2">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if to_user != request.user %}
+                    <form method="POST" enctype="multipart/form-data" class="form-group">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <textarea class="materialize-textarea" name='message'></textarea>
+                            <input type="hidden" name="from_user" value="{{request.user.id}}">
+                            <input type="hidden" name="to_user" value="{{to_user.id}}">
+                            <button
+                                class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Enviar</button>
+                        </div>
+                    </form>
+                    {% endif %}
+                    {% if to_user == request.user %}
+                    <form method="POST" enctype="multipart/form-data" class="form-group">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <textarea class="materialize-textarea" name='message'></textarea>
+                            <input type="hidden" name="from_user" value="{{request.user.id}}">
+                            <input type="hidden" name="to_user" value="{{session_user.id}}">
+                            <button
+                                class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Enviar</button>
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+    </div>
+
+    {% endblock %}

@@ -4,8 +4,15 @@
 {% block conteudo %}
 {% load crispy_forms_tags %}
 {% load staticfiles %}
-							
+
 {% load static %}
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
 <form method="POST" enctype="multipart/form-data" class="form-group">
 	{% csrf_token %}
 	<div class="row">
@@ -16,8 +23,9 @@
 				<div class="mdl-card mdl-cell mdl-cell--11-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
 					<div class="mdl-card__supporting-text">
 						<div class="form-group">
+							<h3>Cadastre uma nova Demanda:</h3>
 							{% crispy form %}
-						</div>	
+						</div>
 					</div>
 				</div>
 			</section>

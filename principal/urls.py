@@ -17,12 +17,24 @@ path('pesquisa/<int:id>/', views.pesquisa, name='pesquisa'),
 
 path('ofertas/', views.ofertasRender, name='ofertas'),
 path('cadastroofertas/', views.cadastroOfertas, name='cadastro_ofertas'),
-path('deletarofertas/<int:id>/', views.deletarOfertas, name='deletar_ofertas'),
-path('editarofertas/<int:id>/', views.editarOfertas, name='editar_ofertas'),
+path('deletarofertas/<int:id>/', views.deletarOfertas, name='deletar_oferta'),
+path('editarofertas/<int:id>/', views.editarOfertas, name='editar_oferta'),
 
 
 path('atualizar/', views.atualizarDados, name='atualizar_dados'),
 path('servicos/', views.servicosRender, name='servicos'),
+path('interesses/<int:id>/', views.interesses, name='interesses'),
+path('novointeresse/<int:id>/', views.newInteresse, name='newInteresse'),
+
+path('chat/', views.chat, name='chat'),
+path('post/', views.post, name='chat'),
+
+#path('messages/', views.messages, name='messages'),
+path('box/', views.box_message, name='box_message'),
+path('boxsend/', views.box_message_send, name='box_message_send'),
+path('send/<int:id>/', views.send_message, name='send_message'),
+path('messages/<int:id>/', views.messagesUser, name='messagesUser'),
+
 
 
 ]

@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-
+from django.contrib.messages import constants as message_constants
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -31,7 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,11 +44,11 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'chat',
-    'rest_framework',
-    'rest_framework.authtoken',
-    'djoser',
-    'channels',
+    #'chat',
+    #'rest_framework',
+    #'rest_framework.authtoken',
+    #'djoser',
+    #'channels',
 ]
 
 
@@ -178,3 +177,14 @@ ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 ACCOUNT_SESSION_REMEMBER = True 
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_UNIQUE_EMAIL = True
+
+#Messages Notify
+
+MESSAGE_LEVEL = message_constants.DEBUG
+#MESSAGE_TAGS = {
+#	messages.DEBUG: 'alert-info',
+#	messages.INFO: 'alert-info',
+#	messages.SUCCESS: 'alert-success',
+#	messages.WARNING: 'alert-warning',
+#	messages.ERROR: 'alert-danger',
+#}

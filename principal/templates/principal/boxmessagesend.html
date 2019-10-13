@@ -1,0 +1,70 @@
+{% extends 'principal/base.html'%}
+{% block titulo %}Caixa de Mensagens {% endblock%}
+{% block conteudo %}
+<div class="row">
+    <div class="col-3">
+            {% if request.user.categoria == 'Consumidor' %}
+            <div class="card">
+                <article class="card-group-item">
+                    <header class="card-header">
+                        <h6 class="title">Demandas</h6>
+                    </header>
+                    <div class="filter-content">
+                        <div class="list-group list-group-flush">
+                            <a href="{% url 'cadastro_demanda' %}" class="list-group-item">Criar uma nova demanda </a>
+                            <a href="{% url 'demandas' %}" class="list-group-item">Minhas Demandas <span
+                                    class="float-right badge badge-light round"></span> </a>
+                            <a href="#" class="list-group-item">Meus Interesses <span
+                                    class="float-right badge badge-light round"></span> </a>
+                            <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
+                                    class="float-right badge badge-light round"></span>
+                            </a>
+                            <a href="{% url 'box_message_send' %}" class="list-group-item">Mensagens Enviadas<span
+                                    class="float-right badge badge-light round"></span>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            {% endif %}
+        {% if request.user.categoria == 'Consumidor' %}
+        <div class="card">
+            <article class="card-group-item">
+                <header class="card-header">
+                    <h6 class="title">Ofertas</h6>
+                </header>
+                <div class="filter-content">
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'cadastro_ofertas' %}" class="list-group-item">Criar uma nova oferta </a>
+                        <a href="{% url 'ofertas' %}" class="list-group-item">Minhas Ofertas <span
+                                class="float-right badge badge-light round"></span> </a>
+                        <a href="#" class="list-group-item">Meus Interesses <span
+                                class="float-right badge badge-light round"></span> </a>
+                        <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
+                                class="float-right badge badge-light round"></span>
+                        </a>
+                        <a href="{% url 'box_message_send' %}" class="list-group-item">Mensagens Enviadas<span
+                                class="float-right badge badge-light round"></span>
+                        </a>
+                    </div>
+                </div>
+            </article>
+        </div>
+        {% endif %} 
+    </div>
+    <div class="col-9">
+
+        {% for it in search %}
+        <div id="email-list">
+            <ul class="collection">
+                <li class="collection-item avatar">
+                    <a href="{% url 'conta' request.user.id %}"><img src="{{it.from_user.imagem}}" alt="" class="circle">
+                        <span class="email-title">{{ it.from_user }}</span></a>
+                    <p class="truncate grey-text ultra-small">{{ it.message }}</p>
+                </li>
+            </ul>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

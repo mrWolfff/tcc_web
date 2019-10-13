@@ -26,7 +26,7 @@
 			{% csrf_token %}
 			<div class="row">
 				<div class="col-4">
-					<img src="{{user.imagem}}" class="rounded float-left" alt="..." style="height: 200px;width: 200px;">
+					<img src="{{user.imagem}}" class="rounded float-left" alt="..." style="max-height: 200px;max-width: 200px;">
 					<span class="mdl-chip">
 						<span class="mdl-chip__text">Trocar Imagem Perfil</span>
 					</span>
@@ -61,7 +61,7 @@
 	<div class="col-3">
 		<div class="card" style="height: 450px;" >
 			<div class="card-image">
-				<img src="{{user.imagem}}" style="height: 250px;width: 223px;">
+				<img src="{{user.imagem}}" style="max-height: 250px;max-width: 223px;">
 				<span class="card-title">{{user.first_name}} {{user.last_name}}</span>
 				<a class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons">insert_photo</i></a>
 			</div>

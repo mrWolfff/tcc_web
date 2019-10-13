@@ -6,7 +6,13 @@ from django.conf import settings
 
 
 
+class Chat(models.Model):
+	message = models.CharField(max_length=254)
+	date = models.DateTimeField(auto_now=True)
+	user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
+	def __str__(self):
+		return self.message
 
 class Demandas(models.Model):
 
@@ -49,10 +55,11 @@ class Ofertas(models.Model):
 
 
 class Interesses(models.Model):
-	interesse = models.CharField(max_length=100)
+	interesse = models.ForeignKey(Demandas, on_delete=models.CASCADE, null=True, blank=True)
 	data_interesse = models.DateTimeField(default=timezone.now)
-	interesse_servico = models.ForeignKey(Servicos, on_delete=models.CASCADE, related_name='INTERESSE_SERVICO')
+	#interesse_servico = models.ForeignKey(Servicos, on_delete=models.CASCADE, related_name='INTERESSE_SERVICO')
 	usuario_interesse = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='usuarios_interesse')
+	user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user')
 
 	class Meta:
 	 	ordering = ['-data_interesse']
@@ -67,3 +74,13 @@ class Comentarios_Perfil(models.Model):
 	class Meta:
 		ordering = ['hora_comentario']
 
+class MessageSession(models.Model):
+	from_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_1')
+	to_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_2')
+
+class Message(models.Model):
+	message = models.CharField(max_length=254)
+	time_message = models.DateTimeField(default=timezone.now)
+	from_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='from_user')
+	to_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='to_user')
+	session = models.ForeignKey(MessageSession, on_delete=models.CASCADE)

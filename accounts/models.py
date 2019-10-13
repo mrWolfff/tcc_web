@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 class Servicos_Categoria(models.Model):
 	categoria_servico = models.CharField(max_length=50)
+	#imagem = models.ImageField(null=True, blank=True, upload_to='/media/')
 	def __str__(self):
 		return self.categoria_servico
 
@@ -10,6 +11,7 @@ class Usuario_Categoria(models.Model):
 	categoria_usuario = models.CharField(max_length=30),
 
 	def __str__(self):
+     
 		return self.categoria_categoria
 
 
