@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django import forms
 from django.contrib.auth.models import User
-from .models import Demandas, Ofertas, Servicos, Message
+from .models import Demandas, Ofertas, Servicos, Message, Propostas
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column, Reset
 
@@ -89,3 +89,16 @@ class DemandasFormEdit(forms.ModelForm):
 	class Meta:
 		model = Demandas
 		fields = ( 'titulo_demanda', 'descricao_demanda', 'imagem_demanda')
+  
+class PropostasForm(forms.ModelForm):
+    class Meta:
+        model = Propostas
+        fields = ('proposta', 'valor_proposta', 'data_inicio', 'data_fim', 'user_proposta', 'to_user_proposta', 'demanda')
+        widgets = {'proposta': forms.Textarea(attrs={'class': 'materialize-textarea'})}
+        labels = {
+            'proposta': 'Proposta: ',
+            'valor_proposta': 'Valor da Proposta: *',
+            'data_inicio': 'Data Inicio Serviço: ',
+            'data_fim': 'Data Fim Serviço: ',
+            'demanda': 'Demanda: '
+        }

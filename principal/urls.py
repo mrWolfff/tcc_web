@@ -23,8 +23,9 @@ path('editarofertas/<int:id>/', views.editarOfertas, name='editar_oferta'),
 
 path('atualizar/', views.atualizarDados, name='atualizar_dados'),
 path('servicos/', views.servicosRender, name='servicos'),
-path('interesses/<int:id>/', views.interesses, name='interesses'),
+path('interesses/', views.interesses, name='interesses'),
 path('novointeresse/<int:id>/', views.newInteresse, name='newInteresse'),
+path('deletarinteresse/<int:id>/', views.deleteInteresse, name='delete_interesse'),
 
 path('chat/', views.chat, name='chat'),
 path('post/', views.post, name='chat'),
@@ -36,5 +37,7 @@ path('send/<int:id>/', views.send_message, name='send_message'),
 path('messages/<int:id>/', views.messagesUser, name='messagesUser'),
 
 
-
+path('deletepropostas/<int:id>/', views.deletePropostas, name='deletePropostas'),
+path('createservico/<int:id>/', views.create_servico, name='create_servico'),
+path('create_proposta/', views.create_proposta, name='create_proposta'),
 ]

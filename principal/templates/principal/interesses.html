@@ -63,14 +63,15 @@
                 </header>
                 <div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--10-col-tablet mdl-cell--4-col-phone">
                     <div class="mdl-card__supporting-text">
-                        <h4>{{interesse.titulo_demanda}}</h4>
+                        <h4>{{interesse.interesse.titulo_demanda}}</h4>
                         <p>
-                            {{interesse.descricao_demanda}}.<br><bR>
-                            <b>Categoria de Serviço:</b> {{interesse.categoria}}.
+                            {{interesse.interesse.descricao_demanda}}.<br><bR>
+                            <b>Categoria de Serviço:</b> {{interesse.interesse.categoria}}.
                         </p>
                     </div>
                     <div class="mdl-card__actions">
-                        <a class="waves-effect waves-light btn modal-trigger" href="#{{interesse.titulo_demanda}}">Ver
+                        <a class="waves-effect waves-light btn modal-trigger"
+                            href="#{{interesse.interesse.titulo_demanda}}">Ver
                             Detalhes</a>
                         <script type="text/javascript">
                             document.addEventListener('DOMContentLoaded', function () {
@@ -80,10 +81,20 @@
                             $(document).ready(function () {
                                 $('.modal').modal();
                             });
+                            $("a[href='{% url 'delete_interesse' interesse.id %}']").click(function (event) {
+
+                                event.preventDefault();
+                                if (confirm('Deseja apagar?'))
+                                    window.location = "{% url 'delete_interesse' interesse.id %}";
+                                else {
+                                    alert('Okay, nada feito!');
+                                    event.preventDefault();
+                                }
+                            });
                         </script>
                     </div>
                 </div>
-                <div id="{{interesse.titulo_demanda}}" class="modal modal-fixed-footer">
+                <div id="{{interesse.interesse.titulo_demanda}}" class="modal modal-fixed-footer">
                     <div class="modal-content">
                         <h4>{{interesse.titulo_demanda}}</h4>
                         <p><b>Publicado em:</b> {{interesse.data_demanda}}.
@@ -91,12 +102,12 @@
                             <b>Datas: </b>Esse serviço deve ser realizado nos dias {{data_inicio}} à {{ data_fim }}.<bR>
                             <b>Usuário:</b> {{interesse.usuario_demanda}}.<br>
                             <b>Categoria de Serviço:</b> {{interesse.categoria}}.
-                        </p>
+                        </p> 
                         <b>Fotos:</b><br>
                         <img src="{{ interesse.imagem_demanda }}" style="height: 100px;width: 100px;">
                     </div>
                     <div class="modal-footer">
-                        <a href="#!" class="modal-close waves-effect waves-green btn-flat">DELETAR <i
+                        <a href="{% url 'delete_interesse' interesse.id %}" id="delete" class="modal-close waves-effect waves-green btn-flat">DELETAR <i
                                 class="material-icons">
                                 delete_forever
                             </i></a>
@@ -124,6 +135,7 @@
                     <div class="mdl-card__actions">
                         <a class="waves-effect waves-light btn modal-trigger" href="#{{interesse.titulo_demanda}}">Ver
                             Detalhes</a>
+
                         <script type="text/javascript">
                             document.addEventListener('DOMContentLoaded', function () {
                                 var elems = document.querySelectorAll('.modal');
@@ -132,7 +144,16 @@
                             $(document).ready(function () {
                                 $('.modal').modal();
                             });
+                            $("#delete").click(function (e) {
+                                if (confirm('Deseja apagar?'))
+                                    window.location = "{% url 'delete_interesse' interesse.id %}"
+                                else {
+                                    alert('Okay, nada feito!');
+                                    e.preventDefault();
+                                }
+                            });
                         </script>
+
                     </div>
                 </div>
                 <div id="{{interesse.titulo_demanda}}" class="modal modal-fixed-footer">
@@ -146,8 +167,8 @@
                         <img src="{{ interesse.imagem }}" style="height: 100px;width: 100px;">
                     </div>
                     <div class="modal-footer">
-                        <a href="#!" class="modal-close waves-effect waves-green btn-flat">DELETAR <i
-                                class="material-icons">
+                        <a href="{% url 'delete_interesse' interesse.id%}" id="delet"
+                            class="modal-close waves-effect waves-green btn-flat">DELETAR <i class="material-icons">
                                 delete_forever
                             </i></a>
                     </div>

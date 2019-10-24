@@ -3,11 +3,7 @@
 {% block demanda%}{%endblock%}
 {% block demandas_nav %}{% endblock %}
 {% block conteudo %}
-{% if request.user.cidade == None and request.user.estado == '' and request.user.descricao == '' %}
-<script language="JavaScript">
-  location.href = "{%  url 'atualizar_dados' %}";
-</script>
-{% endif %}
+
 {% if request.user.categoria == 'Consumidor' %}
 <script language="JavaScript">
   location.href = "{%  url 'index' %}";
@@ -24,11 +20,10 @@
         </header>
         <div class="filter-content">
           <div class="list-group list-group-flush">
-            <a href="{% url 'cadastro_ofertas' %}" class="list-group-item">Criar uma nova oferta </a>
-            <a href="{% url 'ofertas' %}" class="list-group-item">Minhas Ofertas <span
+            <a href="{% url 'interesses' %}" class="list-group-item">Meus Interesses <span
                 class="float-right badge badge-light round"></span> </a>
-            <a href="#" class="list-group-item">Meus Interesses <span
-                class="float-right badge badge-light round"></span> </a>
+                <a href="{% url 'servicos' %}" class="list-group-item">Meus Serviços <span
+                  class="float-right badge badge-light round"></span> </a>
             <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span class="float-right badge badge-light round"></span>
             </a>
           </div> <!-- list-group .// -->
@@ -86,7 +81,8 @@
           <div class="mdl-card__supporting-text">
             <h4>{{query.titulo_demanda}}</h4>
             <p>
-              {{query.descricao_demanda}}.<br><bR>
+              {{query.descricao_demanda}}.<br>
+              <b>Usuario:</b> {{query.usuario_demanda}}.<bR>
               <b>Categoria de Serviço:</b> {{query.categoria}}.
             </p>
           </div>
@@ -124,7 +120,7 @@
               </i></a>
             {% endif %}
             {% if request.user.categoria == 'Prestador' %}
-            <a href="#!" class="modal-close waves-effect waves-green btn-flat">ADICIONAR AOS MEUS INTERESSES <i
+            <a href="{% url 'newInteresse' query.id %}" class="modal-close waves-effect waves-green btn-flat">ADICIONAR AOS MEUS INTERESSES <i
                 class="material-icons">
                 beenhere
               </i></a>

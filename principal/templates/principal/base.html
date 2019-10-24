@@ -11,6 +11,7 @@
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
 		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
 		crossorigin="anonymous"></script>
+		<script src="https://code.jquery.com/jquery-3.4.1.js" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
 		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
 		crossorigin="anonymous"></script>
@@ -45,10 +46,6 @@
 						href="{% url 'cadastro_demanda' %}"><i class="material-icons">
 							add
 						</i> Criar uma nova demanda</a>{% endif %}
-					{% if request.user.categoria == 'Prestador'%}<a class="mdl-navigation__link"
-						href="{% url 'cadastro_ofertas' %}"><i class="material-icons">
-							add
-						</i> Criar uma nova Oferta</a>{% endif %}
 					<a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button"
 						data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						{{ user.username }}
@@ -78,11 +75,9 @@
 				<div class="divider"></div>
 				<a class="mdl-navigation__link" href="{% url 'index' %}">Home</a>
 				<a class="mdl-navigation__link" href="{% url 'box_message' %}">Caixa de Mensagens</a>
-				<a class="mdl-navigation__link" href="{% url 'interesses' request.user.id %}">Meus Interesses</a>
-				{% block demanda%}<a class="mdl-navigation__link" href="{% url 'demandas' %}">Minhas
+				<a class="mdl-navigation__link" href="{% url 'interesses' %}">Meus Interesses</a>
+				{% block demanda %}<a class="mdl-navigation__link" href="{% url 'demandas' %}">Minhas
 					Demandas</a>{% endblock %}
-				{% block oferta%}<a class="mdl-navigation__link" href="{% url 'ofertas' %}">Minhas
-					Ofertas</a>{% endblock %}
 				<a class="mdl-navigation__link" href="{% url 'servicos' %}">Serviços</a>
 				{% if user.categoria == 'Prestador' %}
 				<form method="POST" action="{% url 'index'%}">

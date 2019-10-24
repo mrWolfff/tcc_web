@@ -34,11 +34,7 @@ class Demandas(models.Model):
 	def __str__(self):
 		return self.titulo_demanda
 
-class Servicos(models.Model):
-	titulo_servico = models.CharField(max_length=50)
-	descricao_servico = models.CharField(max_length=250)
-	data_servico = models.DateTimeField(default=timezone.now)
-	requisitos_servico = models.CharField(max_length=150)
+
 
 		
 
@@ -58,7 +54,7 @@ class Interesses(models.Model):
 	interesse = models.ForeignKey(Demandas, on_delete=models.CASCADE, null=True, blank=True)
 	data_interesse = models.DateTimeField(default=timezone.now)
 	#interesse_servico = models.ForeignKey(Servicos, on_delete=models.CASCADE, related_name='INTERESSE_SERVICO')
-	usuario_interesse = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='usuarios_interesse')
+	usuario_interesse = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='usuarios_interesse', null=True, blank=True)
 	user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user')
 
 	class Meta:
@@ -78,9 +74,31 @@ class MessageSession(models.Model):
 	from_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_1')
 	to_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_2')
 
+class Propostas(models.Model):
+    proposta = models.TextField()
+    valor_proposta = models.CharField(max_length=20, blank=True, null=True)
+    data_inicio = models.DateField()
+    data_fim = models.DateField()
+    user_proposta = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_proposta')
+    to_user_proposta = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='to_user_proposta')
+    demanda = models.ForeignKey(Demandas, on_delete=models.CASCADE, null=True)
+    
+
+
 class Message(models.Model):
 	message = models.CharField(max_length=254)
 	time_message = models.DateTimeField(default=timezone.now)
 	from_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='from_user')
 	to_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='to_user')
 	session = models.ForeignKey(MessageSession, on_delete=models.CASCADE)
+ 
+	class Meta:
+		ordering = ['time_message']
+
+STATUS = [('Ativo', '1'), ('Concluido', '2'), ('Cancelado', '3'), ('Concluido e Confirmado', '4'), ('Cancelado e Confirmado', '5')]
+ 
+class Servicos(models.Model):
+    data_servico = models.DateTimeField(default=timezone.now)
+    status = models.CharField(max_length=240, null=True)
+    proposta = models.ForeignKey(Propostas, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)

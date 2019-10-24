@@ -3,8 +3,8 @@ from django.utils import timezone
 from django.shortcuts import redirect
 import pdb
 from django.views.generic import CreateView
-from .models import Demandas, Servicos, Ofertas, Chat, Message, MessageSession, Interesses
-from .forms import DemandasForm, OfertasForm, OfertasFormEdit, MessageForm, DemandasFormEdit
+from .models import Demandas, Servicos, Ofertas, Chat, Message, MessageSession, Interesses, Propostas
+from .forms import DemandasForm, OfertasForm, OfertasFormEdit, MessageForm, DemandasFormEdit, PropostasForm
 from django.contrib.auth.decorators import login_required
 from accounts.forms import TrocaCategoria
 from accounts.models import CustomUser, Servicos_Categoria
@@ -16,6 +16,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic.edit import DeleteView
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 ##############################################################################
 ## INDEX E BASE ##############################################################
 def baseLogin(request):
@@ -48,7 +49,7 @@ def indexC(request):
     return render(request, 'principal/indexC.html', {'querys': querys, 'ofertas': ofertas, 'categorias': categorias})
 @login_required
 def indexP(request):
-    messages.success(request, 'Your password was updated successfully!', extra_tags='alert')
+    #messages.success(request, 'Your password was updated successfully!', extra_tags='alert')
     userid = get_user_model()
     demandas = Demandas.objects.all()
     querys = demandas
@@ -64,7 +65,6 @@ def indexP(request):
 def pesquisa(request, id):
     users = CustomUser.objects.all()
     results = users.filter(categoria_servico__id=id)
-    querys = Ofertas.objects.all()
     return render(request, 'principal/pesquisa.html', {'results': results})
 @login_required
 def base(request):
@@ -93,7 +93,7 @@ def cadastroDemanda(request):
         if form.is_valid():
             try:
                 form.save()
-                messages.success(request, 'Post editado com sucesso')
+                #messages.success(request, 'Post editado com sucesso')
                 return redirect('demandas')
             except:
                 return HttpResponse("Não foi possivel cadastrar")
@@ -158,20 +158,19 @@ def deletarOfertas(request, id):
 ########################################################################
 ## SERVICOS ############################################################
 def servicosRender(request):
-    form = Demandas.objects.all()
-    usuarios = CustomUser.objects.all()
-    return render(request, 'principal/servicos.html', {'form': form, 'usuarios': usuarios})
+    servicos = Servicos.objects.filter(user=request.user)
+    #if servicos != "":
+        #try:
+            #servicos 
+    return render(request, 'principal/servicos.html', {'servicos': servicos})
 
-def cadastroServicos(request):
-    form = Demandas.objects.all()
-    usuarios = CustomUser.objects.all()
-    if request.POST != None:
-        form = DemandasForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('demanda')
-
-    return render(request, 'principal/cadastrodemanda.html', {'form': form, 'usuarios': usuarios})
+def create_servico(request, id):
+    proposta = Propostas.objects.get(id=id)
+    try:
+        Servicos.objects.get(proposta=proposta, user=request.user)
+    except:
+        Servicos.objects.create(status="Ativo", proposta=proposta, user=request.user)
+    return redirect('servicos')
 
 def editarServicos(request, id):
     demandas = Demandas.objects.get(id=id)
@@ -189,18 +188,32 @@ def deletarServicos(request, id):
         return redirect('index')
     return render(request, 'principal/deletardemanda.html', {'demanda': demanda})
 
-def interesses(request, id):
+def interesses(request):
     interesses = Interesses.objects.filter(user=request.user)
     return render(request, 'principal/interesses.html', {'interesses':interesses})
     
 def newInteresse(request, id):
     user = CustomUser.objects.get(id=id)
-    try:
-        Interesses.objects.get(usuario_interesse=user)
-        #GERAR MENSAGEM QUE INTERESSE JA ESTA CADASTRADO!
-    except:
-        obj = Intesses.objects.created(usuario_interesse=user, user=request.user)
-    return render(request, 'principal/interesses.html', {'interesses':interesses})
+    demanda = Demandas.objects.get(id=id)
+    if request.user.categoria == 'Prestador':
+        try:
+            Interesses.objects.get(interesse=demanda, user=request.user)
+            #GERAR MENSAGEM QUE INTERESSE JA ESTA CADASTRADO!
+        except:
+            Interesses.objects.create(user=request.user, interesse=demanda)
+            return redirect('interesses')
+    else:        
+        try:
+            Interesses.objects.get(usuario_interesse=user, user=request.user)
+            #GERAR MENSAGEM QUE INTERESSE JA ESTA CADASTRADO!
+        except:
+            Interesses.objects.created(usuario_interesse=user, user=request.user)
+    return HttpResponse("Interesse já cadastrado ou Erro ao cadastrar!")
+
+def deleteInteresse(request, id):
+    if Interesses.objects.get(id=id).delete():
+        return redirect('interesses')
+    return HttpResponse('Erro ao deletar!')
 
 ###############################################################################
 ## ATUALIZAR DADOS USER #######################################################
@@ -222,7 +235,6 @@ def atualizarDados(request):
 def chat(request):
     c = Chat.objects.all()
     return render(request, "chat/chat.html", {'home': 'active', 'chat': c})
-
 def post(request):
     if request.method == "POST":
         msg = request.POST.get('msgbox', None)
@@ -234,8 +246,6 @@ def post(request):
         return JsonResponse({'msg': msg, 'user': c.user.username})
     else:
         return HttpResponse('Request must be POST.')
-
-def messages(request):
     c = Chat.objects.all()
     return render(request, 'chat/messages.html', {'chat': c})
 ##########################################################################
@@ -248,16 +258,74 @@ def box_message(request):
         aux = False
     # pdb.set_trace()
     return render(request, 'principal/boxmessage.html', {'search': search, 'aux': aux})
+
+def create_proposta(request):
+    response_data = {}
+    if request.POST:
+        user_proposta = request.POST.get('user_proposta')
+        to_user_proposta = request.POST.get('to_user_proposta')
+        try: 
+            aux = Propostas.objects.get(user_proposta=user_proposta, to_user_proposta=to_user_proposta)
+            #aux.delete()
+        except Exception as exception:
+            print("Erro: {}", exception)
+            proposta = request.POST.get('proposta')
+            valor_proposta = request.POST.get('valor_proposta')
+            data_inicio = request.POST.get('data_inicio')
+            data_fim = request.POST.get('data_fim')
+            demanda = request.POST.get('demanda')
+            response_data = {
+                'proposta': proposta,
+                'valor_proposta': valor_proposta,
+                'data_inicio': data_inicio,
+                'data_fim': data_fim,
+                'user_proposta': user_proposta,
+                'to_user_proposta': to_user_proposta,
+                'demanda': demanda,
+            }
+            user_proposta = CustomUser.objects.get(id=user_proposta)
+            to_user_proposta = CustomUser.objects.get(id=to_user_proposta)
+            Propostas.objects.create(
+                proposta= proposta,
+                valor_proposta= valor_proposta,
+                data_inicio= data_inicio,
+                data_fim= data_fim,
+                user_proposta=user_proposta,
+                to_user_proposta=to_user_proposta,
+                demanda= demanda,
+            )
+            return JsonResponse(response_data)
+        return redirect('box_message')
+    print(response_data)
+    return HttpResponse("deu boa, achho")
+
 def messagesUser(request, id):
     messages = Message.objects.filter(session=id)
-    #pdb.set_trace()
     session = MessageSession.objects.get(id=id)
     form = MessageForm()
     post = request.POST
     from_user = request.POST.get('from_user')
     to_user = request.POST.get('to_user')
-    if post:
-        message = request.POST.get('message')
+    propostas = ''
+    try: 
+        #pdb.set_trace()
+        propostas = Propostas.objects.filter(to_user_proposta=request.user).order_by('-id')[0]
+    except Exception as exception:
+        print("Erro: {}", exception)
+        HttpResponse("erro")
+    if post.get('proposta_valor') or post.get('proposta'):
+        user_proposta = request.POST.get('user_proposta')
+        to_user_proposta = request.POST.get('to_user_proposta')
+        try: 
+            aux = Propostas.objects.get(user_proposta=user_proposta, to_user_proposta=to_user_proposta)
+            aux.delete()
+        except Exception as exception:
+            print("Erro: {}", exception)
+            obj = PropostasForm(request.POST)
+            if obj.is_valid():
+                obj.save()
+                return redirect('box_message')
+    if post.get('message'):
         try:
             MessageSession.objects.get(from_user=from_user, to_user=to_user)
             created = MessageSession.objects.get(
@@ -268,7 +336,8 @@ def messagesUser(request, id):
             if form.is_valid():
                 form.save()
                 return redirect('box_message')
-        except:
+        except Exception as exception:
+            print("Erro: {}", exception)
             try:
                 MessageSession.objects.get(
                     from_user=to_user, to_user=from_user)
@@ -280,7 +349,8 @@ def messagesUser(request, id):
                 if form.is_valid():
                     form.save()
                     return redirect('box_message')
-            except:
+            except Exception as exception:
+                print("Erro: {}", exception)
                 MessageSession.objects.get_or_create(
                     from_user=from_user, to_user=to_user)
                 created = MessageSession.objects.get(
@@ -294,10 +364,11 @@ def messagesUser(request, id):
     to_user = session.from_user
     from_user = request.user
     session_user = ''
+    demandas = Demandas.objects.filter(usuario_demanda=to_user)
     if to_user == from_user:
         session_user = session.to_user
-    
-    return render(request, 'principal/messages.html', {'to_user': to_user, 'messages': messages, 'from_user': from_user, 'session_user': session_user})
+    context = {'to_user': to_user, 'messages': messages, 'from_user': from_user, 'session_user': session_user, 'propostas':propostas, 'demandas': demandas}
+    return render(request, 'principal/messages.html', context)
 
 
 def box_message_send(request):
@@ -311,7 +382,6 @@ def send_message(request, id):
     form = MessageForm()
     post = request.POST
     if post:
-        message = request.POST.get('message')
         try:
             MessageSession.objects.get(from_user=from_user, to_user=to_user)
             created = MessageSession.objects.get(
@@ -321,6 +391,7 @@ def send_message(request, id):
             form = MessageForm(copy)
             if form.is_valid():
                 form.save()
+                
                 return redirect('box_message')
         except:
             try:
@@ -333,7 +404,7 @@ def send_message(request, id):
                 form = MessageForm(copy)
                 if form.is_valid():
                     form.save()
-                    return redirect('box_message')
+                    #return redirect('box_message')
             except:
                 MessageSession.objects.get_or_create(
                     from_user=from_user, to_user=to_user)
@@ -344,5 +415,13 @@ def send_message(request, id):
                 form = MessageForm(copy)
                 if form.is_valid():
                     form.save()
-                    return redirect('box_message')
+                    #return redirect('box_message')
     return render(request, 'principal/sendmessage.html', {'to_user': to_user})
+
+
+def deletePropostas(request, id):
+    proposta = Propostas.objects.get(id=id)
+    proposta.delete()
+    return redirect('box_message')
+
+

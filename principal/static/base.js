@@ -6,3 +6,11 @@ document.addEventListener('DOMContentLoaded', function() {
   // Or with jQuery
 
   $('.dropdown-trigger').dropdown();
+
+  $('#delete').on('click', function () {
+    if(confirm("Deseja excluir a proposta? ")){
+        window.location.href = "{% url 'deletePropostas' propostas.id   %}";
+    }else{
+        location.reload();
+    }
+});
