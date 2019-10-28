@@ -1,0 +1,242 @@
+{% extends 'principal/base.html' %}
+
+{% block conteudo %}
+<div class="row">
+    <div class="col s12">
+        <div class="card grey lighten-2">
+            <div class="card-content">
+                <span class="card-title"><b>Situaçao do Serviço</b></span>
+                <b>Status: </b>{{servico.status}}
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="row justify-content-md-center">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">
+                    {demanda.title}
+                </span>
+                <p>{ demanda.descricao }</p>
+                <p>{ demanda.user }</p>
+                <p>{ demanda.descricao }</p>
+            </div>
+            <div class="card-action grey lighten-2">
+                <a class="waves-effect waves-light btn modal-trigger green lighten-1" href="#modal_done">Concluir
+                    <i class="material-icons">
+                        done
+                    </i></a>
+                <a class="waves-effect waves-light btn modal-trigger red darken-4" href="#modal_cancel">Cancelar
+                    <i class="material-icons">
+                        cancel
+                    </i></a>
+
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">
+                    {{proposta.proposta}}
+                </span>
+                <p>{ demanda.descricao }</p>
+                <p>{ demanda.informacoes }</p>
+            </div>
+            <div class="card-action grey lighten-2">
+
+                <a class="waves-effect waves-light btn modal-trigger" href="#modal">Editar
+                    <i class="material-icons">
+                        edit
+                    </i></a>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        var elems = document.querySelectorAll('.modal');
+        var instances = M.Modal.init(elems, options);
+    });
+    $(document).ready(function () {
+        $('.modal').modal();
+    });
+    $('#edit').click(function () {
+        confirm("");
+        window.location.href = "#modal";
+    });
+    function Avaliar(estrela) {
+        let cont;
+        switch (estrela) {
+            case 1:
+                if ($('#star1').attr("src") == 'https://image.flaticon.com/icons/svg/148/148841.svg') {
+                    $('#star1').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                    $('#star2').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                    $('#star3').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                    $('#star4').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                    $('#star5').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                    cont = 0;
+                    $('#rating').text(cont);
+                } else {
+                    $('#star1').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                    cont = 1;
+                    $('#rating').text(cont);
+                }
+                break;
+            case 2:
+                if ($('#star2').attr("src") == 'https://image.flaticon.com/icons/svg/148/148841.svg') {
+                    $('#star2').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                    $('#star3').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                    $('#star4').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                    $('#star5').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                    cont = 1;
+                    $('#rating').text(cont);
+                } else {
+                    $('#star1').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                    $('#star2').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                    cont = 2;
+                    $('#rating').text(cont);
+                }
+                break;
+            case 3:
+                if ($('#star3').attr("src") == 'https://image.flaticon.com/icons/svg/148/148841.svg') {
+                    $('#star3').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                    $('#star4').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                    $('#star5').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                    cont = 2;
+                    $('#rating').text(cont);
+                } else {
+                    $('#star1').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                    $('#star2').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                    $('#star3').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                    cont = 3;
+                    $('#rating').text(cont);
+                }
+                break;
+            case 4:
+                if ($('#star4').attr("src") == 'https://image.flaticon.com/icons/svg/148/148841.svg') {
+                    $('#star4').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                    $('#star5').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                    cont = 3;
+                    $('#rating').text(cont);
+                } else {
+                    $('#star1').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                    $('#star2').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                    $('#star3').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                    $('#star4').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                    cont = 4;
+                    $('#rating').text(cont);
+                }
+
+                break;
+            case 5:
+                if ($('#star5').attr("src") == 'https://image.flaticon.com/icons/svg/148/148841.svg') {
+                    $('#star5').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                    cont = 4;
+                    $('#rating').text(cont);
+                } else {
+                    $('#star1').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                    $('#star2').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                    $('#star3').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                    $('#star4').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                    $('#star5').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                    cont = 5;
+                    $('#rating').text(cont);
+                    console.log(cont);
+                }
+                break;
+            default:
+                console.log("Erro");
+
+        }
+
+    }
+</script>
+<div id="modal" class="modal modal-fixed-footer">
+    <div class="modal-content">
+    </div>
+    <div class="modal-footer">
+
+    </div>
+</div>
+<div id="modal_done" class="modal modal-fixed-footer">
+    <div class="modal-content">
+        <h5>Conclusão do serviço pelo {{request.user.categoria}}</h5>
+        <p>Faça uma sugestão ou critica sobre o serviço prestado e faça uma avaliação</p>
+        <form method="POST">
+            <label>Sugestão ou critica</label><br>
+            <textarea class="materialize-textarea" name='finalizacao'></textarea><br>
+            {% if request.user.categoria == 'Prestador' %}
+            <label>Avalie o ????????????????</label>
+            {% endif %} {% if request.user.categoria == 'Consumidor' %}
+            <label>Avalie o Prestador</label><br>
+            {% endif %}
+
+            <a href="javascript:void(0)" onclick="Avaliar(1)">
+                <img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star1"
+                    style="height: 35px; width: 35px;"></a>
+
+            <a href="javascript:void(0)" onclick="Avaliar(2)">
+                <img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star2"
+                    style="height: 35px; width: 35px;"></a>
+
+            <a href="javascript:void(0)" onclick="Avaliar(3)">
+                <img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star3"
+                    style="height: 35px; width: 35px;"></a>
+
+            <a href="javascript:void(0)" onclick="Avaliar(4)">
+                <img id="star4" src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star4"
+                    style="height: 35px; width: 35px;"></a>
+
+            <a href="javascript:void(0)" onclick="Avaliar(5)">
+                <img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star5"
+                    style="height: 35px; width: 35px;"></a>
+            <label id="rating"></label>
+            <input type="hidden" name="avaliacao">
+        
+    </div>
+    <div class="modal-footer">
+        <button class="btn green lighten-1">Pronto
+            <i class="material-icons">
+                done
+            </i></button>
+        </form>
+    </div>
+</div>
+<div id="modal_cancel" class="modal modal-fixed-footer">
+    <div class="modal-content">
+        <h5>Cancelamento do serviço pelo {{request.user.categoria}}</h5>
+        <p>Antes de executar essa ação, nos diga a razão do cancelamento: </p>
+        <form method="POST">
+            <textarea name="justificativa" class="materialize-textarea"></textarea>
+            <label>Justificativa</label>
+
+    </div>
+    <div class="modal-footer grey lighten-2">
+        <button class="btn green lighten-1">Pronto
+            <i class="material-icons">
+                done
+            </i></button>
+    </div>
+    </form>
+</div>
+<div id="modal_aval" class="modal modal-fixed-footer">
+    <div class="modal-content">
+
+    </div>
+    <div class="modal-footer">
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#star").click(function () {
+            alert("it works!");
+        });
+    });
+
+</script>
+{% endblock %}

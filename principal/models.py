@@ -23,7 +23,7 @@ class Demandas(models.Model):
 	descricao_demanda = models.CharField(max_length=250)
 	data_demanda = models.DateTimeField(default=timezone.now)
 	requisitos_demanda = models.CharField(max_length=150)
-	anexo_demanda = models.FileField(upload_to='../media', max_length=250, null=True)
+	anexo_demanda = models.FileField(upload_to='../media', max_length=250, null=True,)
 	imagem_demanda = models.ImageField(upload_to='../media', max_length=250, null=True)
 	usuario_demanda = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='usuarios_servicos')
 	usuario_prestador = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
@@ -51,7 +51,7 @@ class Ofertas(models.Model):
 
 
 class Interesses(models.Model):
-	interesse = models.ForeignKey(Demandas, on_delete=models.CASCADE, null=True, blank=True)
+	interesse = models.ForeignKey(Demandas, on_delete=models.CASCADE, null=True)
 	data_interesse = models.DateTimeField(default=timezone.now)
 	#interesse_servico = models.ForeignKey(Servicos, on_delete=models.CASCADE, related_name='INTERESSE_SERVICO')
 	usuario_interesse = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='usuarios_interesse', null=True, blank=True)
@@ -95,10 +95,31 @@ class Message(models.Model):
 	class Meta:
 		ordering = ['time_message']
 
-STATUS = [('Ativo', '1'), ('Concluido', '2'), ('Cancelado', '3'), ('Concluido e Confirmado', '4'), ('Cancelado e Confirmado', '5')]
  
 class Servicos(models.Model):
     data_servico = models.DateTimeField(default=timezone.now)
     status = models.CharField(max_length=240, null=True)
     proposta = models.ForeignKey(Propostas, on_delete=models.CASCADE, null=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
+    justificativa = models.TextField(blank=True, default='')
+    cancel_confirm = models.BooleanField(default=False)
+    avaliacao = models.FloatField(blank=True, default='')
+    sugestao_critica = models.TextField(blank=True, default='')
+    
+     
+    def finalizarServico(self, avaliacao, sugestao_critica):
+        if self.status == 'Ativo':
+            self.avaliacao = avaliacao
+            self.sugestao_critica = sugestao_critica
+            self.status = 'Concluído' 
+            return True
+        return False
+            
+    def cancelarServico(self, avaliacao, justificativa):
+        if self.status == 'Ativo':
+            self.justificativa = justificativa
+            self.avaliacao = avaliacao
+            self.status = 'Cancelado sem Confirmação'
+        if self.cancel_confirm:
+            self.status = 'Cancelado'
+         

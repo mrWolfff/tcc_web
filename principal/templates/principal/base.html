@@ -11,7 +11,7 @@
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
 		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
 		crossorigin="anonymous"></script>
-		<script src="https://code.jquery.com/jquery-3.4.1.js" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.js" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
 		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
 		crossorigin="anonymous"></script>
@@ -42,10 +42,14 @@
 				<div class="mdl-layout-spacer"></div>
 				<div class="mdl-navigation mdl-layout--large-screen-only">
 
-					{% if request.user.categoria == 'Consumidor'%}<a class="mdl-navigation__link"
-						href="{% url 'cadastro_demanda' %}"><i class="material-icons">
-							add
-						</i> Criar uma nova demanda</a>{% endif %}
+					{% if request.user.categoria == 'Consumidor'%}
+					<button class="btn light-blue darken-4" id="new_demanda"><i class="material-icons align-text-center">add</i> Criar uma
+						demanda</button> {% endif %}
+					<script type="text/javascript">
+						$('#new_demanda').click(function () {
+							window.location.href = "{% url 'cadastro_demanda' %}"
+						});
+					</script>
 					<a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button"
 						data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						{{ user.username }}
@@ -56,16 +60,20 @@
 						<div class="dropdown-divider"></div>
 						<a class="dropdown-item" href="{% url 'logout' %}">Sair</a>
 					</div>
-					<a href="{% url 'conta' request.user.id %}"><img class="circle" src="{{user.imagem}}" style="width: 25px; height: 25px;"></a>
+					<a href="{% url 'conta' request.user.id %}"><img class="circle" src="{{user.imagem}}"
+							style="width: 25px; height: 25px;"></a>
 				</div>
 
 			</div>
 		</header>
 		<div class="mdl-layout__drawer">
 			<div class="user-view">
-				<a href="{% url 'conta' request.user.id %}"><img class="circle" src="{{user.imagem}}" style="width: 75px; height: 75px;"></a>
-				<a href="{% url 'conta' request.user.id %}"><span class="black-text name">{{ user.first_name }}</span></a>
-				<a href="{% url 'conta' request.user.id %}"><span class="black-text name">{{ user.last_name }}</span></a>
+				<a href="{% url 'conta' request.user.id %}"><img class="circle" src="{{user.imagem}}"
+						style="width: 75px; height: 75px;"></a>
+				<a href="{% url 'conta' request.user.id %}"><span
+						class="black-text name">{{ user.first_name }}</span></a>
+				<a href="{% url 'conta' request.user.id %}"><span
+						class="black-text name">{{ user.last_name }}</span></a>
 				<a href="{% url 'conta' request.user.id %}"><span class="black-text email">{{ user.email }}</span></a>
 				<span class="mdl-layout-title"></span>
 			</div>
@@ -110,18 +118,19 @@
 					{% block conteudo %}
 					{% endblock %}
 				</div>
-			</div>	
+			</div>
 		</main>
 		<footer class="mdl-mini-footer" style="flex: 0 0 auto;">
-				<div class="mdl-mini-footer__left-section mdl-color-text--white .mdl-typography--caption">
-					<div class="mdl-logo">By:</div>
-					<ul class="mdl-mini-footer__link-list">
-						<li><a href="#">Lucas Wolf</a></li>
-						<li><a	 href="github.com/mrWolfff">github.com/mrWolfff/tcc_web</a></li>
-					</ul>
-				</div>
-			</footer>
+			<div class="mdl-mini-footer__left-section mdl-color-text--white .mdl-typography--caption">
+				<div class="mdl-logo">By:</div>
+				<ul class="mdl-mini-footer__link-list">
+					<li><a href="#">Lucas Wolf</a></li>
+					<li><a href="github.com/mrWolfff">github.com/mrWolfff/tcc_web</a></li>
+				</ul>
+			</div>
+		</footer>
 
 	</div>
 </body>
+
 </html>

@@ -172,6 +172,20 @@ def create_servico(request, id):
         Servicos.objects.create(status="Ativo", proposta=proposta, user=request.user)
     return redirect('servicos')
 
+def servico_atual(request, id):
+    servico = Servicos.objects.get(id=id)
+    #pdb.set_trace()
+    #demandas nao estao sendo cadastradas ##REVER
+    proposta = Propostas.objects.get(id=servico.proposta.id)
+    #demanda =  Demandas.objects.get(id=proposta.demanda.id)
+    context = {
+        'servico':servico,
+        #'demanda':demanda,
+        'proposta':proposta,
+    }
+    return render(request, 'principal/servico_atual.html', context)
+
+
 def editarServicos(request, id):
     demandas = Demandas.objects.get(id=id)
     if request.POST != None:
@@ -296,8 +310,7 @@ def create_proposta(request):
             )
             return JsonResponse(response_data)
         return redirect('box_message')
-    print(response_data)
-    return HttpResponse("deu boa, achho")
+    return HttpResponse("error")
 
 def messagesUser(request, id):
     messages = Message.objects.filter(session=id)

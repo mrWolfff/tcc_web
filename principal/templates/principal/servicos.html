@@ -69,6 +69,7 @@
                 <b>Usuário:</b> {{servico.proposta.user_proposta}}.<br>
                 <b>Categoria de Serviço:</b> {{servico.demanda.categoria}}.<br>{{servico.proposta.demanda}}
                 <b>Status: </b>{{servico.status}}
+                <button class="btn btn-info" id="servico_atual">Ver Serviço</button>
               </p>
               </p>
             </div>
@@ -81,6 +82,9 @@
                 });
                 $(document).ready(function () {
                   $('.modal').modal();
+                });
+                $('#servico_atual').click(function(event){
+                  window.location.href= "{% url 'servico_atual' servico.id %}";
                 });
               </script>
             </div>

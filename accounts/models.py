@@ -17,8 +17,16 @@ class Usuario_Categoria(models.Model):
 
 class CustomUser(AbstractUser):
 	CATEGORIAS = [('Prestador', 'Prestador'), ('Consumidor', 'Consumidor')]
-	SEXOS = [('MAS', 'Masculino'), ('FEM', 'Feminino')]
-	ESTADOS = [('PARANÁ', 'PR'), ('RIO GRANDE DO SUL', 'RS'), ('São Paulo', 'SP'), ('Santa Catarina', 'SC')]
+	SEXOS = [
+     ('MAS', 'Masculino'), 
+     ('FEM', 'Feminino')
+     ]
+	ESTADOS = [
+     ('PARANÁ', 'PR'), 
+     ('RIO GRANDE DO SUL', 'RS'), 
+     ('São Paulo', 'SP'), 
+     ('Santa Catarina', 'SC')
+     ]
 	categoria = models.CharField(max_length=20, null=True, choices=CATEGORIAS)
 	#
 	cpf_cnpj= models.CharField(max_length=15, null=True, blank=True)

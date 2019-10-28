@@ -40,4 +40,5 @@ path('messages/<int:id>/', views.messagesUser, name='messagesUser'),
 path('deletepropostas/<int:id>/', views.deletePropostas, name='deletePropostas'),
 path('createservico/<int:id>/', views.create_servico, name='create_servico'),
 path('create_proposta/', views.create_proposta, name='create_proposta'),
+path('servico/<int:id>/', views.servico_atual, name='servico_atual'),
 ]
