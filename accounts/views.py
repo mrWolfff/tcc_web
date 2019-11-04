@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect
 from django.views import generic
 from . forms import CustomUserCreationForm, CustomUserChangeForm, CustomUser, ContaForm, SignupForm
-from .models import CustomUser
+from .models import CustomUser, Informacoes
 from django.contrib.auth.models import User
 from django.utils import timezone
 import pdb
 from django.urls import reverse_lazy
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import login, authenticate
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
@@ -28,7 +28,7 @@ def minhaConta(request, id):
 	if request.POST != None:
 		form = ContaForm(request.POST or None, request.FILES or None, instance=user)
 		if form.is_valid():
-			form.save()
+			form.save(commit=False)
 			redirect('index')
 	return render(request, 'principal/conta.html', {'user': user, 'form': form})
 
@@ -36,21 +36,43 @@ def minhaConta(request, id):
 def editar_conta(request):
 	return render(request, 'principal/editar_conta.html')
 
+def config(request, id):
+    user = CustomUser.objects.get(id=id)
+    informacao = request.POST.get('informacao')
+    if informacao:
+        if Informacoes.objects.create(informacao=informacao, user=request.user):
+            return redirect()
+    return render(request, 'principal/config.html', {'user':user})
+
+def config_json(request):
+    response_data = {}
+    if request.GET:
+        info = Informacoes.objects.all()
+        response_data['info'] = info
+        return JsonResponse(response_data)
+    if request.POST:
+        user = CustomUser.objects.get(id=request.user.id)
+        informacao = request.POST.get('informacao')
+        response_data = {
+            'informacao':informacao,
+            'user':request.user,	
+		}
+        if Informacoes.objects.create(informacao=informacao, user=request.user):
+            return JsonResponse(response_data)
+    return HttpResponse('erro ao mandar JSON!')
+
 
 def signup(request):
-	# User = get_user_model()
 	if request.method == 'POST':
-		# pdb.set_trace()
 		form = SignupForm(request.POST)
 		if form.is_valid():
 			user = form.save(commit=False)
 			user.is_active = False
 			user.save()
-			# current_site = get_current_site(request)
 			mail_subject = 'Ative seu E-mail no Sistema.'
 			message = render_to_string('acc_active_email.html', {
 				'user': user,
-				'domain': '127.0.0.1:8000',
+				'domain': '127.0.0.1:8000', 
 				'uid': urlsafe_base64_encode(force_bytes(user.pk)),
 				'token': account_activation_token.make_token(user),
 			})

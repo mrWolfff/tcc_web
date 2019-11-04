@@ -3,26 +3,44 @@
 {% block conteudo %}
 <div class="row">
     <div class="col s12">
-        <div class="card grey lighten-2">
+        <div class="card hoverable grey lighten-2">
             <div class="card-content">
                 <span class="card-title"><b>Situaçao do Serviço</b></span>
-                <b>Status: </b>{{servico.status}}
-
+                <b>Status: </b>{{servico.status}}<br>
+                {% if servico.status == 'Concluído' %}
+                <b>Sugestão ou Critica do serviço realizado: </b>{{servico.sugestao_critica}}<br>
+                <b>Avaliação do serviço: </b>{{servico.avaliacao}}<br>
+                    <img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star1"
+                        style="height: 35px; width: 35px;">
+                    <img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star2"
+                        style="height: 35px; width: 35px;">
+                    <img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star3"
+                        style="height: 35px; width: 35px;">
+                    <img id="star4" src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star4"
+                        style="height: 35px; width: 35px;">
+                    <img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star5"
+                        style="height: 35px; width: 35px;">
+                {% endif %}
+                {% if servico.status == 'Cancelado' or servico.status == 'Cancelado sem confirmação' %}
+                <b>Justificativa do Cancelamento: </b>{{servico.justificativa}}<br>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
 <div class="row">
     <div class="row justify-content-md-center">
-        <div class="card">
+        <div class="card hoverable">
             <div class="card-content">
                 <span class="card-title">
-                    {demanda.title}
+                    Demanda do serviço é {{demanda.titulo}}
                 </span>
-                <p>{ demanda.descricao }</p>
-                <p>{ demanda.user }</p>
-                <p>{ demanda.descricao }</p>
+                <b>Descricao:</b> {{demanda.descricao}}.<br>
+                <b>Categoria:</b> {{demanda.categoria}}.<br>
+                <b>usuario:</b> {{demanda.user}}.<br>
+                <b>Data de publicação:</b> {{demanda.data}}.<br>
             </div>
+            {% if servico.status == 'Ativo' %}
             <div class="card-action grey lighten-2">
                 <a class="waves-effect waves-light btn modal-trigger green lighten-1" href="#modal_done">Concluir
                     <i class="material-icons">
@@ -32,25 +50,29 @@
                     <i class="material-icons">
                         cancel
                     </i></a>
-
             </div>
+            {% endif %}
         </div>
     </div>
     <div class="col">
-        <div class="card">
+        <div class="card hoverable">
             <div class="card-content">
                 <span class="card-title">
-                    {{proposta.proposta}}
+                    Proposta:
                 </span>
-                <p>{ demanda.descricao }</p>
-                <p>{ demanda.informacoes }</p>
+                <b>Proposta:</b> {{proposta.proposta}}.<br>
+                <b>Valor da Proposta:</b> {{proposta.valor}}.<br>
+                <b>O serviço deve ser realizado de </b>{{proposta.data_inicio}} <b>até</b> {{proposta.data_inicio}}.<br>
+                <b>Publicado em:</b> {{proposta.data}}.<br>
+                <b>Usuário:</b> {{proposta.user_proposta}}.<br>
             </div>
             <div class="card-action grey lighten-2">
-
+                {% if request.user.categoria == 'Prestador' %}
                 <a class="waves-effect waves-light btn modal-trigger" href="#modal">Editar
                     <i class="material-icons">
                         edit
                     </i></a>
+                {%endif %}
             </div>
         </div>
     </div>
@@ -79,10 +101,12 @@
                     $('#star5').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
                     cont = 0;
                     $('#rating').text(cont);
+                    $('#input_rating').val(cont);
                 } else {
                     $('#star1').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
                     cont = 1;
                     $('#rating').text(cont);
+                    $('#input_rating').val(cont);
                 }
                 break;
             case 2:
@@ -93,11 +117,13 @@
                     $('#star5').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
                     cont = 1;
                     $('#rating').text(cont);
+                    $('#input_rating').val(cont);
                 } else {
                     $('#star1').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
                     $('#star2').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
                     cont = 2;
                     $('#rating').text(cont);
+                    $('#input_rating').val(cont);
                 }
                 break;
             case 3:
@@ -107,12 +133,14 @@
                     $('#star5').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
                     cont = 2;
                     $('#rating').text(cont);
+                    $('#input_rating').val(cont);
                 } else {
                     $('#star1').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
                     $('#star2').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
                     $('#star3').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
                     cont = 3;
                     $('#rating').text(cont);
+                    $('#input_rating').val(cont);
                 }
                 break;
             case 4:
@@ -121,6 +149,7 @@
                     $('#star5').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
                     cont = 3;
                     $('#rating').text(cont);
+                    $('#input_rating').val(cont);
                 } else {
                     $('#star1').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
                     $('#star2').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
@@ -128,6 +157,7 @@
                     $('#star4').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
                     cont = 4;
                     $('#rating').text(cont);
+                    $('#input_rating').val(cont);
                 }
 
                 break;
@@ -136,6 +166,7 @@
                     $('#star5').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
                     cont = 4;
                     $('#rating').text(cont);
+                    $('#input_rating').val(cont);
                 } else {
                     $('#star1').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
                     $('#star2').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
@@ -144,6 +175,7 @@
                     $('#star5').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
                     cont = 5;
                     $('#rating').text(cont);
+                    $('#input_rating').val(cont);
                     console.log(cont);
                 }
                 break;
@@ -156,9 +188,35 @@
 </script>
 <div id="modal" class="modal modal-fixed-footer">
     <div class="modal-content">
+        <span class="modal-title">
+            <h4>Edite sua Proposta!</h4>
+        </span>
+        <form method="POST" enctype="multipart/form-data" class="form-group">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-6">
+                    <input type="text" class="validate" value="{{proposta.valor}}" name="valor">
+                    <label>Valor: </label>
+                    <label>Valor é um dado preferencial!</label>
+                    <div class="input-field">
+                        <input type="text" value="{{proposta.demanda}}" disabled>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <input type="date" class="validate" name="data_inicio" value="{{proposta.data_inicio}}">
+                    <label>Data inicio:</label>
+                    <input type="date" class="validate" name="data_fim" value="{{proposta.data_fim}}">
+                    <label>Data fim:</label>
+                </div>
+                <label>Proposta</label>
+                <textarea class="materialize-textarea" name="proposta">{{proposta.proposta  }}</textarea>
+            </div>
     </div>
     <div class="modal-footer">
-
+        <button id="create_proposta"
+            class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Pronto
+            <i class="material-icons">check</i></button>
+        </form>
     </div>
 </div>
 <div id="modal_done" class="modal modal-fixed-footer">
@@ -166,8 +224,9 @@
         <h5>Conclusão do serviço pelo {{request.user.categoria}}</h5>
         <p>Faça uma sugestão ou critica sobre o serviço prestado e faça uma avaliação</p>
         <form method="POST">
+            {% csrf_token %}
             <label>Sugestão ou critica</label><br>
-            <textarea class="materialize-textarea" name='finalizacao'></textarea><br>
+            <textarea class="materialize-textarea" name='sugestao_critica'></textarea><br>
             {% if request.user.categoria == 'Prestador' %}
             <label>Avalie o ????????????????</label>
             {% endif %} {% if request.user.categoria == 'Consumidor' %}
@@ -194,11 +253,11 @@
                 <img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star5"
                     style="height: 35px; width: 35px;"></a>
             <label id="rating"></label>
-            <input type="hidden" name="avaliacao">
-        
+            <input id="input_rating" type="hidden" name="avaliacao" class="w-25">
+
     </div>
     <div class="modal-footer">
-        <button class="btn green lighten-1">Pronto
+        <button class="btn green lighten-1" id="aval">Pronto
             <i class="material-icons">
                 done
             </i></button>
@@ -210,6 +269,7 @@
         <h5>Cancelamento do serviço pelo {{request.user.categoria}}</h5>
         <p>Antes de executar essa ação, nos diga a razão do cancelamento: </p>
         <form method="POST">
+            {% csrf_token %}
             <textarea name="justificativa" class="materialize-textarea"></textarea>
             <label>Justificativa</label>
 
@@ -230,13 +290,4 @@
 
     </div>
 </div>
-
-<script type="text/javascript">
-    $(document).ready(function () {
-        $("#star").click(function () {
-            alert("it works!");
-        });
-    });
-
-</script>
 {% endblock %}

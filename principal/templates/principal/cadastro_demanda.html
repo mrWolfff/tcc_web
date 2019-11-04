@@ -6,33 +6,97 @@
 {% load staticfiles %}
 
 {% load static %}
-{% if messages %}
-  <ul class="messages">
-    {% for message in messages %}
-      <li class="{{ message.tags }}">{{ message }}</li>
-    {% endfor %}
-  </ul>
-{% endif %}
-<form method="POST" enctype="multipart/form-data" class="form-group">
-	{% csrf_token %}
-	<div class="row">
-		<div class="col-1">
-		</div>
-		<div class="col-10">
-			<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--3dp">
-				<div class="mdl-card mdl-cell mdl-cell--11-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
-					<div class="mdl-card__supporting-text">
-						<div class="form-group">
-							<h3>Cadastre uma nova Demanda:</h3>
-							{% crispy form %}
-						</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('select');
+    var instances = M.FormSelect.init(elems, options);
+  });
+  $(document).ready(function(){
+    $('select').formSelect();
+  });
+      
+</script>
+<div class="row">
+	<div class="col-3">
+		{% if request.user.categoria == 'Consumidor' %}
+		<div class="card">
+			<article class="card-group-item">
+				<header class="card-header">
+					<h6 class="title">Demandas</h6>
+				</header>
+				<div class="filter-content">
+					<div class="list-group list-group-flush">
+						<a href="{% url 'cadastro_demanda' %}" class="list-group-item">Criar uma nova demanda </a>
+						<a href="{% url 'demandas' %}" class="list-group-item">Minhas Demandas <span
+								class="float-right badge badge-light round"></span> </a>
+						<a href="#" class="list-group-item">Meus Interesses <span
+								class="float-right badge badge-light round"></span> </a>
+						<a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
+								class="float-right badge badge-light round"></span>
+						</a>
 					</div>
 				</div>
-			</section>
+			</article>
 		</div>
-		<div class="col-1">
+		{% endif %}
+		{% if request.user.categoria == 'Prestador' %}
+
+		<div class="card">
+			<article class="card-group-item">
+				<header class="card-header">
+				</header>
+				<div class="filter-content">
+					<div class="list-group list-group-flush">
+						<a href="#" class="list-group-item">Meus Interesses <span
+								class="float-right badge badge-light round"></span> </a>
+						<a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
+								class="float-right badge badge-light round"></span>
+						</a>
+					</div>
+				</div>
+			</article>
+		</div>
+		{% endif %}
+	</div>
+	<div class="col-9">
+		<div class="card hoverable">
+			<div class="card-content">
+				<span class="card-title">
+					<h5>Cadastro de Demandas</h5>
+				</span>
+			</div>
+			<form method="POST">
+				{% csrf_token %}
+				<div class="row">
+					<div class="col-sm-6">
+						<input type="text" name="titulo">
+						<label for="titulo">Titulo da demanda</label>
+						
+					</div>
+					<div class="col-sm-6">
+							<select class="input-field" name="categoria">
+									<option value="" disabled selected>Categorias de Serviço...</option>
+									{% for categoria in categorias %}
+									<option value="{{categoria.id}}">{{categoria}}</option>
+									{% endfor %}
+								  </select>
+								  <label>Categorias</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<textarea class="materialize-textarea" name="descricao"></textarea>
+						<label for="descricao">Descrição da Demanda</label>
+						<input type="hidden" name="user_demanda" value="{{request.user.id}}">
+					</div>
+				</div>
+			<div class="card-footer">
+				<button class="waves-effect waves-light btn green" type="submit" >Cadastrar</button>
+			</form>
+			</div>
 		</div>
 	</div>
-</form>
+</div>
+
 
 {% endblock %}

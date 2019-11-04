@@ -19,14 +19,28 @@ from django.views.generic.base import TemplateView
 from django.contrib.auth.views import LoginView
 from django.conf.urls.static import static
 from django.conf import settings
+from rest_framework import routers
+from principal import views
+
+router = routers.DefaultRouter()
+router.register('api/demandas', views.Demandas_all)
+router.register('api/servicos', views.Servicos_all)
+router.register('api/propostas', views.Propostas_all)
+router.register('api/message', views.Message_all)
+router.register('api/messagesession', views.MessageSession_all)
+router.register('api/users', views.Users_all)
+admin.autodiscover()
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('principal.urls',)), 
-    path('', include('accounts.urls',)),
+    path('', include('principal.urls')), 
+    path('', include('accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),  
     path('', LoginView.as_view(template_name='login.html'), name="login"),
-    path('auth/', include('djoser.urls')),
+    path('', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework') ),
+    
+    #path('auth/', include('djoser.urls')),
     #path('auth/', include('djoser.urls.authtoken')),
     #path('', include('chat.urls')),
     

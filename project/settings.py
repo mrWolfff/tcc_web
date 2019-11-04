@@ -25,7 +25,7 @@ SECRET_KEY = 'g%s0zm5#=x_&e-x9^5oaz$guw&-+3$!ydsd6(p==$31^y4)x$z'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.0.104', 'localhost', '127.0.0.1', '10.141.4.237']
 
 
 # Application definition
@@ -45,12 +45,18 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     #'chat',
-    #'rest_framework',
-    #'rest_framework.authtoken',
+    'rest_framework',
+    'rest_framework.authtoken',
     #'djoser',
     #'channels',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 

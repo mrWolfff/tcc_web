@@ -113,3 +113,6 @@ function Avaliar(estrela) {
     }
 
 }
+$('#new_demanda').click(function () {
+    window.location.href = "{% url 'cadastro_demanda' %}"
+});

@@ -1,0 +1,145 @@
+{% extends 'principal/base.html' %}
+{% block titulo %}Configurações{% endblock %}
+{% block conteudo_full %}
+
+<br>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        var elems = document.querySelectorAll('.modal');
+        var instances = M.Modal.init(elems, options);
+    });
+    $(document).ready(function () {
+        $('.modal').modal();
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        var elems = document.querySelectorAll('.collapsible');
+        var instances = M.Collapsible.init(elems, options);
+    });
+
+    $(document).ready(function () {
+        $('.collapsible').collapsible();
+    });
+    $('#add_information').click(function(){
+        alert();
+    });
+    $(document).on('click', '#add_information', function (event) {
+        event.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "config_json" %}',
+            data: {
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                informacao: $("textarea[name='informacao']").val(),
+            },
+            success: function () {
+                alert("Informação adicionada! ");
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'config_json' %}",
+                    data: data,
+                    success: function (response) {
+                        alert(response.data);
+                        alert(data);
+                        alert(response);
+                    },
+                    error: function (response) {
+                        console.log(response)
+                    }
+                })
+            },
+            error: function (jqxhr, status, exception) {
+                alert('Exception:', exception, jqxhr, status);
+            }
+        });
+    });
+</script>
+<div class="row">
+    <div class="col-md-6">
+        <div class="container">
+
+            <div class="card">
+                <div class="card-image waves-effect waves-block waves-light">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img class="rounded" src="{{user.imagem}}">
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Dados Pessoais</h5>
+                            <i class="material-icons">
+                                person
+                            </i>{{user.get_full_name}}<br>
+                            <i class="material-icons">
+                                mail
+                            </i>{{user.email}}<br>
+                            <i class="material-icons">
+                                phone
+                            </i>{{user.telefone}}<br>
+                            <i class="material-icons">
+                                person
+                            </i>{{user.get_full_address}}
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card-content">
+                    <span class="card-title activator grey-text text-darken-4">Informações adicionais<i
+                            class="material-icons right">more_vert</i></span>
+
+                    <ul class="collapsible">
+                        <li>
+                            <div class="collapsible-header"><i class="material-icons">info</i>{informacao}</div>
+                            <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header"><i class="material-icons">add</i>Adicione mais informações
+                            </div>
+                            <div class="collapsible-body">
+                                <span>
+                                    <form method="POST">
+                                    {% csrf_token %}waves
+                                <textarea class="materialize-textare" name="informacao"></textarea>
+                                <button class="waves-effect -light btn green" id="add_information">OK</button>
+                            </form>  
+                            </span></div>
+                        </li>
+                    </ul>
+
+                    <a class="waves-effect waves-light btn modal-trigger green">Pronto</a>
+                </div>
+                <div class="card-reveal">
+                    <span class="card-title grey-text text-darken-4">Card Title<i
+                            class="material-icons right">close</i></span>
+                    <p>Here is some more information about this product that is only revealed once clicked on.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="container">
+            <h4>Configurações da Conta</h4>
+            <ul class="collapsible">
+                <li>
+                    <div class="collapsible-header"><i class="material-icons">expand_more</i><b>Titulo:</b>
+                        {{query.titulo}}
+                    </div>
+                    <div class="collapsible-body"><input id="icon_prefix" type="text" value="{{query.titulo}}"
+                            name="titulo"><label for="icon_prefix">Titulo</label></div>
+                </li>
+                <li>
+                    <div class="collapsible-header"><i class="material-icons">expand_more</i><b>Descrição:</b>
+                        {{query.descricao}}</div>
+                    <div class="collapsible-body"><textarea class="materialize-textarea"
+                            name="descricao">{{query.descricao}}</textarea><label for="icon_prefix">Descrição</label>
+                    </div>
+                </li>
+                <li>
+                    <div class="collapsible-header"><i class="material-icons">expand_more</i><b>Categoria:</b>
+                        {{query.categoria}}</div>
+                    <div class="collapsible-body">{{query.categoria}}</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

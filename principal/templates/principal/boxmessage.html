@@ -1,49 +1,41 @@
 {% extends 'principal/base.html'%}
+
 {% block titulo %}Caixa de Mensagens {% endblock%}
 {% block conteudo %}
+
 <div class="row">
     <div class="col-3">
-            {% if request.user.categoria == 'Consumidor' %}
-            <div class="card">
-                <article class="card-group-item">
-                    <header class="card-header">
-                        <h6 class="title">Demandas</h6>
-                    </header>
-                    <div class="filter-content">
-                        <div class="list-group list-group-flush">
-                            <a href="{% url 'cadastro_demanda' %}" class="list-group-item">Criar uma nova demanda </a>
-                            <a href="{% url 'demandas' %}" class="list-group-item">Minhas Demandas <span
-                                    class="float-right badge badge-light round"></span> </a>
-                            <a href="#" class="list-group-item">Meus Interesses <span
-                                    class="float-right badge badge-light round"></span> </a>
-                            <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
-                                    class="float-right badge badge-light round"></span>
-                            </a>
-                            <a href="{% url 'box_message_send' %}" class="list-group-item">Mensagens Enviadas<span
-                                    class="float-right badge badge-light round"></span>
-                            </a>
-                        </div>
-                    </div>
-                </article>
-            </div>
-            {% endif %}
-        {% if request.user.categoria == 'Prestador' %}
+        {% if request.user.categoria == 'Consumidor' %}
         <div class="card">
             <article class="card-group-item">
                 <header class="card-header">
-                    <h6 class="title">Ofertas</h6>
+                    <h6 class="title">Demandas</h6>
                 </header>
                 <div class="filter-content">
                     <div class="list-group list-group-flush">
-                        <a href="{% url 'cadastro_ofertas' %}" class="list-group-item">Criar uma nova oferta </a>
-                        <a href="{% url 'ofertas' %}" class="list-group-item">Minhas Ofertas <span
+                        <a href="{% url 'cadastro_demanda' %}" class="list-group-item">Criar uma nova demanda </a>
+                        <a href="{% url 'demandas' %}" class="list-group-item">Minhas Demandas <span
                                 class="float-right badge badge-light round"></span> </a>
                         <a href="#" class="list-group-item">Meus Interesses <span
                                 class="float-right badge badge-light round"></span> </a>
                         <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
                                 class="float-right badge badge-light round"></span>
                         </a>
-                        <a href="{% url 'box_message_send' %}" class="list-group-item">Mensagens Enviadas<span
+                    </div>
+                </div>
+            </article>
+        </div>
+        {% endif %}
+        {% if request.user.categoria == 'Prestador' %}
+        <div class="card">
+            <article class="card-group-item">
+                <header class="card-header">
+                </header>
+                <div class="filter-content">
+                    <div class="list-group list-group-flush">
+                        <a href="#" class="list-group-item">Meus Interesses <span
+                                class="float-right badge badge-light round"></span> </a>
+                        <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
                                 class="float-right badge badge-light round"></span>
                         </a>
                     </div>
@@ -55,33 +47,35 @@
     <div class="col-9">
         {% for it in search %}
         {% if aux %}
-        <div id="email-list">
-            <ul class="collection">
-                <li class="collection-item avatar">
-                    <a href="{% url 'messagesUser' it.id %}"><img src="{{it.from_user.imagem}}" alt=""
-                            class="circle">
-                        <span class="email-title">{{ it.from_user }}</span></a>
-                    <p class="truncate grey-text ultra-small">{{ it.from_user.categoria_servico }}</p>
-                    <a href="{% url 'messagesUser' it.id %}" class="secondary-content"><span
-                            class="badge blue">Responder</span></a>
-                </li>
-            </ul>
-            {% endif %}
-            {% if not aux %}
-            <div id="email-list">
-                <ul class="collection">
-                    <li class="collection-item avatar">
-                        <a href="{% url 'messagesUser' it.id %}"><img src="{{it.to_user.imagem}}" alt=""
-                                class="circle">
-                            <span class="email-title">{{ it.to_user }}</span></a>
-                        <p class="truncate grey-text ultra-small">Trabalha com: {{ it.to_user.categoria_servico }}</p>
-                        <a href="{% url 'messagesUser' it.id %}" class="secondary-content"><span
-                                class="badge blue">Responder</span></a>
-                    </li>
-                </ul>
-                {% endif %}
-                {% endfor %}
+        <a href="{% url 'messagesUser' it.id %}">
+            <div class="card hoverable">
+                <div class="card-content">
+                    <span class="card-title">
+                        <a href="{% url 'messagesUser' it.id %}"><img src="{{it.from_user.imagem}}" alt=""
+                                class="circle" style="width: 50px;height: 50px;">
+                            <span class="email-title">{{ it.from_user.get_full_name }}</span></a>
+                    </span>
+                    <p class="truncate grey-text ultra-small">Faz serviços de {{ it.from_user.categoria_servico }}</p>
+                </div>
             </div>
-        </div>
+        </a>
+        {% endif %}
+        {% if not aux %}
+        <a href="{% url 'messagesUser' it.id %}">
+            <div class="card carousel-indicators hoverable">
+                <div class="card-content">
+                    <span class="card-title">
+                        <a href="{% url 'messagesUser' it.id %}"><img src="{{it.to_user.imagem}}" alt=""
+                                class="circle" style="width: 50px;height: 50px;">
+                            <span class="email-title">{{ it.to_user.get_full_name }}</span></a>
+                    </span>
+                    <p class="truncate grey-text ultra-small">{{ it.to_user.categoria_servico }}</p>
+
+                </div>
+        </a>
     </div>
-    {% endblock %}
+    {% endif %}
+    {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 	<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-blue.min.css" />
 	<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
 		integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
@@ -18,32 +16,27 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
 		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
 		crossorigin="anonymous"></script>
-
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="https://wolf_lib.js"></script>
 	{% load static %}
 	{% load staticfiles %}
-	{% block import %}
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-	{% endblock %}
 	<script type="text/css" src="{% static 'base.css'%}"></script>
-
 	<title>{% block titulo %}Base{% endblock %}</title>
 </head>
-
 <body>
 	<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
 		<header class="mdl-layout__header">
 			<div class="mdl-layout__header-row">
 				<span class="mdl-layout-title"><i class="material-icons">
 						account_circle
-					</i> {{ user.first_name }}</span>
+					</i> {{ user.get_full_name }}</span>
 				<div class="mdl-layout-spacer"></div>
 				<div class="mdl-navigation mdl-layout--large-screen-only">
-
 					{% if request.user.categoria == 'Consumidor'%}
-					<button class="btn light-blue darken-4" id="new_demanda"><i class="material-icons align-text-center">add</i> Criar uma
+					<button class="btn light-blue darken-4" id="new_demanda"><i
+							class="material-icons align-text-center">add</i> Criar uma
 						demanda</button> {% endif %}
 					<script type="text/javascript">
 						$('#new_demanda').click(function () {
@@ -56,7 +49,7 @@
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<a class="dropdown-item" href="{% url 'conta' 	request.user.id %}">Meu Perfil</a>
-						<a class="dropdown-item" href="#">Configurações</a>
+						<a class="dropdown-item" href="{% url 'config' request.user.id %}">Configurações</a>
 						<div class="dropdown-divider"></div>
 						<a class="dropdown-item" href="{% url 'logout' %}">Sair</a>
 					</div>
@@ -71,40 +64,18 @@
 				<a href="{% url 'conta' request.user.id %}"><img class="circle" src="{{user.imagem}}"
 						style="width: 75px; height: 75px;"></a>
 				<a href="{% url 'conta' request.user.id %}"><span
-						class="black-text name">{{ user.first_name }}</span></a>
-				<a href="{% url 'conta' request.user.id %}"><span
-						class="black-text name">{{ user.last_name }}</span></a>
+						class="black-text name">{{ user.get_full_name }}</span></a>
 				<a href="{% url 'conta' request.user.id %}"><span class="black-text email">{{ user.email }}</span></a>
 				<span class="mdl-layout-title"></span>
 			</div>
-
-
 			<div class="mdl-navigation">
 				<div class="divider"></div>
 				<a class="mdl-navigation__link" href="{% url 'index' %}">Home</a>
 				<a class="mdl-navigation__link" href="{% url 'box_message' %}">Caixa de Mensagens</a>
 				<a class="mdl-navigation__link" href="{% url 'interesses' %}">Meus Interesses</a>
-				{% block demanda %}<a class="mdl-navigation__link" href="{% url 'demandas' %}">Minhas
-					Demandas</a>{% endblock %}
+				{% if request.user.categoria == 'Consumidor' %}<a class="mdl-navigation__link" href="{% url 'demandas' %}">Minhas
+					Demandas</a>{% endif %}
 				<a class="mdl-navigation__link" href="{% url 'servicos' %}">Serviços</a>
-				{% if user.categoria == 'Prestador' %}
-				<form method="POST" action="{% url 'index'%}">
-					{% csrf_token %}
-					<input type="hidden" name="troca_user_P" value="troca_user_P">
-					<!--<button type="submit">
-						<a class="mdl-navigation__link">Também quero solicitar demandas!</a>
-					</button>-->
-				</form>
-				{% endif %}
-				{% if user.categoria == 'Consumidor' %}
-				<form method="POST" action="{% url 'index'%}">
-					{% csrf_token %}
-					<input type="hidden" name="troca_user_C" value="troca_user_C">
-					<!--<button type="submit">
-						<a class="mdl-navigation__link">Também quero ser prestador de serviços!</a>
-					</button>-->
-				</form>
-				{% endif %}
 				<div class="divider"></div>
 				<a class="mdl-navigation__link" href="{% url 'logout' %}">Logout</a>
 				<div class="divider"></div>
@@ -113,8 +84,11 @@
 		<main class="mdl-layout__content" style="flex: 1 0 auto;">
 			<div class="page-content">
 				<div class="mdl-layout-spacer"></div>
+				{% block conteudo_full %}
+					{% endblock %}
 				<div class="container">
 					<br>
+					
 					{% block conteudo %}
 					{% endblock %}
 				</div>
@@ -125,12 +99,10 @@
 				<div class="mdl-logo">By:</div>
 				<ul class="mdl-mini-footer__link-list">
 					<li><a href="#">Lucas Wolf</a></li>
-					<li><a href="github.com/mrWolfff">github.com/mrWolfff/tcc_web</a></li>
+					<li><a href="https://github.com/mrWolfff">github.com/mrWolfff/tcc_web</a></li>
 				</ul>
 			</div>
 		</footer>
-
 	</div>
 </body>
-
 </html>

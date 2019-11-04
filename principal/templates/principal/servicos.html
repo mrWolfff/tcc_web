@@ -21,9 +21,6 @@
             <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
                 class="float-right badge badge-light round"></span>
             </a>
-            <a href="{% url 'box_message_send' %}" class="list-group-item">Mensagens Enviadas<span
-                class="float-right badge badge-light round"></span>
-            </a>
           </div>
         </div>
       </article>
@@ -42,77 +39,109 @@
             <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
                 class="float-right badge badge-light round"></span>
             </a>
-            <a href="{% url 'box_message_send' %}" class="list-group-item">Meus Serviços<span
-                class="float-right badge badge-light round"></span>
-            </a>
           </div>
         </div>
       </article>
     </div>
     {% endif %}
   </div>
-    <div class="col-9">
-      {% for servico in servicos %}
-      <div class="mdl-layout__tab-panel is-active" id="overview">
-        <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
-          <header
-            class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">
+  <div class="col s9">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js">
+    </script>
+    <ul class="tabs tabs-fixed-width tab-demo z-depth-1 hoverable ">
+      <li class="tab"><a href="#test1">Ativos</a></li>
+      <li class="tab"><a href="#test2">Concluídos</a></li>
+      <li class="tab"><a href="#test3">Cancelados</a></li>
+    </ul>
 
-          </header>
-          <div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--10-col-tablet mdl-cell--4-col-phone">
-            <div class="mdl-card__supporting-text">
-              <h4>Proposta{{servico.proposta.proposta}}</h4>
-              <p><b>Publicado em:</b> {{servico.data_servico}}.
-                <br>{{servico.proposta.valor_proposta}}.<br><bR>
-                <b>Datas: </b>Esse serviço vai ser realizado nos dias {{servico.proposta.data_inicio}} à
-                {{ servico.proposta.data_fim }}.<bR>
-                <b>Usuário:</b> {{servico.proposta.user_proposta}}.<br>
-                <b>Categoria de Serviço:</b> {{servico.demanda.categoria}}.<br>{{servico.proposta.demanda}}
-                <b>Status: </b>{{servico.status}}
-                <button class="btn btn-info" id="servico_atual">Ver Serviço</button>
-              </p>
-              </p>
-            </div>
-            <div class="mdl-card__actions">
-              <a class="waves-effect waves-light btn modal-trigger" href="#{{servico.proposta.proposta}}">Editar</a>
-              <script type="text/javascript">
-                document.addEventListener('DOMContentLoaded', function () {
-                  var elems = document.querySelectorAll('.modal');
-                  var instances = M.Modal.init(elems, options);
-                });
-                $(document).ready(function () {
-                  $('.modal').modal();
-                });
-                $('#servico_atual').click(function(event){
-                  window.location.href= "{% url 'servico_atual' servico.id %}";
-                });
-              </script>
-            </div>
-          </div>
-          <div id="{{servico.proposta.proposta}}" class="modal modal-fixed-footer">
-            <div class="modal-content">
-
-              <b>Fotos:</b><br>
-              <img src="{{ query.imagem_demanda }}" style="max-height: 100px;max-width: 100px;">
-            </div>
-            <div class="modal-footer">
-              <a href="{% url 'editar_demanda' servico.id %}"
-                class="modal-close waves-effect waves-green btn-flat">CONCLUIR <i
-                  class="material-icons align-text-center">
-                  edit
-                </i></a>
-              <a href="{% url 'deletar_demanda' servico.id %}"
-                class="modal-close waves-effect waves-green btn-flat">CANCELAR <i
-                  class="material-icons align-text-center">
-                  delete_forever
-                </i></a>
-            </div>
-          </div>
-        </section>
+    {% for servico in servicos %}
+    {% if servico.status == 'Ativo' %}
+    <div id="test1" class="col s12">
+      <div class="card hoverable">
+        <div class="card-content">
+          <span class="card-title">
+            <h5>Serviço sobre a demanda: {{servico.proposta.demanda}}</h5>
+          </span>
+          <b>Proposta:</b> {{servico.proposta.proposta}}.<br>
+          <b>Publicado em:</b> {{servico.data_servico}}.<br>
+          <b>Usuário:</b> {{servico.proposta.user_proposta}}.<br>
+          <b>Categoria de Serviço:</b> {{servico.proposta.demanda.categoria}}.<br>
+          <b>Status: </b>{{servico.status}}.
+        </div>
+        <div class="card-action grey lighten-2">
+          <button class="btn btn-info" id="servico_atual">Ver Serviço</button></p>
+        </div>
       </div>
-      <br>
-      {% endfor %}
     </div>
-  </div>
+    {% endif %}
+    {% if servico.status == 'Concluído' %}
+    <div id="test2" class="col s12">
+        <div class="card hoverable">
+            <div class="card-content">
+              <span class="card-title">
+                <h5>Serviço sobre a demanda: {{servico.proposta.demanda}}</h5>
+              </span>
+              <b>Proposta:</b> {{servico.proposta.proposta}}.<br>
+              <b>Publicado em:</b> {{servico.data_servico}}.<br>
+              <b>Usuário:</b> {{servico.proposta.user_proposta}}.<br>
+              <b>Categoria de Serviço:</b> {{servico.proposta.demanda.categoria}}.<br>
+              <b>Status: </b>{{servico.status}}.
+            </div>
+            <div class="card-action grey lighten-2">
+              <button class="btn btn-info" id="servico_atual">Ver Serviço</button></p>
+            </div>
+          </div>
+    </div>
+    {% endif %}
+    {% if servico.status == 'Cancelado' %}
+    <div id="test3" class="col s12">
+        <div class="card hoverable">
+            <div class="card-content">
+              <span class="card-title">
+                <h5>Serviço sobre a demanda: {{servico.proposta.demanda}}</h5>
+              </span>
+              <b>Proposta:</b> {{servico.proposta.proposta}}.<br>
+              <b>Publicado em:</b> {{servico.data_servico}}.<br>
+              <b>Usuário:</b> {{servico.proposta.user_proposta}}.<br>
+              <b>Categoria de Serviço:</b> {{servico.proposta.demanda.categoria}}.<br>
+              <b>Status: </b>{{servico.status}}.
+            </div>
+            <div class="card-action grey lighten-2">
+              <button class="btn btn-info" id="servico_atual">Ver Serviço</button></p>
+            </div>
+          </div>
+    </div>
+    {% endif %}
+    <script type="text/javascript">
+      document.addEventListener('DOMContentLoaded', function () {
+        var elems = document.querySelectorAll('.modal');
+        var instances = M.Modal.init(elems, options);
+      });
+      $(document).ready(function () {
+        $('.modal').modal();
+      });
+      $('#servico_atual').click(function (event) {
+        window.location.href = "{% url 'servico_atual' servico.id %}";
+      });
+      var instance = M.Tabs.init(el, options);
+      $(document).ready(function () {
+        $('.tabs').tabs();
+      });
+      var instance = M.Tabs.getInstance(elem);
+    </script>
+    {% endfor %}
 
-  {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</div>
+{% endblock %}

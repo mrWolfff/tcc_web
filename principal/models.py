@@ -4,122 +4,112 @@ from django import forms
 from accounts.models import Usuario_Categoria, CustomUser, Servicos_Categoria
 from django.conf import settings
 
-
-
-class Chat(models.Model):
-	message = models.CharField(max_length=254)
-	date = models.DateTimeField(auto_now=True)
-	user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-
-	def __str__(self):
-		return self.message
-
 class Demandas(models.Model):
+    titulo = models.TextField()
+    descricao = models.TextField()
+    data = models.DateTimeField(default=timezone.now)
+    user_demanda = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    categoria = models.ForeignKey(Servicos_Categoria, on_delete=models.CASCADE)
 
-	STATUS_DEMANDAS = [
-        ("E", "ESPERA"), ("", ""), ("", "")]
+    class Meta:
+        ordering = ['data']
 
-	titulo_demanda = models.CharField(max_length=50)
-	descricao_demanda = models.CharField(max_length=250)
-	data_demanda = models.DateTimeField(default=timezone.now)
-	requisitos_demanda = models.CharField(max_length=150)
-	anexo_demanda = models.FileField(upload_to='../media', max_length=250, null=True,)
-	imagem_demanda = models.ImageField(upload_to='../media', max_length=250, null=True)
-	usuario_demanda = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='usuarios_servicos')
-	usuario_prestador = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
-	avaliacao_demanda = models.CharField(max_length=10)
-	status_demanda = models.CharField(max_length=20, choices=STATUS_DEMANDAS, default="ESPERA")
-	categoria = models.ForeignKey(Servicos_Categoria, on_delete=models.CASCADE, null=True)
-
-	def __str__(self):
-		return self.titulo_demanda
-
-
-
-		
-
-
-class Ofertas(models.Model):
-	titulo_ofertas = models.CharField(max_length=50)
-	descricao_ofertas = models.CharField(max_length=250)
-	data_oferta = models.DateTimeField(default=timezone.now)
-	imagem_oferta = models.ImageField(upload_to='../media', null=True)
-	usuario_oferta = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='usuarios_oferta')
-
-	def __str__(self):
-		return self.usuario_oferta
-
+    def __str__(self):
+        return self.titulo
 
 class Interesses(models.Model):
-	interesse = models.ForeignKey(Demandas, on_delete=models.CASCADE, null=True)
-	data_interesse = models.DateTimeField(default=timezone.now)
-	#interesse_servico = models.ForeignKey(Servicos, on_delete=models.CASCADE, related_name='INTERESSE_SERVICO')
-	usuario_interesse = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='usuarios_interesse', null=True, blank=True)
-	user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user')
+    interesse = models.ForeignKey(Demandas, on_delete=models.CASCADE, blank=True)
+    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, related_name='usuario')
+    data = models.DateTimeField(default=timezone.now)
+    user_interesse = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_interesse')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user')
 
-	class Meta:
-	 	ordering = ['-data_interesse']
+    class Meta:
+        ordering = ['-data']
 
-class Comentarios_Perfil(models.Model):
-	comentario = models.CharField(max_length=100)
-	data_comentario = models.DateTimeField(default=timezone.now)
-	hora_comentario = models.DateTimeField(default=timezone.now)
-	usuario_prestador = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='usuarios_prestador')
-	usuario_comentario = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='usuarios_comentario')
+    def __str__(self):
+        return self.titulo
 
-	class Meta:
-		ordering = ['hora_comentario']
+
+class Comentarios(models.Model):
+    comentario = models.TextField()
+    data = models.DateTimeField(default=timezone.now)
+    user_prestador = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='usuarios_prestador')
+    user_comentario = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='usuarios_comentario')
+
+    class Meta:
+        ordering = ['data']
+
+    def __str__(self):
+        return self.comentario
+
+    def set_comentario(self, comentario):
+        self.comentario = comentario
 
 class MessageSession(models.Model):
-	from_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_1')
-	to_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_2')
+    from_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='do_usuario')
+    to_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='para_usuario')
+    
+    def get_absolute_url(self):
+    	return "/messages/%i/" % self.id
+
+class Message(models.Model):
+    message = models.TextField()
+    data = models.DateTimeField(default=timezone.now)
+    from_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='from_user')
+    to_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='to_user')
+    session = models.ForeignKey(MessageSession, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['data']
 
 class Propostas(models.Model):
     proposta = models.TextField()
-    valor_proposta = models.CharField(max_length=20, blank=True, null=True)
+    valor = models.FloatField(blank=True)
+    data = models.DateTimeField(default=timezone.now)
     data_inicio = models.DateField()
     data_fim = models.DateField()
     user_proposta = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_proposta')
     to_user_proposta = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='to_user_proposta')
-    demanda = models.ForeignKey(Demandas, on_delete=models.CASCADE, null=True)
-    
+    demanda = models.ForeignKey(Demandas, on_delete=models.CASCADE)
+        
+    def get_last():
+        return Propostas.objects.latest('data')
+    def set_proposta(self):
+        pass
 
 
-class Message(models.Model):
-	message = models.CharField(max_length=254)
-	time_message = models.DateTimeField(default=timezone.now)
-	from_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='from_user')
-	to_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='to_user')
-	session = models.ForeignKey(MessageSession, on_delete=models.CASCADE)
- 
-	class Meta:
-		ordering = ['time_message']
-
- 
 class Servicos(models.Model):
     data_servico = models.DateTimeField(default=timezone.now)
-    status = models.CharField(max_length=240, null=True)
-    proposta = models.ForeignKey(Propostas, on_delete=models.CASCADE, null=True)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
+    status = models.CharField(max_length=240, default='Ativo')
+    proposta = models.ForeignKey(Propostas, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user_prestador = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_prestador')
     justificativa = models.TextField(blank=True, default='')
     cancel_confirm = models.BooleanField(default=False)
-    avaliacao = models.FloatField(blank=True, default='')
+    avaliacao = models.FloatField(blank=True, default=0)
     sugestao_critica = models.TextField(blank=True, default='')
     
-     
-    def finalizarServico(self, avaliacao, sugestao_critica):
+    
+    def get_absolute_url(self):
+    	return "/servico/%i/" % self.id
+
+    def finish_servico(self, avaliacao, sugestao_critica):
         if self.status == 'Ativo':
             self.avaliacao = avaliacao
             self.sugestao_critica = sugestao_critica
-            self.status = 'Concluído' 
+            self.status = 'Concluído'
             return True
         return False
-            
-    def cancelarServico(self, avaliacao, justificativa):
+
+    def cancel_servico(self, justificativa):
         if self.status == 'Ativo':
             self.justificativa = justificativa
-            self.avaliacao = avaliacao
             self.status = 'Cancelado sem Confirmação'
-        if self.cancel_confirm:
+            return True
+        if self.cancel_confirm == False:
             self.status = 'Cancelado'
-         
+            self.cancel_confirm = True
+            return True
+        return False

@@ -2,46 +2,61 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class Servicos_Categoria(models.Model):
-	categoria_servico = models.CharField(max_length=50)
-	#imagem = models.ImageField(null=True, blank=True, upload_to='/media/')
-	def __str__(self):
-		return self.categoria_servico
+    categoria = models.TextField()
+    imagem = models.ImageField(upload_to='../media/')
+
+    def __str__(self):
+        return self.categoria
+
 
 class Usuario_Categoria(models.Model):
-	categoria_usuario = models.CharField(max_length=30),
+    categoria = models.CharField(max_length=30)
 
-	def __str__(self):
-     
-		return self.categoria_categoria
+    def __str__(self):
+        return self.categoria_categoria
 
 
 class CustomUser(AbstractUser):
-	CATEGORIAS = [('Prestador', 'Prestador'), ('Consumidor', 'Consumidor')]
-	SEXOS = [
-     ('MAS', 'Masculino'), 
-     ('FEM', 'Feminino')
-     ]
-	ESTADOS = [
-     ('PARANÁ', 'PR'), 
-     ('RIO GRANDE DO SUL', 'RS'), 
-     ('São Paulo', 'SP'), 
-     ('Santa Catarina', 'SC')
-     ]
-	categoria = models.CharField(max_length=20, null=True, choices=CATEGORIAS)
-	#
-	cpf_cnpj= models.CharField(max_length=15, null=True, blank=True)
-	sexo=models.CharField(max_length=11, null=True, blank=True, choices=SEXOS)
-	data_nasc = models.DateTimeField(null=True, blank=True)
-	#Contato
-	telefone = models.CharField(max_length=20, null=True, blank=True)
-	celular = models.CharField(max_length=20, null=True, blank=True)
-	site = models.CharField(max_length=100, null=True, blank=True)
-	#Localização
-	estado = models.CharField(max_length=50, null=True, blank=True, choices=ESTADOS)
-	cidade = models.CharField(max_length=50, null=True, blank=True,)
-	endereço = models.CharField(max_length=150, null=True, blank=True,)
-	#trabalho realizado
-	descricao = models.CharField(max_length=150, null=True, blank=True,)
-	imagem = models.ImageField(null=True, blank=True, upload_to='../media', default="https://miro.medium.com/max/3200/1*g09N-jl7JtVjVZGcd-vL2g.jpeg")
-	categoria_servico = models.ForeignKey(Servicos_Categoria, on_delete=models.CASCADE, null=True, blank=True)
+    CATEGORIAS = [
+        ('Prestador', 'Prestador'),
+        ('Consumidor', 'Consumidor')
+    ]
+    SEXOS = [
+        ('MAS', 'Masculino'),
+        ('FEM', 'Feminino')
+    ]
+    ESTADOS = [
+        ('PARANÁ', 'PR'),
+        ('RIO GRANDE DO SUL', 'RS'),
+        ('São Paulo', 'SP'),
+        ('Santa Catarina', 'SC')
+    ]
+    categoria = models.CharField(max_length=20, choices=CATEGORIAS,null=True)
+    cpf_cnpj = models.CharField(max_length=15, blank=True, null=True)
+    sexo = models.CharField(max_length=11, blank=True, choices=SEXOS, null=True)
+    nascimento = models.DateField(blank=True, null=True)
+    telefone = models.CharField(max_length=20, blank=True, null=True)
+    celular = models.CharField(max_length=20, blank=True, null=True)
+    estado = models.CharField(max_length=50, blank=True, choices=ESTADOS, null=True)
+    cidade = models.CharField(max_length=50, blank=True, null=True)
+    endereço = models.CharField(max_length=150, blank=True, null=True)
+    informacao = models.TextField(blank=True, null=True)
+    imagem = models.ImageField(blank=True, upload_to='../media',
+                               default="https://miro.medium.com/max/3200/1*g09N-jl7JtVjVZGcd-vL2g.jpeg", null=True)
+    categoria_servico = models.ForeignKey(Servicos_Categoria, on_delete=models.CASCADE, blank=True, null=True)
 
+    def set_informacao(self, informacao):
+        self.informacao = informacao
+    
+    def get_absolute_url(self):
+    	return "/conta/%i/" % self.id
+ 
+    def get_full_address(self):
+        return '%s, %s, %s' % (self.endereço, self.cidade, self.estado)
+    
+class Informacoes(models.Model):
+    informacao = models.TextField()
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.informacao

@@ -31,7 +31,7 @@ class CustomUserCreationForm(UserCreationForm):
 class CustomUserChangeForm(UserChangeForm):
 	class Meta:
 		model = CustomUser
-		fields = ('first_name', 'last_name', 'cpf_cnpj', 'telefone', 'celular', 'site', 'estado', 'cidade', 'endereço', 'descricao', 'imagem', 'categoria_servico',)
+		fields = ('first_name', 'last_name', 'cpf_cnpj', 'telefone', 'celular', 'estado', 'cidade', 'endereço', 'imagem', 'categoria_servico',)
 		widgets = {'descricao': forms.Textarea(attrs={'rows': '4'}),
     'cpf_cnpj': forms.TextInput(attrs={'required':'True'})}
 		fieldsets = (
@@ -47,7 +47,6 @@ class CustomUserChangeForm(UserChangeForm):
             'sexo': 'Sexo*',
             'data_nasc': 'Data de Nascimento*',
             'celular': 'Celular*',
-            'site': 'Endereço Site',
             'estado': 'Estado*',
             'cidade': 'Cidade*',
             'descricao': 'Descrição',
@@ -60,8 +59,6 @@ class CustomUserChangeForm(UserChangeForm):
 		self.helper = FormHelper(self)
 		self.helper.form_method = 'post'
 		self.fields['cpf_cnpj'].help_text = "Por favor, preencha com um CPF ou CNPJ válido."
-		self.fields['site'].help_text = "Por favor, preencha caso possua um site próprio."
-		self.fields['descricao'].help_text = "Nesse campo, informe o tipo de trabalho que realiza ou realizou."
 		self.fields['imagem'].help_text = "Essa será a sua imagem de perfil que aparecerá para todos os usuários."
 		self.fields['categoria_servico'].help_text = "Escolha a categoria de serviço que você realiza."
 		self.helper.layout = Layout(
@@ -74,10 +71,6 @@ class CustomUserChangeForm(UserChangeForm):
            		Column('telefone', css_class='form-group col-md-6'),
            		Column('celular', css_class='form-group col-md-6'),
            		css_class='form-row'	
-        	),
-        	Row(
-        		Column('site', css_class='form-group col-md-10'),
-        		css_class='form-row'
         	),
         	Row(
            		Column('estado', css_class='form-group col-md-6'),
@@ -107,21 +100,21 @@ class TrocaCategoria(UserChangeForm):
 class ContaForm(UserChangeForm):
   class Meta:
     model=CustomUser
-    fields=('first_name', 'last_name', 'cpf_cnpj', 'data_nasc', 'celular', 'imagem', 'email')
+    fields=('first_name', 'last_name', 'cpf_cnpj', 'nascimento', 'celular', 'imagem', 'email')
 
 class SignupForm(UserCreationForm):
   email = forms.EmailField(max_length=200, help_text='Required')
   class Meta:
     model = CustomUser
-    fields = ('first_name', 'last_name', 'username', 'email', 'sexo', 'data_nasc', 'categoria', 'celular', 'password1', 'password2')
+    fields = ('first_name', 'last_name', 'username', 'email', 'sexo', 'nascimento', 'categoria', 'celular', 'password1', 'password2')
     widgets = {'email': forms.TextInput(attrs={'required': 'True',}),
-              'data_nasc': forms.DateInput(attrs={'type': 'date'}),
+              'nascimento': forms.DateInput(attrs={'type': 'date'}),
               'celular': forms.TextInput(attrs={'placeholder': 'Ex.: (00) 00000-0000'})}
     labels = {
       'username': 'Nome de Usuário',
       'email': 'Endereço de E-mail*',
       'categoria': 'Categoria de Usuário',
-      'data_nasc': 'Data de Nascimento*',
+      'nascimento': 'Data de Nascimento*',
       'celular': 'Celular',
     }
   def __init__(self, *args, **kwargs):
@@ -143,7 +136,7 @@ class SignupForm(UserCreationForm):
       ),
       Row(
         Column('sexo', css_class='form-group col-md-6 mb-0'),
-        Column('data_nasc', css_class='form-group col-md-6 mb-0'),
+        Column('nascimento', css_class='form-group col-md-6 mb-0'),
         css_class='form-row'
       ),
       Row(
@@ -158,3 +151,4 @@ class SignupForm(UserCreationForm):
       ),
     )
 
+ 
