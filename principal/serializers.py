@@ -1,5 +1,5 @@
 from .models import Demandas, Servicos, Message, Propostas, MessageSession
-from accounts.models import CustomUser
+from accounts.models import CustomUser, Servicos_Categoria
 from rest_framework import serializers
 
 class DemandasSerializer(serializers.ModelSerializer):
@@ -26,6 +26,11 @@ class MessageSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = MessageSession
         fields = ('url', 'id', 'from_user', 'to_user')  
+        
+class Servicos_CategoriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Servicos_Categoria
+        fields = ('categoria')
         
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:

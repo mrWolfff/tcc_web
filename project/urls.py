@@ -20,15 +20,15 @@ from django.contrib.auth.views import LoginView
 from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework import routers
-from principal import views
+from principal import views, webservice
 
 router = routers.DefaultRouter()
-router.register('api/demandas', views.Demandas_all)
-router.register('api/servicos', views.Servicos_all)
-router.register('api/propostas', views.Propostas_all)
-router.register('api/message', views.Message_all)
-router.register('api/messagesession', views.MessageSession_all)
-router.register('api/users', views.Users_all)
+router.register('api/demandas', webservice.Demandas_all)
+router.register('api/servicos', webservice.Servicos_all)
+router.register('api/propostas', webservice.Propostas_all)
+router.register('api/message', webservice.Message_all)
+router.register('api/messagesession', webservice.MessageSession_all)
+router.register('api/users', webservice.Users_all)
 admin.autodiscover()
 
 urlpatterns = [

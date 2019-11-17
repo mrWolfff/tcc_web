@@ -1,8 +1,7 @@
 from django.urls import path
 from .import views
+from .import webservice
 urlpatterns = [
-    
-    
     path('', views.index, name='index'),
 
     path('baselogin/', views.baseLogin, name='baselogin'),
@@ -29,4 +28,13 @@ urlpatterns = [
     path('createservico/<int:id>/', views.create_servico, name='create_servico'),
     path('create_proposta/', views.create_proposta, name='create_proposta'),
     path('servico/<int:id>/', views.servico_atual, name='servico_atual'),
+    
+    
+    # """  urls webservice  """
+    path('get_token', webservice.get_new_token),
+    path('create_demanda', webservice.create_demanda),
+    path('get_demandas', webservice.get_demandas),
+    path('delete_demanda', webservice.delete_demanda),
+    path('edit_demanda', webservice.edit_demanda),
+    path('get_categorias', webservice.get_categorias),
 ]

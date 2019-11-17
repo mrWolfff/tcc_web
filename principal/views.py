@@ -22,7 +22,16 @@ from copy import deepcopy
 from rest_framework import generics
 from .serializers import DemandasSerializer, ServicosSerializer, PropostasSerializer, MessageSerializer, MessageSessionSerializer, UsersSerializer
 from rest_framework import viewsets
-
+from django.middleware.csrf import get_token
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.status import (
+    HTTP_400_BAD_REQUEST,
+    HTTP_404_NOT_FOUND,
+    HTTP_200_OK
+)
 
 """   Serializers Views   """
 
@@ -57,6 +66,21 @@ class Users_all(viewsets.ModelViewSet):
     serializer_class = UsersSerializer
 
 
+"""  webservice  """
+def get_new_token(request):
+    if(request.method == 'GET' and request.GET.get('secret', False) == 'CHANGE_ME'):
+        token = get_token(request)
+        return JsonResponse({'token': token, 'success': 'true'})
+    else:
+        return JsonResponse({'error': 'true', 'msg': 'Invalid secret'})
+
+@csrf_exempt
+@api_view(["POST"])
+def create_demanda(request):
+    if request.POST:
+        pdb.set_trace()
+
+
 """   Index and Base   """
 
 
@@ -70,6 +94,7 @@ def index(request):
     querys = ''
     if request.POST.get('message'):
         """ criar mensagens aqui """
+        #pdb.set_trace()
         to_user = CustomUser.objects.get(id=request.POST.get('to_user'))
         from_user = CustomUser.objects.get(id=request.POST.get('from_user'))
 
@@ -85,9 +110,6 @@ def index(request):
                 to_user=to_user,
                 session=created
             )
-            if form.is_valid():
-                form.save()
-                return redirect('box_message')
         except:
             try:
                 MessageSession.objects.get(from_user=to_user, to_user=from_user)
@@ -108,7 +130,7 @@ def index(request):
                 form = MessageForm(copy)
                 if form.is_valid():
                     form.save()
-                    return redirect('box_message')
+                    return redirect(url)
     if request.POST.get('busca'):
         busca = request.POST.get('pesquisa')
         querys = CustomUser.objects.filter(username__icontains=busca)
@@ -292,26 +314,6 @@ def atualizarDados(request):
     return render(request, 'principal/atualizar_dados.html', {'form': form, 'user': user})
 
 ######################################################################################
-# CHAT ###############################################################################
-@login_required
-def chat(request):
-    c = Chat.objects.all()
-    return render(request, "chat/chat.html", {'home': 'active', 'chat': c})
-
-
-def post(request):
-    if request.method == "POST":
-        msg = request.POST.get('msgbox', None)
-        c = Chat(user=request.user, message=msg)
-        msg = c.user.username+": "+msg
-        c = Chat(user=request.user, message=msg)
-        if msg != '':
-            c.save()
-        return JsonResponse({'msg': msg, 'user': c.user.username})
-    else:
-        return HttpResponse('Request must be POST.')
-    c = Chat.objects.all()
-    return render(request, 'chat/messages.html', {'chat': c})
 ##########################################################################
 
 

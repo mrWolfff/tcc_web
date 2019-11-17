@@ -15,17 +15,17 @@
 <div class="row">
     <div class="col-3">
         {% if request.user.categoria == 'Consumidor' %}
-        <div class="card">
+        <div class="card hoverable">
             <article class="card-group-item">
                 <header class="card-header">
-                    <h6 class="title">Demandas</h6>
+                    <h6 class="title">Menu</h6>
                 </header>
                 <div class="filter-content">
                     <div class="list-group list-group-flush">
                         <a href="{% url 'cadastro_demanda' %}" class="list-group-item">Criar uma nova demanda </a>
                         <a href="{% url 'demandas' %}" class="list-group-item">Minhas Demandas <span
                                 class="float-right badge badge-light round"></span> </a>
-                        <a href="#" class="list-group-item">Meus Interesses <span
+                        <a href="{% url 'servicos' %}" class="list-group-item">Meus Serviços <span
                                 class="float-right badge badge-light round"></span> </a>
                         <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
                                 class="float-right badge badge-light round"></span>
@@ -36,14 +36,14 @@
         </div>
         {% endif %}
         {% if request.user.categoria == 'Prestador' %}
-        <div class="card">
+        <div class="card hoverable">
             <article class="card-group-item">
                 <header class="card-header">
-                    <h6 class="title">Ofertas</h6>
+                    <h6 class="title">Menu</h6>
                 </header>
                 <div class="filter-content">
                     <div class="list-group list-group-flush">
-                        <a href="#" class="list-group-item">Meus Interesses <span
+                        <a href="{% url 'servicos' %}" class="list-group-item">Meus Serviços <span
                                 class="float-right badge badge-light round"></span> </a>
                         <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
                                 class="float-right badge badge-light round"></span>
@@ -81,7 +81,7 @@
                 </div>
             </div>
         </div>
-        <div class="card grey lighten 1" style="overflow: auto; height: 300px;">
+        <div class="card grey lighten 1 hoverable" style="overflow: auto; height: 300px;">
             <div class="card-content">
                 {% for message in messages %}
                 <div class="row">
@@ -104,7 +104,7 @@
                 </div>
                 {% endfor %}
                 {% if request.user == propostas.user_proposta %}
-                <ul class="collapsible">
+                <ul class="collapsible hoverable">
                     <li>
                         <div class="collapsible-header"><i class="material-icons"> info </i>Proposta enviada ao
                             usuario:</div>
@@ -121,7 +121,7 @@
                 </ul>
                 {% endif %}
                 {% if request.user == propostas.to_user_proposta %}
-                <ul class="collapsible">
+                <ul class="collapsible hoverable">
                     <li>
                         <div class="collapsible-header"><i class="material-icons"> info </i>Proposta recebida do
                             prestador:
@@ -137,7 +137,7 @@
                             </div>
 
                         </div>
-                        <div class="collapsible-body white">
+                        <div class="collapsible-body white ">
                             <span>{{propostas.proposta}}</span><br>
                             <b>Valor proposto:</b><span> {{propostas.valor}}</span><br>
                             <b>A data será de </b><span>A data será {{propostas.data_inicio}} até
@@ -239,7 +239,7 @@
             success: function () {
                 $('.modal').modal();
                 M.toast({ html: 'Proposta Criada!' });
-                .append
+                location.reload(true);
             },
             error: function (jqxhr, status, exception) {
                 alert('Exception:', exception, jqxhr, status);

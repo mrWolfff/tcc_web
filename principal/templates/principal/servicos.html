@@ -6,17 +6,17 @@
 <div class="row">
   <div class="col-3">
     {% if request.user.categoria == 'Consumidor' %}
-    <div class="card">
+    <div class="card hoverable">
       <article class="card-group-item">
         <header class="card-header">
-          <h6 class="title">Demandas</h6>
+          <h6 class="title">Menu</h6>
         </header>
         <div class="filter-content">
           <div class="list-group list-group-flush">
             <a href="{% url 'cadastro_demanda' %}" class="list-group-item">Criar uma nova demanda </a>
             <a href="{% url 'demandas' %}" class="list-group-item">Minhas Demandas <span
                 class="float-right badge badge-light round"></span> </a>
-            <a href="#" class="list-group-item">Meus Interesses <span
+            <a href="#" class="list-group-item">Meus Serviços <span
                 class="float-right badge badge-light round"></span> </a>
             <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
                 class="float-right badge badge-light round"></span>
@@ -27,14 +27,14 @@
     </div>
     {% endif %}
     {% if request.user.categoria == 'Prestador' %}
-    <div class="card">
+    <div class="card hoverable">
       <article class="card-group-item">
         <header class="card-header">
-          <h6 class="title">Ofertas</h6>
+          <h6 class="title">Menu</h6>
         </header>
         <div class="filter-content">
           <div class="list-group list-group-flush">
-            <a href="#" class="list-group-item">Meus Interesses <span
+            <a href="{% url 'servicos' %}" class="list-group-item">Meus Serviços <span
                 class="float-right badge badge-light round"></span> </a>
             <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
                 class="float-right badge badge-light round"></span>
@@ -48,7 +48,7 @@
   <div class="col s9">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js">
     </script>
-    <ul class="tabs tabs-fixed-width tab-demo z-depth-1 hoverable ">
+    <ul class="tabs tabs-fixed-width tab-demo z-depth-1 hoverable">
       <li class="tab"><a href="#test1">Ativos</a></li>
       <li class="tab"><a href="#test2">Concluídos</a></li>
       <li class="tab"><a href="#test3">Cancelados</a></li>

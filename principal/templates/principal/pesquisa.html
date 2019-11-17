@@ -1,5 +1,5 @@
 {% extends 'principal/base.html'%}
-{% block titulo %}Principal{% endblock%}
+{% block titulo %}Usuarios encontrados{% endblock%}
 {% block oferta %}{% endblock %}
 {% block conteudo %}
 
@@ -20,15 +20,15 @@
 
 <div class="row">
 	<div class="col-3">
-		<div class="card">
+		<div class="card hoverable">
 			<article class="card-group-item">
 				<header class="card-header">
-					<h6 class="title">Demandas</h6>
+					<h6 class="title">Menu</h6>
 				</header>
 				<div class="filter-content">
 					<div class="list-group list-group-flush">
 						<a href="{% url 'cadastro_demanda' %}" class="list-group-item">Criar uma nova demanda </a>
-						<a href="{% url ''" class="list-group-item">Meus Interesses <span
+						<a href="{% url 'servicos'%}" class="list-group-item">Meus Serviços <span
                   class="float-right badge badge-light round"></span> </a>
               <a href="{% url 'box_message' %}" class="list-group-item">Mensagens <span
 								class="float-right badge badge-light round"></span> </a>
@@ -46,8 +46,8 @@
 						<img src="{{result.imagem}}" class="circle" style="width: 50px; height: 50px;">
 					</div>
 					<div class="col-sm-10">
-						<b>Nome: </b>{{ result.get_full_name }}
-						<b>Categoria de Serviço: </b>{{ result.categoria_servico }}
+						<b>Nome: </b>{{ result.get_full_name }}<br>
+						<b>Categoria de Serviço: </b>{{ result.categoria_servico }}<br>
 						<b>Usuario: </b> {{ result.username }}
 					</div>
 				</div>
@@ -79,7 +79,7 @@
 			<div class="modal-header">
 				<h6>Enviar uma mensagem para {{result.get_full_name}}</h6>
 			</div>
-			<div class="modal-content">
+			<div class="modal-content border-bottom-0 h-auto h-25">
 				<form method="POST" action="{% url 'index' %}">
 					{% csrf_token %}
 					<div class="row">
@@ -87,7 +87,7 @@
 							<textarea class="materialize-textarea" name='message'></textarea>
 							<label for="message">Mensagem</label>
 							<input type="hidden" name="from_user" value="{{request.user.id}}">
-							<input type="hidden" name="to_user" value="{{query.user_demanda.id}}">
+							<input type="hidden" name="to_user" value="{{result.id}}">
 						</div>
 						<div class="col-sm-4">
 							<button class="waves-effect waves-light btn green">Enviar <i class="material-icons">

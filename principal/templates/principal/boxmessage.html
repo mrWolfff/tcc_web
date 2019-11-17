@@ -6,17 +6,17 @@
 <div class="row">
     <div class="col-3">
         {% if request.user.categoria == 'Consumidor' %}
-        <div class="card">
+        <div class="card hoverable">
             <article class="card-group-item">
                 <header class="card-header">
-                    <h6 class="title">Demandas</h6>
+                    <h6 class="title">Menu</h6>
                 </header>
                 <div class="filter-content">
                     <div class="list-group list-group-flush">
                         <a href="{% url 'cadastro_demanda' %}" class="list-group-item">Criar uma nova demanda </a>
                         <a href="{% url 'demandas' %}" class="list-group-item">Minhas Demandas <span
                                 class="float-right badge badge-light round"></span> </a>
-                        <a href="#" class="list-group-item">Meus Interesses <span
+                        <a href="{% url 'servicos' %}" class="list-group-item">Meus Serviços <span
                                 class="float-right badge badge-light round"></span> </a>
                         <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
                                 class="float-right badge badge-light round"></span>
@@ -27,13 +27,14 @@
         </div>
         {% endif %}
         {% if request.user.categoria == 'Prestador' %}
-        <div class="card">
+        <div class="card hoverable">
             <article class="card-group-item">
                 <header class="card-header">
+                        <h6 class="title">Menu</h6>
                 </header>
                 <div class="filter-content">
                     <div class="list-group list-group-flush">
-                        <a href="#" class="list-group-item">Meus Interesses <span
+                        <a href="{% url 'servicos' %}" class="list-group-item">Meus Serviços <span
                                 class="float-right badge badge-light round"></span> </a>
                         <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
                                 class="float-right badge badge-light round"></span>

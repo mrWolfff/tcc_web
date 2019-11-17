@@ -11,8 +11,6 @@
 				</header>
 				<div class="filter-content">
 					<div class="list-group list-group-flush">
-						<a href="{% url 'interesses' %}" class="list-group-item">Meus Interesses <span
-								class="float-right badge badge-light round"></span> </a>
 						<a href="{% url 'servicos' %}" class="list-group-item">Meus Serviços <span
 								class="float-right badge badge-light round"></span> </a>
 						<a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
@@ -39,7 +37,7 @@
 		<br>
 		<div class="row">
 			<div class="col-11">
-				<h5>Resultados de acordo com a categoria: {{request.user.categoria_servico}}</h5>
+				<h6>Resultados de acordo com a categoria: {{request.user.categoria_servico}}</h6>
 			</div>
 			<div class="col-1">
 				<a class='dropdown-trigger btn' href='#' data-target='dropdown1'> <i class="material-icons">sort</i>
@@ -68,12 +66,7 @@
 					<i class="material-icons">
 						message
 					</i></a>
-				<a class="waves-effect waves-light btn modal-trigger blue" href="#{{query.descricao}}">Adicionar aos
-					meus
-					interesses
-					<i class="material-icons">
-						add_circle
-					</i></a>
+
 			</div>
 		</div>
 		<script type="text/javascript">
@@ -89,8 +82,10 @@
 			});
 		</script>
 		<div id="{{query.titulo}}" class="modal modal-dialog h-50 mx-auto">
-			<div class="modal-content border-bottom-0 h-auto h-25	">
-				<h6>Enviar Mensagem para {{query.user_demanda}}</h6>
+			<div class="modal-header">
+				<h6>Enviar uma mensagem para {{query.user_demanda}}</h6>
+			</div>
+			<div class="modal-content border-bottom-0 h-auto h-25">
 				<form method="POST" action="{% url 'index' %}">
 					{% csrf_token %}
 					<div class="row">
@@ -141,19 +136,7 @@
 
 
 		{% else %}
-		<nav>
-			<div class="nav-wrapper">
-				<form method="POST" action="{% url 'index' %}">
-					{% csrf_token %}
-					<div class="input-field" style="background-color: lightslategray;">
-						<input id="search" type="search" required name="pesquisa"
-							placeholder="Digite para procurar um prestador de serviço ou oferta...">
-						<label class="label-icon" for="search"><i class="material-icons">search</i></label>
-						<i class="material-icons">close</i>
-					</div>
-				</form>
-			</div>
-		</nav>
+
 		<br>
 
 		<div class="row">

@@ -106,7 +106,7 @@ class SignupForm(UserCreationForm):
   email = forms.EmailField(max_length=200, help_text='Required')
   class Meta:
     model = CustomUser
-    fields = ('first_name', 'last_name', 'username', 'email', 'sexo', 'nascimento', 'categoria', 'celular', 'password1', 'password2')
+    fields = ('first_name', 'last_name', 'username', 'email', 'categoria', 'celular', 'password1', 'password2')
     widgets = {'email': forms.TextInput(attrs={'required': 'True',}),
               'nascimento': forms.DateInput(attrs={'type': 'date'}),
               'celular': forms.TextInput(attrs={'placeholder': 'Ex.: (00) 00000-0000'})}
@@ -130,17 +130,12 @@ class SignupForm(UserCreationForm):
         css_class='form-row'
       ),
       Row(
-        Column('username', css_class='form-group col-md-6  '),
+        Column('username', css_class='form-group col-md-6'),
         Column('email', css_class='form-group col-md-6  '),
         css_class='form-row'
       ),
       Row(
-        Column('sexo', css_class='form-group col-md-6 mb-0'),
-        Column('nascimento', css_class='form-group col-md-6 mb-0'),
-        css_class='form-row'
-      ),
-      Row(
-        Column('categoria', css_class='form-group col-md-6'),
+        Column('categoria', css_class='col-md-6'), 
         Column('celular', css_class='form-group col-md-6 cel-sp-mask'),
         css_class='form-row'  
       ),

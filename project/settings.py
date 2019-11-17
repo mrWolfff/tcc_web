@@ -25,7 +25,8 @@ SECRET_KEY = 'g%s0zm5#=x_&e-x9^5oaz$guw&-+3$!ydsd6(p==$31^y4)x$z'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.104', 'localhost', '127.0.0.1', '10.141.4.237']
+ALLOWED_HOSTS = ['*']
+#ALLOWED_HOSTS = ['192.168.0.106', 'localhost', '127.0.0.1', '10.141.4.237', '10.153.15.86']
 
 
 # Application definition
@@ -194,3 +195,7 @@ MESSAGE_LEVEL = message_constants.DEBUG
 #	messages.WARNING: 'alert-warning',
 #	messages.ERROR: 'alert-danger',
 #}
+
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SECURE_SSL_REDIRECT = False
