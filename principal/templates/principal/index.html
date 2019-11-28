@@ -2,12 +2,13 @@
 {% block titulo %}Início{% endblock%}
 {% block conteudo %}
 {% if user.categoria == 'Prestador' %}
+
 <div class="row">
 	<div class="col-3">
 		<div class="card">
 			<article class="card-group-item">
 				<header class="card-header">
-					<h6 class="title">Ofertas</h6>
+					<h6 class="title">Menu</h6>
 				</header>
 				<div class="filter-content">
 					<div class="list-group list-group-flush">
@@ -26,7 +27,7 @@
 				<form method="POST" action="{% url 'index' %}">
 					{% csrf_token %}
 					<div class="input-field" style="background-color: lightslategray;">
-						<input id="search" type="search" required name="pesquisa"
+						<input id="search" type="search" name="pesquisa"
 							placeholder="Digite para procurar um prestador de serviço ou oferta...">
 						<label class="label-icon" for="search"><i class="material-icons">search</i></label>
 						<i class="material-icons">close</i>
@@ -36,23 +37,29 @@
 		</nav>
 		<br>
 		<div class="row">
-			<div class="col-11">
+			<div class="col-sm-9">
 				<h6>Resultados de acordo com a categoria: {{request.user.categoria_servico}}</h6>
 			</div>
-			<div class="col-1">
-				<a class='dropdown-trigger btn' href='#' data-target='dropdown1'> <i class="material-icons">sort</i>
+			<div class="col-sm-3">
+				<a class='dropdown-trigger btn' href='#' data-target='dropdown1'>Filtro <i
+						class="material-icons align-top">sort</i>
 				</a>
 				<ul id='dropdown1' class='dropdown-content'>
-					<li><a href="#!">Mais Recentes</a></li>
-					<li><a href="#!">Ordem Alfabética</a></li>
-					<li><a href="#!">outro...</a></li>
-				</ul>
+					<form method='POST' action="{% url 'index' %}">
+						<input type="hidden" name="value" value="recents">
+						<li><a href="{% url 'index' %}" type="submit">Mais Recentes</a></li>
+					</form>
+					<form method='POST' action="{% url 'index' %}">
+							<input type="hidden" name="value" value="alpha">
+							<li><a href="{% url 'index' %}" type="submit">Orgem alfabética</a></li>
+					</form>
+				</ul>	
 			</div>
 		</div>
 
 		{% for query in querys %}
 		{% if query.categoria == user.categoria_servico %}
-		<div class="card hoverable modal-trigger" href="#{{query.categoria}}">
+		<div class="card hoverable modal-trigger" href="#{{query.id}}">
 			<div class="card-content">
 				<span class="card-title">
 					<b>Demanda: </b>{{query.titulo}}
@@ -110,9 +117,12 @@
 			<div class="modal-footer">
 			</div>
 		</div>
-		<div id="{{query.categoria}}" class="modal modal-fixed-footer">
-			<div class="modal-content">
-				<h5><b>Demanda: </b>{{query.titulo}}</h5>
+		<div id="{{query.id}}" class="modal modal-fixed-footer">
+				<div class="modal-header">
+						<h5 class="modal-title"><b>Demanda: </b>{{query.titulo}}</h5>
+					</div>
+			<div class="modal-content h-75">
+					
 				<div><i class="material-icons align-top">
 						description
 					</i><b>Descrição: </b>{{query.descricao}}</div>
@@ -124,7 +134,13 @@
 					</i><b>Usuário: </b>{{query.user_demanda}}</div>
 				<div><i class="material-icons align-top">
 						info
-					</i>><b>Data de Criação: </b> {{query.data}}</div>
+					</i><b>Data de Criação: </b> {{query.data}}</div>
+			</div>
+			<div class="modal-footer grey lighten-2">
+					<a class="waves-effect waves-light btn modal-trigger green" href="#{{query.titulo}}">Enviar Mensagem
+							<i class="material-icons">
+								message
+							</i></a>
 			</div>
 		</div>
 		<br>
@@ -135,14 +151,21 @@
 
 
 
+
+
+
+
+
+
 		{% else %}
-
 		<br>
-
 		<div class="row">
 			{%for categoria in categorias %}
 			<div class="col-3"><br>
 				<div class="card hoverable">
+					<div class="card-image">
+						<img src="{{categoria.imagem}}" style="width: 200px; height: 100px;">
+					</div>
 					<div class="card-content">
 						<span class="card-title">
 							<h5>Categoria</h5>
@@ -160,4 +183,15 @@
 			{%endfor%}
 		</div>
 		{% endif %}
+
+
+
+
+		<script type="text/javascript">
+			document.addEventListener('DOMContentLoaded', function () {
+				var elems = document.querySelectorAll('.dropdown-trigger');
+				var instances = M.Dropdown.init(elems, options);
+			});
+			$('.dropdown-trigger').dropdown();
+		</script>
 		{% endblock %}

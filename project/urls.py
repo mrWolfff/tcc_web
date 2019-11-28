@@ -22,14 +22,15 @@ from django.conf import settings
 from rest_framework import routers
 from principal import views, webservice
 
-router = routers.DefaultRouter()
-router.register('api/demandas', webservice.Demandas_all)
-router.register('api/servicos', webservice.Servicos_all)
-router.register('api/propostas', webservice.Propostas_all)
-router.register('api/message', webservice.Message_all)
-router.register('api/messagesession', webservice.MessageSession_all)
-router.register('api/users', webservice.Users_all)
-admin.autodiscover()
+#router = routers.DefaultRouter()
+#router.register('api/demandas', webservice.Demandas_all)
+#router.register('api/servicos', webservice.Servicos_all)
+#router.register('api/propostas', webservice.Propostas_all)
+#router.register('api/message', webservice.Message_all)
+#router.register('api/messagesession', webservice.MessageSession_all)
+#router.register('api/users', webservice.Users_all)
+#router.register('api/categorias', webservice.Categorias)
+#admin.autodiscover()
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -37,12 +38,7 @@ urlpatterns = [
     path('', include('accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),  
     path('', LoginView.as_view(template_name='login.html'), name="login"),
-    path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework') ),
-    
-    #path('auth/', include('djoser.urls')),
-    #path('auth/', include('djoser.urls.authtoken')),
-    #path('', include('chat.urls')),
-    
-]
-urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    #path('', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

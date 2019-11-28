@@ -52,6 +52,9 @@ class Users_all(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UsersSerializer
 
+class Categorias(viewsets.ModelViewSet):
+    queryset = Servicos_Categoria.objects.all()
+    serializer_class = Servicos_CategoriaSerializer
 
 """  webservice VIEWS  """
 
@@ -76,8 +79,17 @@ def get_new_token(request):
 @csrf_exempt
 @api_view(["POST"])
 def create_demanda(request):
-    if request.POST:
-        pdb.set_trace()
+    token = request.data.get('token')
+    userid = request.data.get('id')
+    titulo = request.data.get('titulo')
+    descricao = request.data.get('descricao')
+    data_categoria = request.data.get('categoria')
+    if user_is_valid(token, userid):
+        user = CustomUser.objects.get(id=userid)
+        categoria = Servicos_Categoria.objects.get(categoria=data_categoria)
+        Demandas.objects.create(titulo=titulo, descricao=descricao, categoria=categoria, user_demanda=user)
+        return Response(status=HTTP_200_OK)
+    return Response(status=HTTP_404_NOT_FOUND)
 
 
 @csrf_exempt
@@ -99,8 +111,12 @@ def index_mobile(request):
     userid = request.data.get('id')
     if user_is_valid(token, userid):
         user = CustomUser.objects.get(id=userid)
-        demandas = Demandas.objects.filter(user_demanda=user)
-        serializer = DemandasSerializer(demandas, many=True)
+        if user.categoria == 'Prestador':
+            demandas = Demandas.objects.filter(user_demanda=user)
+            serializer = DemandasSerializer(demandas, many=True)
+        if user.categoria == 'Consumidor': 
+            categorias = Servicos_Categoria.objects.all()
+            serializer = Servicos_CategoriaSerializer(categorias, many=True)
         return Response(serializer.data, status=HTTP_200_OK)
     return Response(status=HTTP_404_NOT_FOUND)
 
@@ -109,9 +125,8 @@ def index_mobile(request):
 def get_categorias(request):
     token = request.data.get('token')
     userid = request.data.get('id')
-    
+    aux = {}
     if user_is_valid(token, userid):
-        user = CustomUser.objects.get(id=userid)
         categorias = Servicos_Categoria.objects.all()
         serializer = Servicos_CategoriaSerializer(categorias, many=True)
         return Response(serializer.data, status=HTTP_200_OK)
@@ -122,9 +137,10 @@ def get_categorias(request):
 def delete_demanda(request):
     token = request.data.get('token')
     userid = request.data.get('id')
-    pdb.set_trace()
+    id_demanda = request.data.get('id_demanda')
     if user_is_valid(token, userid):
-        pdb.set_trace()
+        demanda = Demandas.objects.get(id=id_demanda)
+        demanda.delete()
     return Response(status=HTTP_404_NOT_FOUND)
 
 @csrf_exempt
@@ -132,13 +148,30 @@ def delete_demanda(request):
 def edit_demanda(request):
     token = request.data.get('token')
     userid = request.data.get('id')
-    pdb.set_trace()
+    id_demanda = request.data.get('id_demanda')
+    titulo = request.data.get('titulo')
+    descricao = request.data.get('descricao')
     if user_is_valid(token, userid):
-        pdb.set_trace()
+        demanda = Demandas.objects.get(id=id_demanda)
+        demanda.setTitulo(titulo)
+        demanda.setDescricao(descricao)
+        demanda.save()
+        return Response(status=HTTP_200_OK)
     return Response(status=HTTP_404_NOT_FOUND)
 
-
-
+@csrf_exempt
+@api_view(["POST"])
+def get_user_categoria(request):
+    token = request.data.get('token')
+    userid = request.data.get('id')
+    categ = request.data.get('categoria')
+    categoria = Servicos_Categoria.objects.get(categoria=categ)
+    if user_is_valid(token, userid):
+        users = CustomUser.objects.filter(categoria_servico=categoria)
+        serializer = UsersSerializer(users, many=True)
+        return Response(serializer.data, status=HTTP_200_OK)
+    return Response(status=HTTP_404_NOT_FOUND)
+        
 
 
 
@@ -187,13 +220,13 @@ def get_info(request):
     userid = request.data.get('id')
     if user_is_valid(token, userid):
         user = CustomUser.objects.get(id=userid)
-        if user.categoria != None:
+        if user.categoria != 'Consumidor':
             data = {
 			    'first_name':user.first_name,
 			    'last_name':user.last_name,
 			    'username':user.username,
 			    'email':user.email,
-			    'categoria_user':user.categoria,
+			    'categoria':user.categoria,
 		    }
         else:
             data = {

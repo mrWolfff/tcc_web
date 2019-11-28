@@ -18,7 +18,9 @@
         <div class="card hoverable">
             <article class="card-group-item">
                 <header class="card-header">
-                    <h6 class="title">Menu</h6>
+                    <h6 class="title"><i class="material-icons align-top">
+                            menu
+                        </i> Menu</h6>
                 </header>
                 <div class="filter-content">
                     <div class="list-group list-group-flush">
@@ -39,7 +41,9 @@
         <div class="card hoverable">
             <article class="card-group-item">
                 <header class="card-header">
-                    <h6 class="title">Menu</h6>
+                    <h6 class="title"> <i class="material-icons align-top">
+                            menu
+                        </i> Menu</h6>
                 </header>
                 <div class="filter-content">
                     <div class="list-group list-group-flush">
@@ -52,6 +56,10 @@
                 </div>
             </article>
         </div>
+        {% endif %}
+        {% if request.user.categoria  == 'Prestador'%}
+        <a class="waves-effect waves-light btn modal-trigger hoverable" href="#modal">Criar uma proposta<i
+                class="material-icons">add</i></a>
         {% endif %}
     </div>
     <div class="col-9">
@@ -81,113 +89,125 @@
                 </div>
             </div>
         </div>
-        <div class="card grey lighten 1 hoverable" style="overflow: auto; height: 300px;">
+        <div id="chat_scroll" class="card grey lighten-1 hoverable" style="overflow: auto; height: 300px;">
             <div class="card-content">
-                {% for message in messages %}
-                <div class="row">
-                    <div class="col-sm-8">
-                        {% if request.user != message.from_user %}
-                        <span class="mdl-chip">
-                            <span class="mdl-chip__text" ><b>{{message.from_user}}: </b>
-                                {{message.message}}</span>
-                        </span>
-                        {% endif %}
+                <div id="chat_content">
+                    {% for message in messages %}
+                    <div class="row">
+                        <div class="col-sm-8">
+                            {% if request.user != message.from_user %}
+                            <span class="mdl-chip">
+                                <span class="mdl-chip__text"><b>{{message.from_user}} </b>
+                                    {{message.message}}</span>
+                            </span>
+                            {% endif %}
+                        </div>
+                        <div class="col-sm">
+                            {% if request.user == message.from_user %}
+                            <span class="mdl-chip">
+                                <span class="mdl-chip__text"><b>{{message.from_user}} </b>
+                                    {{message.message}}</span>
+                            </span>
+                            {% endif %}
+                        </div>
                     </div>
-                    <div class="col-sm">
-                        {% if request.user == message.from_user %}
-                        <span class="mdl-chip">
-                            <span class="mdl-chip__text"><b>{{message.from_user}}: </b>
-                                {{message.message}}</span>
-                        </span>
-                        {% endif %}
+                    {% endfor %}
+                    <!-- PARTE AJAX DE POST DAS MENSAGENS  -->
+                    <div id="chat">
                     </div>
+                    <!-- PARTE AJAX DE POST DAS MENSAGENS  -->
                 </div>
-                {% endfor %}
-                {% if request.user == propostas.user_proposta %}
-                <ul class="collapsible hoverable">
-                    <li>
-                        <div class="collapsible-header"><i class="material-icons"> info </i>Proposta enviada ao
-                            usuario:</div>
-                        <div class="collapsible-body white">
-                            <span>{{propostas.proposta}}</span><br>
-                            <b>Valor proposto:</b><span> {{propostas.valor}}</span>
-                            <b>A data será de </b><span>A data será {{propostas.data_inicio}} até
-                                {{propostas.data_fim}}.</span>
-                            <b>A demanda é </b><span> {{propostas.demanda}} do usuario
-                                {{propostas.to_user_proposta}}</span>
-                            <b>Proposta foi feita por </b><span>Proposta feita por {{propostas.user_proposta}}</span>
-                        </div>
-                    </li>
-                </ul>
-                {% endif %}
-                {% if request.user == propostas.to_user_proposta %}
-                <ul class="collapsible hoverable">
-                    <li>
-                        <div class="collapsible-header"><i class="material-icons"> info </i>Proposta recebida do
-                            prestador:
-                            <div class="row">
-                                <div class="col-sm-1"></div>
-                                <div class="col-sm-11">
-                                    
-                                    <button class="btn waves-effect waves-light green" type="submit" name="action"
-                                        id="accept">Aceitar</button>
-                                    <button class="btn waves-effect waves-light red" type="submit" name="action"
-                                        id="reject">Rejeitar</button>
-                                </div>
+                <div id="propostas">
+                    {% if request.user == propostas.user_proposta %}
+                    {% if propostas.to_user_proposta == session_user %}
+
+                    <ul class="collapsible hoverable">
+                        <li>
+                            <div class="collapsible-header"><i class="material-icons"> info </i>Proposta enviada ao
+                                usuario:</div>
+                            <div class="collapsible-body white">
+                                <span>{{propostas.proposta}}</span><br>
+                                <b>Valor proposto:</b><span> {{propostas.valor}}</span><br>
+                                <b>A data será de </b><span>A data será {{propostas.data_inicio}} até
+                                    {{propostas.data_fim}}.</span><br>
+                                <b>A demanda é </b><span> {{propostas.demanda}} do usuario
+                                    {{propostas.to_user_proposta}}</span><br>
+                                <b>Proposta foi feita por </b><span>Proposta feita por
+                                    {{propostas.user_proposta}}</span>
                             </div>
+                        </li>
+                    </ul>
+                    {% endif %}
+                    {% endif %}
+                    {% if request.user == propostas.to_user_proposta %}
+                    <ul class="collapsible hoverable">
+                        <li>
+                            <div class="collapsible-header"><i class="material-icons"> info </i>Proposta recebida do
+                                prestador:
+                                <div class="row">
+                                    <div class="col-sm-1"></div>
+                                    <div class="col-sm-11">
 
-                        </div>
-                        <div class="collapsible-body white ">
-                            <span>{{propostas.proposta}}</span><br>
-                            <b>Valor proposto:</b><span> {{propostas.valor}}</span><br>
-                            <b>A data será de </b><span>A data será {{propostas.data_inicio}} até
-                                {{propostas.data_fim}}.</span><br>
-                            <b>A demanda é </b><span> {{propostas.demanda}} do usuario
-                                {{propostas.to_user_proposta}}</span><br>
-                            <b>Proposta foi feita por </b><span>Proposta feita por {{propostas.user_proposta}}</span>
+                                        <button class="btn waves-effect waves-light green" type="submit" name="action"
+                                            id="accept">Aceitar</button>
+                                        <button class="waves-effect waves-light btn red"
+                                            id="reject">Rejeitar</button>
+                                    </div>
+                                </div>
 
-                        </div>
-                    </li>
-                </ul>
-                {% endif %}
+                            </div>
+                            <div class="collapsible-body white ">
+                                <span>{{propostas.proposta}}</span><br>
+                                <b>Valor proposto:</b><span> {{propostas.valor}}</span><br>
+                                <b>A data será de </b><span>A data será {{propostas.data_inicio}} até
+                                    {{propostas.data_fim}}.</span><br>
+                                <b>A demanda é </b><span> {{propostas.demanda}} do usuario
+                                    {{propostas.to_user_proposta}}</span><br>
+                                <b>Proposta foi feita por </b><span>Proposta feita por
+                                    {{propostas.user_proposta}}</span>
+
+                            </div>
+                        </li>
+                    </ul>
+                    {% endif %}
+                </div>
+
             </div>
         </div>
+
         <div class="card hoverable ">
             <div class="card-content">
                 {% if to_user != request.user %}
                 <form method="POST" enctype="multipart/form-data" class="form-group">
                     {% csrf_token %}
                     <div class="row">
-                        <div class="col-sm-9">
-                            <textarea class="materialize-textarea" name='message'></textarea>
+                        <div class="col-sm-10">
+                            <input type="text" name='message'>
                             <input type="hidden" name="from_user" value="{{request.user.id}}">
                             <input type="hidden" name="to_user" value="{{to_user.id}}">
                         </div>
-                        <div class="col-sm-3">
-                            <button
-                                class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Enviar
+                        <div class="col-sm-2">
+                            <button id="new_message"
+                                class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
                                 <i class="material-icons">
                                     send
                                 </i></button>
                         </div>
                     </div>
                 </form>
-                {% if request.user.categoria  == 'Prestador'%}
-                <a class="waves-effect waves-light btn modal-trigger" href="#modal">Criar uma proposta<i
-                        class="material-icons">add</i></a>
-                {% endif %}
+
                 {% endif %}
                 {% if to_user == request.user %}
                 <form method="POST" enctype="multipart/form-data" class="form-group">
                     {% csrf_token %}
                     <div class="row">
-                        <div class="col-sm-9">
-                            <textarea class="materialize-textarea" name='message'></textarea>
+                        <div class="col-sm-10">
+                            <input type="text" name='message'>
                             <input type="hidden" name="from_user" value="{{request.user.id}}">
                             <input type="hidden" name="to_user" value="{{session_user.id}}">
                         </div>
-                        <div class="col-sm-3">
-                            <button
+                        <div class="col-sm-2">
+                            <button id="new_message_other"
                                 class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">Enviar
                                 <i class="material-icons">
                                     send
@@ -195,21 +215,145 @@
                         </div>
                     </div>
                 </form>
-                {% if request.user.categoria  == 'Prestador'%}
-                <a class="waves-effect waves-light btn modal-trigger" href="#modal">Criar uma proposta<i
-                        class="material-icons">add</i></a>
-                {% endif %}
                 {% endif %}
             </div>
         </div>
     </div>
 </div>
-
+<input type="hidden" name="from" value="{{from_user.id}}">
+<input type="hidden" name="to" value="{{to_user.id}}">
+<input type="hidden" name="session" value="{{session_user.id}}">
+<input type="hidden" name="request" value="{{request.user.id}}">
+<input type="hidden" name="request_name" value="{{request.user.username}}">
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function () {
         var elems = document.querySelectorAll('.modal');
         var instances = M.Modal.init(elems, options);
         var height = $(window).height();
+    });
+    $(document).ready(function () {
+        $("#chat_scroll").animate({ scrollTop: $("#chat_scroll").prop('scrollHeight') }, 300);
+        setInterval(function () {
+            $.ajax({
+                type: 'POST',
+                url: '{% url "get_message_ajax" %}',
+                dataType: "json",
+                data: {
+                    request_user: $('input[name=request]').val(),
+                    from_user: $('input[name=from]').val(),
+                    to_user: $('input[name=to]').val(),
+                    session_user: $('input[name=session]').val(),
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function (data) {
+                    let request_user = $('input[name=request]').val();
+                    let from_user = $('input[name=from]').val();
+                    let to_user = $('input[name=to]').val();
+                    let size = $('#chat_content').height();
+                    $('#chat_content').empty();
+                    for (let i = 0; i < data.length; i++) {
+                        console.log(">>", data[i].is_proposta);
+                        if(data[i].is_proposta){
+                            $('#chat_content').append('<ul class="collapsible hoverable"><li><div class="collapsible-header"><i class="material-icons"> report </i>Proposta rejeitada: '+ data[i].message +'</div><div class="collapsible-body white"><span></span><br><b>Valor proposto:</b><span> ' + data['valor'] + '  </span><br><b>A data será de </b><span>A data será ' + data['data_inicio'] + ' até ' + data['data_inicio'] + '.</span><br><b>A demanda é </b><span> ' + data['demanda'] + ' do usuario' + data['user_demanda'] + '</span><br><b>Proposta foi feita por </b><span>Proposta feita por {{propostas.user_proposta}}</span></div></li></ul>');
+                        }else{
+                            if (data[i].from_user == request_user) {
+                                $('#chat_content').append('<div class="row"><div class="col-sm-8"></div><div class="col-sm"><span class="mdl-chip"><span class="mdl-chip__text"><b> {{request.user}}: </b> ' + data[i].message + '</span></span></div></div>');
+                            } else {
+                                $('#chat_content').append('<div class="row"><div class="col-sm-8"><span class="mdl-chip"><span class="mdl-chip__text"><b> ' + 'user' + ': </b> ' + data[i].message + '</span></span></div><div class="col-sm"></div></div>');
+                            }
+                        }
+                    }
+                    if (size < $('chat_content').height()) {
+                        $("#chat_scroll").animate({ scrollTop: $("#chat_scroll").prop('scrollHeight') }, 500);
+                    }
+                },
+                error: function (jqxhr, status, exception) {
+                    //M.toast({ html: 'erro!' });
+                }
+            });
+            //$.ajax({
+                //type: 'POST',
+                //url: '{% url "get_propostas_ajax" %}',
+                //dataType: "json",
+                //data: {
+                    //request_user: $('input[name=request_name]').val(),
+                    //from_user: $('input[name=from]').val(),
+                    //to_user: $('input[name=to]').val(),
+                    //session_user: $('input[name=session]').val(),
+                    //csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                //},
+                //success: function (data) {
+                    //let request_user = $('input[name=request]').val();
+                    //let from_user = $('input[name=from]').val();
+                    //let to_user = $('input[name=to]').val();
+                    //let size = $('#chat_content').height();
+                    //$('#propostas').empty();
+                    //if (data['user_proposta'] == request_user) {
+                            //$('#propostas').append('<ul class="collapsible hoverable"><li><div class="collapsible-header"><i class="material-icons"> info </i>Proposta enviada ao usuario:</div><div class="collapsible-body white"><span>' + data['proposta'] + '</span><br><b>Valor proposto:</b><span> ' + data['valor'] + '  </span><br><b>A data será de </b><span>A data será ' + data['data_inicio'] + ' até ' + data['data_inicio'] + '.</span><br><b>A demanda é </b><span> ' + data['demanda'] + ' do usuario' + data['user_demanda'] + '</span><br><b>Proposta foi feita por </b><span>Proposta feita por {{propostas.user_proposta}}</span></div></li></ul>');
+                        //} else {
+                            //size = $('#chat_content').height();
+                            //$('#propostas').append('<ul class="collapsible hoverable"><li><div class="collapsible-header"><i class="material-icons"> info </i>Proposta recebida doprestador:<div class="row"><div class="col-sm-1"></div><div class="col-sm-11"><button class="btn waves-effect waves-light green" type="submit" name="action"id="accept">Aceitar</button><button class="btn waves-effect waves-light red" type="submit" name="action"id="reject">Rejeitar</button></div></div></div><div class="collapsible-body white "><span>' + data['proposta'] + '</span><br><b>Valor proposto:</b><span> ' + data['valor'] + '</span><br><b>A data será de </b><span>A data será ' + data['data_inicio'] + ' até ' + data['data_fim'] + '.</span><br><b>A demanda é </b><span> ' + data['demanda'] + ' do usuario ' + data['user_proposta'] + '</span><br><b>Proposta foi feita por </b><span>Proposta feita por ' + data['to_user_proposta'] + '</span></div></li></ul>');
+                    //}
+                //},
+                //error: function (jqxhr, status, exception) {
+                    //M.toast({ html: 'erro!' });
+                //}
+            //});
+
+
+        }, 2000);
+
+    });
+    $(document).on('click', '#new_message', function (event) {
+        let message = $("input[name='message']").val();
+        let request_user = $("input[name=request_user]").val();
+        let from_user = $('input[name=from_user').val();
+        let to_user = $('input[name=to_user').val();
+        event.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "message_ajax" %}',
+            data: {
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                from_user: $('input[name=from_user').val(),
+                to_user: $('input[name=to_user').val(),
+                message: message,
+            },
+            success: function (e) {
+                $("input[name='message']").val("");
+                $('#chat').append('<div class="row"><div class="col-sm-8"></div><div class="col-sm"><span class="mdl-chip"><span class="mdl-chip__text"><b>{{request.user}} </b>' + message + '</span></span></div></div>');
+                $("#chat_scroll").animate({ scrollTop: $("#chat_scroll").prop('scrollHeight') }, 1000);
+                $("textarea[name='message']").focus();
+            },
+            error: function (jqxhr, status, exception) {
+                //M.toast({ html: 'Mensagem vazia!' });
+            }
+        });
+    });
+    $(document).on('click', '#new_message_other', function (event) {
+        let message = $("input[name='message']").val();
+        let request_user = $("input[name=request_user]").val();
+        let from_user = $('input[name=from_user').val();
+        let to_user = $('input[name=to_user').val();
+        event.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "message_ajax" %}',
+            data: {
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                from_user: $('input[name=from_user').val(),
+                to_user: $('input[name=to_user').val(),
+                message: message,
+            },
+            success: function () {
+                $("input[name='message']").val("");
+                $('#chat').append('<div class="row"><div class="col-sm-8"></div><div class="col-sm"><span class="mdl-chip"><span class="mdl-chip__text"><b>{{request.user}} </b>' + message + ' </span></span></div></div>');
+                $("#chat_scroll").animate({ scrollTop: $("#chat_scroll").prop('scrollHeight') }, 1000);
+            },
+            error: function (jqxhr, status, exception) {
+                M.toast({ html: 'Mensagem vazia!' });
+            }
+        });
     });
     $(document).ready(function () {
         $('.modal').modal();
@@ -236,10 +380,12 @@
                 data_fim: $("input[name='data_fim']").val(),
                 demanda: $("select[name='demanda']").val(),
             },
-            success: function () {
+            success: function (data) {
                 $('.modal').modal();
+                console.log(data);
                 M.toast({ html: 'Proposta Criada!' });
                 location.reload(true);
+                //append here
             },
             error: function (jqxhr, status, exception) {
                 alert('Exception:', exception, jqxhr, status);
@@ -253,22 +399,37 @@
 {% if propostas %}
 <script type="text/javascript">
 
-    $('#accept').on('click', function () {
-        M.toast({ html: 'Proposta aceita!' })
+    $('#accept').click(function () {
+        M.toast({ html: 'Proposta aceita!' });
         window.location.href = "{% url 'create_servico' propostas.id %}";
     });
-    $('#reject').on('click', function () {
-        if (confirm("Deseja excluir a proposta? ")) {
-            M.toast({ html: 'Proposta Excluida!' })
-            window.location.href = "{% url 'deletePropostas' propostas.id   %}";
-        } else {
-            location.reload();
+    $('#reject').click(function () {
+        if(confirm("Você tem certeza que deseja rejeitar?")){
+            $.ajax({
+            type: 'POST',
+            url: '{% url "rejeitar_proposta" propostas.id %}',
+            data: {
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                request_user: $("input[name=request]").val(),
+                from_user: $('input[name=from_user').val(),
+                to_user: $('input[name=to_user').val(),
+                session_user: $('input[name=session]').val(),
+            },
+            success: function () {
+                M.toast({ html: 'Proposta Rejeitada!' });
+                location.reload(true);
+            },
+            error: function (jqxhr, status, exception) {
+                alert('Erro:', exception, jqxhr, status);
+            }
+        });
         }
     });
     $(document).ready(function () {
         $('.scrollspy').scrollSpy();
     });
 </script>
+
 {% endif %}
 <div id="modal" class="modal modal-fixed-footer">
     <div class="modal-content">

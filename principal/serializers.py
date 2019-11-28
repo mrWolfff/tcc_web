@@ -1,4 +1,4 @@
-from .models import Demandas, Servicos, Message, Propostas, MessageSession
+from .models import Demandas, Servicos, Message, Propostas, MessageSession, Propostas
 from accounts.models import CustomUser, Servicos_Categoria
 from rest_framework import serializers
 
@@ -11,16 +11,12 @@ class ServicosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Servicos
         fields = ('url', 'id', 'data_servico', 'status', 'proposta', 'user', 'justificativa', 'cancel_confirm', 'avaliacao', 'sugestao_critica')  
-        
-class PropostasSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Propostas
-        fields = ('url', 'id', 'proposta', 'valor', 'data', 'data_inicio', 'data_fim', 'user_proposta', 'to_user_proposta', 'demanda')  
+         
         
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
-        fields = ('message', 'data', 'from_user', 'to_user', 'session')  
+        fields = ('message', 'data', 'from_user', 'to_user', 'session', 'is_proposta')  
         
 class MessageSessionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,9 +26,14 @@ class MessageSessionSerializer(serializers.ModelSerializer):
 class Servicos_CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Servicos_Categoria
-        fields = ('categoria')
+        fields = ('__all__')
         
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ('url', 'id', 'first_name', 'last_name', 'email', 'cpf_cnpj', 'cpf_cnpj', 'sexo', 'nascimento', 'telefone', 'celular', 'estado', 'cidade', 'endereço', 'imagem', 'categoria_servico', 'categoria')  
+        fields = ('__all__')  
+        
+class PropostasSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Propostas
+        fields = ('__all__')  

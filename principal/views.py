@@ -6,7 +6,6 @@ from django.views.generic import CreateView
 from .models import Demandas, Servicos, Message, MessageSession, Interesses, Propostas
 from .forms import DemandasForm, MessageForm, DemandasFormEdit, PropostasForm
 from django.contrib.auth.decorators import login_required
-from accounts.forms import TrocaCategoria
 from accounts.models import CustomUser, Servicos_Categoria
 from django.urls import reverse_lazy
 from django.views import generic
@@ -17,8 +16,9 @@ from django.views.generic.edit import DeleteView
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from rest_framework.response import Response
 from copy import deepcopy
-
+from django.db.models import Q
 from rest_framework import generics
 from .serializers import DemandasSerializer, ServicosSerializer, PropostasSerializer, MessageSerializer, MessageSessionSerializer, UsersSerializer
 from rest_framework import viewsets
@@ -32,6 +32,9 @@ from rest_framework.status import (
     HTTP_404_NOT_FOUND,
     HTTP_200_OK
 )
+import json
+from datetime import datetime, timedelta
+from rest_framework.renderers import JSONRenderer
 
 """   Serializers Views   """
 
@@ -139,9 +142,9 @@ def index(request):
     querys = demandas
     if request.POST.get('pesquisa'):
         busca = request.POST.get('pesquisa')
-        querys = demandas.filter(titulo__icontains=busca)
-    else:
-        querys = demandas.prefetch_related('categoria')
+        querys = demandas.filter(Q(titulo__icontains=busca) | Q(descricao__icontains=busca))
+    #else:
+     #   querys = demandas.prefetch_related('categoria')
         # querys = demandas.filter(categoria_id__icontains=user.categoria_servico)
     context = {
         'querys': querys,
@@ -231,6 +234,7 @@ def servico_atual(request, id):
     servico = Servicos.objects.get(id=id)
     proposta = Propostas.objects.get(id=servico.proposta.id)
     demanda =  Demandas.objects.get(id=proposta.demanda.id)
+    user = servico.user_prestador
     if request.POST.get('proposta'):
         pass
     if request.POST.get('justificativa'):
@@ -242,6 +246,9 @@ def servico_atual(request, id):
         avaliacao = request.POST.get('avaliacao')
         sugestao_critica = request.POST.get('sugestao_critica')
         if servico.finish_servico(avaliacao, sugestao_critica):
+            user.avaliar(avaliacao)
+            user.save()
+            demanda.set_status()
             servico.save()
             redirect('servicos')
     context = {
@@ -338,41 +345,35 @@ def create_proposta(request):
     if request.POST:
         user_proposta = request.POST.get('user_proposta')
         to_user_proposta = request.POST.get('to_user_proposta')
-        try:
-            aux = Propostas.objects.get(user_proposta=user_proposta, to_user_proposta=to_user_proposta)
-            # aux.delete()
-        except Exception as exception:
-            print("Erro: {}", exception)
-            proposta = request.POST.get('proposta')
-            valor = request.POST.get('valor')
-            data_inicio = request.POST.get('data_inicio')
-            data_fim = request.POST.get('data_fim')
-            demanda = request.POST.get('demanda')
-            response_data = {
-                'proposta': proposta,
-                'valor': valor,
-                'data_inicio': data_inicio,
-                'data_fim': data_fim,
-                'user_proposta': user_proposta,
-                'to_user_proposta': to_user_proposta,
-                'demanda': demanda,
-            }
-            user_proposta = CustomUser.objects.get(id=user_proposta)
-            to_user_proposta = CustomUser.objects.get(id=to_user_proposta)
-            demanda = Demandas.objects.get(id=request.POST.get('demanda'))
+        proposta = request.POST.get('proposta')
+        valor = request.POST.get('valor')
+        data_inicio = request.POST.get('data_inicio')
+        data_fim = request.POST.get('data_fim')
+        demanda = request.POST.get('demanda')
+        response_data = {
+            'proposta': proposta,
+            'valor': valor,
+            'data_inicio': data_inicio,
+            'data_fim': data_fim,
+            'user_proposta': user_proposta,
+            'to_user_proposta': to_user_proposta,
+            'demanda': demanda,
+        }
+        user_proposta = CustomUser.objects.get(id=user_proposta)
+        to_user_proposta = CustomUser.objects.get(id=to_user_proposta)
+        demanda = Demandas.objects.get(id=request.POST.get('demanda'))
             # pdb.set_trace()
-            Propostas.objects.create(
-                proposta=proposta,
-                valor=valor,
-                data_inicio=data_inicio,
-                data_fim=data_fim,
-                user_proposta=user_proposta,
-                to_user_proposta=to_user_proposta,
-                demanda=demanda,
-            )
-            return JsonResponse(response_data)
-        return redirect('box_message')
-    return HttpResponse("error")
+        Propostas.objects.create(
+            proposta=proposta,
+            valor=valor,
+            data_inicio=data_inicio,
+            data_fim=data_fim,
+            user_proposta=user_proposta,
+            to_user_proposta=to_user_proposta,
+            demanda=demanda,    
+        )
+        return JsonResponse(response_data)
+    return redirect('box_message')
 
 
 def messagesUser(request, id):
@@ -384,10 +385,10 @@ def messagesUser(request, id):
     to_user = request.POST.get('to_user')
     propostas = ''
     try:
-        propostas = Propostas.objects.filter(to_user_proposta=request.user).order_by('-id')[0]
+        propostas = Propostas.objects.filter(to_user_proposta=request.user, ativo=True).order_by('-id')[0]
     except Exception as exception:
         try:
-            propostas = Propostas.objects.filter(user_proposta=request.user).order_by('-id')[0]
+            propostas = Propostas.objects.filter(user_proposta=request.user, ativo=True).order_by('-id')[0]
         except Exception as exception:
             print(exception)
     if post.get('proposta_valor') or post.get('proposta'):
@@ -414,7 +415,7 @@ def messagesUser(request, id):
             form = MessageForm(copy)
             if form.is_valid():
                 form.save()
-                return redirect('box_message')
+                return redirect(created.get_absolute_url())
         except Exception as exception:
             try:
                 MessageSession.objects.get(
@@ -426,9 +427,8 @@ def messagesUser(request, id):
                 form = MessageForm(copy)
                 if form.is_valid():
                     form.save()
-                    return redirect('box_message')
+                    return redirect(created.get_absolute_url())
             except Exception as exception:
-               # pdb.set_trace()
                 MessageSession.objects.get_or_create(
                     from_user=from_user, to_user=to_user)
                 created = MessageSession.objects.get(
@@ -438,7 +438,7 @@ def messagesUser(request, id):
                 form = MessageForm(copy)
                 if form.is_valid():
                     form.save()
-                    return redirect('box_message')
+                    return redirect(created.get_absolute_url())
     to_user = session.from_user
     from_user = request.user
     session_user = ''
@@ -455,7 +455,132 @@ def messagesUser(request, id):
     context = {'to_user': to_user, 'messages': messages, 'from_user': from_user, 'session_user': session_user, 'propostas':propostas, 'demandas': demandas}
     return render(request, 'principal/messages.html', context)
 
+def get_message_ajax(request):
+    from_user = request.POST.get('from_user')
+    to_user = request.POST.get('to_user')
+    session_user = request.POST.get('session_user')
+    try:
+        from_user = CustomUser.objects.get(id=from_user)
+        to_user = CustomUser.objects.get(id=to_user)
+        session_user = CustomUser.objects.get(id=session_user)
+    except Exception as e:
+        pass
+    #if session_user:
+    #    to_user = session_user
+    session = ''
+    proposta = ''
+    try:
+        session = MessageSession.objects.get(from_user=from_user.id, to_user=to_user.id)
+        proposta = Propostas.objects.get(user_proposta=from_user.id, to_user_proposta=to_user.id)
+    except Exception as e:
+        try:
+            session = MessageSession.objects.get(from_user=from_user.id, to_user=session_user.id)
+            proposta = Propostas.objects.get(user_proposta=from_user.id, to_user_proposta=session_user.id)
+        except:
+            try:
+                session = MessageSession.objects.get(from_user=to_user.id, to_user=from_user.id)
+                proposta = Propostas.objects.get(user_proposta=to_user.id, to_user_proposta=from_user.id)
+            except:
+                pass
+    
+    if request.POST:
+        #now = datetime.now()
+        #before = timedelta(seconds=24)
+        #past_time = now - before
+        #message = Message.objects.filter(data__gte=past_time).exclude(from_user=session.from_user.id)
+        
+        message = Message.objects.filter(session=session)
+        serializer = MessageSerializer(message, many=True)
+        #pdb.set_trace()
+        return JsonResponse(serializer.data, safe=False)
 
+def get_propostas_ajax(request):
+    from_user = request.POST.get('from_user')
+    to_user = request.POST.get('to_user')
+    session_user = request.POST.get('session_user')
+    try:
+        from_user = CustomUser.objects.get(id=from_user)
+        to_user = CustomUser.objects.get(id=to_user)
+        session_user = CustomUser.objects.get(id=session_user)
+    except Exception as e:
+        pass
+    proposta = ''
+    try:
+        proposta = Propostas.objects.get(user_proposta=from_user.id, to_user_proposta=to_user.id)
+    except Exception as e:
+        try:
+            proposta = Propostas.objects.get(user_proposta=from_user.id, to_user_proposta=session_user.id)
+        except:
+            try:
+                proposta = Propostas.objects.get(user_proposta=to_user.id, to_user_proposta=from_user.id)
+            except:
+                pass
+    
+    if request.POST:
+        serial = {
+            'id': proposta.id,
+            'valor_proposta': proposta.valor,
+            'proposta': proposta.proposta,
+            'data': proposta.data.strftime("%Y-%m-%d %H:%M:%S"),
+            'data_inicio': proposta.data_inicio.strftime("%Y-%m-%d %H:%M:%S"),
+            'data_fim': proposta.data_fim.strftime("%Y-%m-%d %H:%M:%S"),
+            'user_proposta': proposta.user_proposta.username,
+            'to_user_proposta': proposta.to_user_proposta.username,
+            'demanda': proposta.demanda.titulo,
+        }
+        return JsonResponse(serial, safe=False)
+
+def message_ajax(request):
+    message = request.POST.get('message')
+    from_user = request.POST.get('from_user')
+    to_user = request.POST.get('to_user')
+    #pdb.set_trace()
+    if message:
+        try:
+            from_user = CustomUser.objects.get(id=from_user)
+            to_user = CustomUser(id=to_user)
+            MessageSession.objects.get(from_user=from_user, to_user=to_user)
+            created = MessageSession.objects.get(
+                from_user=from_user, to_user=to_user)
+            copy = request.POST.copy()
+            copy.appendlist('session', created.id)
+            form = MessageForm(copy)
+            if form.is_valid():
+                form.save()
+                response_data = {
+                        'message':message,	
+		            }
+                return JsonResponse(response_data)
+        except Exception as exception:
+            try:
+                MessageSession.objects.get(
+                    from_user=to_user, to_user=from_user)
+                created = MessageSession.objects.get(
+                    from_user=to_user, to_user=from_user)
+                copy = request.POST.copy()
+                copy.appendlist('session', created.id)
+                form = MessageForm(copy)
+                if form.is_valid():
+                    form.save()
+                    response_data = {
+                        'message':message,	
+		            }
+                    return JsonResponse(response_data)
+            except Exception as exception:
+                MessageSession.objects.get_or_create(
+                    from_user=from_user, to_user=to_user)
+                created = MessageSession.objects.get(
+                    from_user=from_user, to_user=to_user)
+                copy = request.POST.copy()
+                copy.appendlist('session', created.id)
+                form = MessageForm(copy)
+                if form.is_valid():
+                    form.save()
+                    response_data = {
+                        'message':message,	
+		            }
+                    return JsonResponse(response_data)
+    return Response(status=HTTP_404_NOT_FOUND)
 
 def send_message(request, id):
     to_user = CustomUser.objects.get(id=id)
@@ -500,9 +625,31 @@ def send_message(request, id):
     return render(request, 'principal/sendmessage.html', {'to_user': to_user})
 
 
-def deletePropostas(request, id):
+def rejeitar_proposta(request, id):
     proposta = Propostas.objects.get(id=id)
-    proposta.delete()
-    return redirect('box_message')
-
-
+    from_user = request.POST.get('from_user')
+    to_user = request.POST.get('to_user')
+    session_user = request.POST.get('session_user')
+    if to_user == from_user:
+        to_user = session_user
+    try:
+        from_user = CustomUser.objects.get(id=from_user)
+        to_user = CustomUser.objects.get(id=to_user)
+    except:
+        pass
+    
+    try:
+        session = MessageSession.objects.get(from_user=from_user.id, to_user=to_user.id)
+    except:
+        session = MessageSession.objects.get(from_user=to_user.id, to_user=from_user.id)
+    aux = 'Proposta: ' + proposta.proposta + ' Valor: ' + str(proposta.valor) + ' Datas: de ' + str(proposta.data_inicio) + ' até ' + str(proposta.data_fim) 
+    message = Message.objects.create(message=aux, from_user=session.from_user, to_user=session.to_user, session=session)
+    message.set_proposta(proposta)  
+    proposta.set_status()
+    message.save()
+    proposta.save()
+    #pdb.set_trace()
+    response_data = {
+        'message':message.message
+    }
+    return JsonResponse(response_data)

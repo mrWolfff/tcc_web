@@ -19,10 +19,11 @@
     $(document).ready(function () {
         $('.collapsible').collapsible();
     });
-    $('#add_information').click(function(){
+    $('#add_information').click(function () {
         alert();
     });
     $(document).on('click', '#add_information', function (event) {
+        let info = $("textarea[name='informacao']").val();
         event.preventDefault();
         $.ajax({
             type: 'POST',
@@ -31,21 +32,30 @@
                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
                 informacao: $("textarea[name='informacao']").val(),
             },
-            success: function () {
-                alert("Informação adicionada! ");
-                $.ajax({
-                    type: 'GET',
-                    url: "{% url 'config_json' %}",
-                    data: data,
-                    success: function (response) {
-                        alert(response.data);
-                        alert(data);
-                        alert(response);
-                    },
-                    error: function (response) {
-                        console.log(response)
-                    }
-                })
+            success: function (e) {
+                M.toast({ html: 'Informação adicionada!' });
+                $("textarea[name='informacao']").val("");
+                $('#info').append('<li><div class="collapsible-header"><i class="material-icons">info</i>' + info + '</div><div class="collapsible-body"><span>' + info + '</span></div></li>');
+                $('.collapsible').collapsible();
+
+            },
+            error: function (jqxhr, status, exception) {
+                alert('Exception:', exception, jqxhr, status);
+            }
+            
+        });
+    });
+    $(document).on('click', '#delete_info', function (event) {
+        event.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "delete_info" %}',
+            data: {
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                delete: $("input[name='delete']").val(),
+            },
+            success: function (e) {
+                M.toast({ html: 'Informação deletada!' });
             },
             error: function (jqxhr, status, exception) {
                 alert('Exception:', exception, jqxhr, status);
@@ -55,27 +65,27 @@
 </script>
 <div class="row">
     <div class="col-md-6">
-        <div class="container">
+        <div class="container-fluid">
 
-            <div class="card">
+            <div class="card hoverable">
                 <div class="card-image waves-effect waves-block waves-light">
                     <div class="row">
                         <div class="col-md-6">
-                            <img class="rounded" src="../{{user.imagem}}">
+                            <img class="rounded hoverable" src="../{{user.imagem}}">
                         </div>
                         <div class="col-md-6">
                             <h5>Dados Pessoais</h5>
-                            <i class="material-icons">
+                            <i class="material-icons align-top">
                                 person
                             </i>{{user.get_full_name}}<br>
-                            <i class="material-icons">
+                            <i class="material-icons align-top">
                                 mail
                             </i>{{user.email}}<br>
-                            <i class="material-icons">
+                            <i class="material-icons align-top">
                                 phone
                             </i>{{user.telefone}}<br>
-                            <i class="material-icons">
-                                person
+                            <i class="material-icons align-top">
+                                room
                             </i>{{user.get_full_address}}
                         </div>
 
@@ -85,26 +95,48 @@
                     <span class="card-title activator grey-text text-darken-4">Informações adicionais<i
                             class="material-icons right">more_vert</i></span>
 
-                    <ul class="collapsible">
+                    <ul class="collapsible" id="info">
                         <li>
-                            <div class="collapsible-header"><i class="material-icons">info</i>{informacao}</div>
-                            <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-                        </li>
-                        <li>
-                            <div class="collapsible-header"><i class="material-icons">add</i>Adicione mais informações
+                            <div class="collapsible-header"><i class="material-icons">add</i>Adicione informações
                             </div>
                             <div class="collapsible-body">
                                 <span>
                                     <form method="POST">
-                                    {% csrf_token %}
-                                    <div class="row">
-                                        <div class="col-9">
-                                <textarea class="materialize-textarea" name="informacao"></textarea></div>
-                                <button class="waves-effect -light btn green" id="add_information">OK</button>
-                            </div>
-                            </form>  
-                            </span></div>
+                                        {% csrf_token %}
+                                        <div class="row">
+                                            <div class="col-9">
+                                                <textarea class="materialize-textarea" name="informacao"
+                                                    id="field_info"></textarea>
+                                            </div>
+                                            <button class="waves-effect -light btn green"
+                                                id="add_information">OK</button>
+                                        </div>
+                                    </form>
+                                </span></div>
                         </li>
+                        {% for info in informacoes %}
+                        <li>
+                            <div class="collapsible-header">
+                                <i class="material-icons">info</i><span>{{info.informacao}}</span>
+                            </div>
+                            <div class="collapsible-body">
+                                <div class="row">
+                                    <div class="col-10">
+                                        {{info.informacao}}
+                                    </div>
+                                    <div class="col-2">
+                                        <form method="POST">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="delete" value="{{info.id}}">
+                                            <button type="submit" class="btn waves-effect waves-light red"
+                                                id="delete_info"><i class="material-icons">delete</i></button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+
                     </ul>
 
                     <a class="waves-effect waves-light btn modal-trigger green">Pronto</a>
@@ -121,26 +153,66 @@
     <div class="col-md-6">
         <div class="container">
             <h4>Configurações da Conta</h4>
-            <ul class="collapsible">
-                <li>
-                    <div class="collapsible-header"><i class="material-icons">expand_more</i><b>Deseja que apareça :</b>
-                        {{query.titulo}}
-                    </div>
-                    <div class="collapsible-body"><input id="icon_prefix" type="text" value="{{query.titulo}}"
-                            name="titulo"><label for="icon_prefix">Titulo</label></div>
-                </li>
-                <li>
-                    <div class="collapsible-header"><i class="material-icons">expand_more</i><b>Descrição:</b>
-                        {{query.descricao}}</div>
-                    <div class="collapsible-body"><textarea class="materialize-textarea"
-                            name="descricao">{{query.descricao}}</textarea><label for="icon_prefix">Descrição</label>
-                    </div>
-                </li>
-                <li>
-                    <div class="collapsible-header"><i class="material-icons">expand_more</i><b>Categoria:</b>
-                        {{query.categoria}}</div>
-                    <div class="collapsible-body">{{query.categoria}}</div>
-                </li>
+            <p>Selecione os seguintes dados que deseja que apareça para outros usuários.</p>
+            <ul class="collection hoverable">
+                <form action="#">
+                    <a class="collection-item">
+                        <p>
+                            <label>
+                                <input type="checkbox" />
+                                <span>Nome Completo</span>
+                            </label>
+                        </p>
+                    </a>
+                    <a class="collection-item">
+                        <p>
+                            <label>
+                                <input type="checkbox" />
+                                <span>CPF</span>
+                            </label>
+                        </p>
+                    </a>
+                    <a class="collection-item">
+                        <p>
+                            <label>
+                                <input type="checkbox" />
+                                <span>E-mail de contato</span>
+                            </label>
+                        </p>
+                    </a>
+                    <a class="collection-item">
+                        <p>
+                            <label>
+                                <input type="checkbox" />
+                                <span>Celular e Telefone</span>
+                            </label>
+                        </p>
+                    </a>
+                    <a class="collection-item">
+                        <p>
+                            <label>
+                                <input type="checkbox" />
+                                <span>Endereço</span>
+                            </label>
+                        </p>
+                    </a>
+                    <a class="collection-item">
+                        <p>
+                            <label>
+                                <input type="checkbox" />
+                                <span>Sexo</span>
+                            </label>
+                        </p>
+                    </a>
+                    <a class="collection-item">
+                        <p>
+                            <label>
+                                <input type="checkbox" />
+                                <span>Informações adicionais</span>
+                            </label>
+                        </p>
+                    </a>
+                </form>
             </ul>
         </div>
     </div>

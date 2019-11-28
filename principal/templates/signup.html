@@ -3,7 +3,7 @@
 {% block titulo_meio %}Cadastro{% endblock %}
 {% block conteudo %}
 {% load crispy_forms_tags %}
-<br><br><br>
+<br><br>
 <form method="POST" enctype="multipart/form-data">
   {% csrf_token %}
   <div class="row">
@@ -12,6 +12,7 @@
 		<div class="col-8">
 				<div class="card hoverable">
 					<div class="card-content">
+						<h6 class="card-title">Novo Usuário</h6>
 						{% crispy form %}
 						<button type="submit" class="waves-effect waves-light btn green">Cadastrar</button> <br><br>
 					</div>

@@ -22,49 +22,9 @@ class CustomUser(AbstractUser):
         ('Consumidor', 'Consumidor')
     ]
     SEXOS = [
-        ('MAS', 'Masculino'),
-        ('FEM', 'Feminino')
-    ]
-    ESTADOS = [
-        ('PARANÁ', 'PR'),
-        ('RIO GRANDE DO SUL', 'RS'),
-        ('São Paulo', 'SP'),
-        ('Santa Catarina', 'SC')
-    ]
-    categoria = models.CharField(max_length=20, choices=CATEGORIAS,null=True)
-    cpf_cnpj = models.CharField(max_length=15, blank=True, null=True)
-    sexo = models.CharField(max_length=11, blank=True, choices=SEXOS, null=True)
-    nascimento = models.DateField(blank=True, null=True)
-    telefone = models.CharField(max_length=20, blank=True, null=True)
-    celular = models.CharField(max_length=20, blank=True, null=True)
-    estado = models.CharField(max_length=50, blank=True, choices=ESTADOS, null=True)
-    cidade = models.CharField(max_length=50, blank=True, null=True)
-    endereço = models.CharField(max_length=150, blank=True, null=True)
-    informacao = models.TextField(blank=True, null=True)
-    imagem = models.ImageField(blank=True, upload_to='../media',
-                               default="https://miro.medium.com/max/3200/1*g09N-jl7JtVjVZGcd-vL2g.jpeg", null=True)
-    categoria_servico = models.ForeignKey(Servicos_Categoria, on_delete=models.CASCADE, blank=True, null=True)
-
-    def set_informacao(self, informacao):
-        self.informacao = informacao
-    
-    def get_absolute_url(self):
-    	return "/conta/%i/" % self.id
- 
-    def get_full_address(self):
-        return '%s, %s, %s' % (self.endereço, self.cidade, self.estado)
-    
-
-    
-class Perfis(models.Model):
-    CATEGORIAS = [
-        ('Prestador', 'Prestador'),
-        ('Consumidor', 'Consumidor')
-    ]
-    SEXOS = [
         ('Masculino', 'MAS'),
         ('Feminino', 'FEM'),
-        ('Prefiro não colocar', 'OUTRO')
+        ('Prefiro não colocar', 'NENHUM')
     ]
     ESTADOS = [
         ('Acre', 'AC'),
@@ -95,6 +55,7 @@ class Perfis(models.Model):
         ('Sergipe', 'SE'),
         ('Tocantins', 'TO'),
     ]
+    categoria = models.CharField(max_length=20, choices=CATEGORIAS,null=True)
     cpf_cnpj = models.CharField(max_length=15, blank=True, null=True)
     sexo = models.CharField(max_length=11, blank=True, choices=SEXOS, null=True)
     nascimento = models.DateField(blank=True, null=True)
@@ -103,15 +64,30 @@ class Perfis(models.Model):
     estado = models.CharField(max_length=50, blank=True, choices=ESTADOS, null=True)
     cidade = models.CharField(max_length=50, blank=True, null=True)
     endereço = models.CharField(max_length=150, blank=True, null=True)
-    imagem = models.ImageField(blank=True, upload_to='../media', default="https://miro.medium.com/max/3200/1*g09N-jl7JtVjVZGcd-vL2g.jpeg", null=True)
+    informacao = models.TextField(blank=True, null=True)
+    imagem = models.ImageField(blank=True, upload_to='media/',
+                               default="https://miro.medium.com/max/3200/1*g09N-jl7JtVjVZGcd-vL2g.jpeg", null=True)
     categoria_servico = models.ForeignKey(Servicos_Categoria, on_delete=models.CASCADE, blank=True, null=True)
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    avaliacao = models.FloatField(null=True, blank=True)
+    avaliacao = models.FloatField(null=True)
+
+    def set_informacao(self, informacao):
+        self.informacao = informacao
+    
+    def get_absolute_url(self):
+    	return "/config/%i/" % self.id
+ 
+    def get_full_address(self):
+        return '%s, %s, %s' % (self.endereço, self.cidade, self.estado)
+    
+    def avaliar(self, avaliacao):
+        self.avaliacao = (self.avaliacao + avaliacao) / 2
     
 class Informacoes(models.Model):
     informacao = models.TextField()
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     #perfil = models.ForeignKey(Perfil, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.informacao
+
 

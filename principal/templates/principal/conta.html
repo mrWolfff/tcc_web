@@ -1,12 +1,17 @@
 {% extends 'principal/base.html'%}
 {% block titulo %}Principal {% endblock%}
-{% block conteudo_full %}
-<div class="container">
+{% block conteudo %}
+	{% if user != request.user %}
+	<script language= "JavaScript">
+			location.href="{%  url 'index' %}";
+		</script>
+	{% endif %}
 	<br>
 	{% if user == request.user %}
 	<div class="row">	
 		<div class="col-9">
-			<a class="waves-effect waves-light btn modal-trigger" href="#modal1">Editar</a>
+			<a class="waves-effect waves-light btn modal-trigger blue" href="#modal1">Editar</a>
+			{% if request.user.categoria == 'Prestador' %}<a class="waves-effect waves-light btn modal-trigger blue" href="{% url 'config' request.user.id %}">Configurações</a>{% endif %}
 		</div>
 	</div>
 	<script type="text/javascript">
@@ -71,11 +76,12 @@
 					<span class="card-title">{{user.username}}</span>
 					<div class="divider"></div>
 					<div class="card-text">
+						<b>Avaliação: </b> {{user.avaliacao}}
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="col-sm">
+		<div class="col-sm-6">
 			<div class="card hoverable">
 				<div class="card-content">
 					<span class="card-title">Sobre {{user.get_full_name}}</span>
@@ -87,6 +93,27 @@
 				</div>
 			</div>
 		</div>
+
+		
 	</div>
-</div>
+	{% if request.user.categoria == 'Prestador' %}
+	<div class="card hoverable">
+			<div class="card-content">
+				<span class="card-title"><h5>Comentários</h5></span>
+				{% for comentario in comentarios %}
+				<span class="mdl-chip">
+						<span class="mdl-chip__text"><b>{{comentario.user_comentario.username}} </b>
+							{{comentario.comentarios}}</span>
+					</span>
+				{% endfor %}
+			</div>
+			<div class="card-action grey lighten-2">
+				{% endif %}
+				{% if request.user.categoria == 'Consumidor' %}
+				<button class="btn waves waves-light blue">Comentar</button>
+				{% endif %}
+				{% if request.user.categoria == 'Prestador' %}
+			</div>
+		</div>
+		{% endif %}
 {% endblock %}

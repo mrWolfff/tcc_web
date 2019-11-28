@@ -11,12 +11,22 @@ class Demandas(models.Model):
     user_demanda = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     categoria = models.ForeignKey(Servicos_Categoria, on_delete=models.CASCADE)
+    status = models.CharField(max_length=30, default='Ativo')
 
     class Meta:
         ordering = ['data']
 
     def __str__(self):
         return self.titulo
+    
+    def setTitulo(self, titulo):
+        self.titulo = titulo
+    
+    def setDescricao(self, descricao):
+        self.descricao = descricao
+    
+    def set_status(self):
+        self.status = 'Inativo'
 
 class Interesses(models.Model):
     interesse = models.ForeignKey(Demandas, on_delete=models.CASCADE, blank=True)
@@ -54,15 +64,7 @@ class MessageSession(models.Model):
     def get_absolute_url(self):
     	return "/messages/%i/" % self.id
 
-class Message(models.Model):
-    message = models.TextField()
-    data = models.DateTimeField(default=timezone.now)
-    from_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='from_user')
-    to_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='to_user')
-    session = models.ForeignKey(MessageSession, on_delete=models.CASCADE)
 
-    class Meta:
-        ordering = ['data']
 
 class Propostas(models.Model):
     proposta = models.TextField()
@@ -73,12 +75,26 @@ class Propostas(models.Model):
     user_proposta = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_proposta')
     to_user_proposta = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='to_user_proposta')
     demanda = models.ForeignKey(Demandas, on_delete=models.CASCADE)
+    ativo = models.BooleanField(default=True)
         
-    def get_last():
-        return Propostas.objects.latest('data')
-    def set_proposta(self):
-        pass
+    def set_status(self):
+        self.ativo = False
 
+class Message(models.Model):
+    message = models.TextField()
+    data = models.DateTimeField(default=timezone.now)
+    from_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='from_user')
+    to_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='to_user')
+    session = models.ForeignKey(MessageSession, on_delete=models.CASCADE)
+    is_proposta = models.BooleanField(default=False)
+    proposta = models.ForeignKey(Propostas, on_delete=models.CASCADE, null=True)
+    
+    def set_proposta(self, proposta):
+        self.is_proposta = True
+        self.proposta = proposta
+
+    class Meta:
+        ordering = ['data']
 
 class Servicos(models.Model):
     data_servico = models.DateTimeField(default=timezone.now)

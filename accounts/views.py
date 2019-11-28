@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import generic
 from . forms import CustomUserCreationForm, CustomUserChangeForm, CustomUser, ContaForm, SignupForm
 from .models import CustomUser, Informacoes
+from principal.models import Comentarios
 from django.contrib.auth.models import User
 from django.utils import timezone
 import pdb
@@ -16,7 +17,12 @@ from .tokens import account_activation_token
 from django.core.mail import EmailMessage
 from django.contrib.auth import get_user_model
 from django.views.decorators.csrf import csrf_exempt
-
+from rest_framework.response import Response
+from rest_framework.status import (
+    HTTP_400_BAD_REQUEST,
+    HTTP_404_NOT_FOUND,
+    HTTP_200_OK
+)
 
 
 
@@ -29,28 +35,41 @@ from django.views.decorators.csrf import csrf_exempt
 def minhaConta(request, id):
 	user = CustomUser.objects.get(id=id)
 	form = ''
+	comentarios = Comentarios.objects.filter(user_prestador=user)
+	if request.user != user:
+		redirect('index')
 	if request.POST != None:
 		form = ContaForm(request.POST or None, request.FILES or None, instance=user)
 		if form.is_valid():
-			form.save(commit=False)
+			form.save()
 			redirect('index')
+	context = {
+		'user':user,
+		'form':form,
+		'comentarios':comentarios,
+	}
 	return render(request, 'principal/conta.html', {'user': user, 'form': form})
-
-
-def editar_conta(request):
-	return render(request, 'principal/editar_conta.html')
 
 def config(request, id):
     user = CustomUser.objects.get(id=id)
-    informacao = request.POST.get('informacao')
-    if informacao:
-        if Informacoes.objects.create(informacao=informacao, user=request.user):
-            return redirect()
-    return render(request, 'principal/config.html', {'user':user})
+    if user.categoria == 'Consumidor':
+        return redirect('index')
+    informacoes = Informacoes.objects.filter(user=request.user)
+    return render(request, 'principal/config.html', {'user':user, 'informacoes':informacoes})
 
+def delete_info(request):
+    id = request.POST.get('delete')
+    info = Informacoes.objects.get(id=id)
+    info.delete()	
+    response_data = {
+            'user':request.user.id,	
+		}
+    return JsonResponse(response_data)
+    
 def config_json(request):
     response_data = {}
     if request.GET:
+        pdb.set_trace()
         info = Informacoes.objects.all()
         response_data['info'] = info
         return JsonResponse(response_data)
@@ -59,7 +78,7 @@ def config_json(request):
         informacao = request.POST.get('informacao')
         response_data = {
             'informacao':informacao,
-            'user':request.user,	
+            'user':request.user.id,	
 		}
         if Informacoes.objects.create(informacao=informacao, user=request.user):
             return JsonResponse(response_data)
