@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'allauth',
     'allauth.account',
-    'allauth.socialaccount',
+    'allauth.socialaccount', 
     #'chat',
     'rest_framework',
     'rest_framework.authtoken',
