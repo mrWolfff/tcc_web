@@ -60,7 +60,7 @@
 					<div id="help" class="modal modal-fixed-footer">
 						<div class="modal-content">
 							<h4 class="modal-title">Ajuda</h4>
-							<p>A bunch of text bla bla bla bla</p>
+							<p>A bunch of text bla bla bla bla</p>	
 						</div>
 						<div class="modal-footer grey lighten-2">
 							<a href="#!" class="modal-close waves-effect waves-green btn-flat blue">OK</a>
@@ -82,7 +82,7 @@
 						<div class="dropdown-divider"></div>
 						<a class="dropdown-item" href="{% url 'logout' %}">Sair</a>
 					</div>
-					<a href="{% url 'conta' request.user.id %}"><img class="circle" src="{{request.user.imagem}}"
+					<a href="{% url 'conta' request.user.id %}"><img class="circle" src="media/{{request.user.imagem}}"
 							style="width: 25px; height: 25px;"></a>
 				</div>
 
@@ -90,7 +90,7 @@
 		</header>
 		<div class="mdl-layout__drawer">
 			<div class="user-view">
-				<a href="{% url 'conta' request.user.id %}"><img class="circle" src="{{user.imagem}}"
+				<a href="{% url 'conta' request.user.id %}"><img class="circle" src="media/{{user.imagem}}"
 						style="width: 75px; height: 75px;"></a>
 				<a href="{% url 'conta' request.user.id %}"><span
 						class="black-text name">{{ user.get_full_name }}</span></a>

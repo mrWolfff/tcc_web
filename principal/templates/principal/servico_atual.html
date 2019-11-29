@@ -10,6 +10,7 @@
                 {% if servico.status == 'Concluído' %}
                 <b>Sugestão ou Critica do serviço realizado: </b>{{servico.sugestao_critica}}<br>
                 <b>Avaliação do serviço: </b>{{servico.avaliacao}}<br>
+                <div id="nota">
                     <img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star1"
                         style="height: 35px; width: 35px;">
                     <img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star2"
@@ -20,6 +21,8 @@
                         style="height: 35px; width: 35px;">
                     <img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star5"
                         style="height: 35px; width: 35px;">
+                </div>
+                <input type="hidden" id="nota_value" value="{{servico.avaliacao}}" name="value">
                 {% endif %}
                 {% if servico.status == 'Cancelado' or servico.status == 'Cancelado sem confirmação' %}
                 <b>Justificativa do Cancelamento: </b>{{servico.justificativa}}<br>
@@ -77,12 +80,42 @@
         var instances = M.Modal.init(elems, options);
     });
     $(document).ready(function () {
+        let nota = $('input[name=value]').val();
+        if(nota == "1,0"){
+            $('nota').empty();
+            $('nota').append('<img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star1"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star2"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star3"style="height: 35px; width: 35px;"><img id="star4" src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star4"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star5"style="height: 35px; width: 35px;">');
+
+        }
+        if(nota == "2,0"){
+            $('nota').empty();
+            $('nota').append('<img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star1"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star2"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star3"style="height: 35px; width: 35px;"><img id="star4" src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star4"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star5"style="height: 35px; width: 35px;">');
+
+        }
+        if(nota == "3,0"){
+            $('nota').empty();
+            $('nota').append('<img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star1"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star2"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star3"style="height: 35px; width: 35px;"><img id="star4" src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star4"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star5"style="height: 35px; width: 35px;">');
+
+        }
+        if(nota == "4,0"){
+            $('nota').empty();
+            $('nota').append('<img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star1"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star2"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star3"style="height: 35px; width: 35px;"><img id="star4" src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star4"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star5"style="height: 35px; width: 35px;">');
+
+        }
+        if(nota == "5,0"){
+            $('nota').empty();
+            $('nota').append('<img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star1"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star2"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star3"style="height: 35px; width: 35px;"><img id="star4" src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star4"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star5"style="height: 35px; width: 35px;">');
+
+        }
+
         $('.modal').modal();
     });
     $('#edit').click(function () {
         confirm("");
         window.location.href = "#modal";
     });
+
+    
+
     function Avaliar(estrela) {
         let cont;
         switch (estrela) {

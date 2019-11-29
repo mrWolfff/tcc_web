@@ -23,7 +23,11 @@ from rest_framework.status import (
     HTTP_404_NOT_FOUND,
     HTTP_200_OK
 )
+from django.core.mail import send_mail
 
+
+from django.conf import settings
+settings.SENDGRID_SANDBOX_MODE_IN_DEBUG=False
 
 
 
@@ -47,6 +51,7 @@ def minhaConta(request, id):
 		'user':user,
 		'form':form,
 		'comentarios':comentarios,
+  		'media_root': settings.MEDIA_ROOT,
 	}
 	return render(request, 'principal/conta.html', {'user': user, 'form': form})
 
@@ -60,6 +65,7 @@ def config(request, id):
 def delete_info(request):
     id = request.POST.get('delete')
     info = Informacoes.objects.get(id=id)
+    #pdb.set_trace()
     info.delete()	
     response_data = {
             'user':request.user.id,	
@@ -76,15 +82,17 @@ def config_json(request):
     if request.POST:
         user = CustomUser.objects.get(id=request.user.id)
         informacao = request.POST.get('informacao')
-        response_data = {
-            'informacao':informacao,
-            'user':request.user.id,	
-		}
-        if Informacoes.objects.create(informacao=informacao, user=request.user):
+        #pdb.set_trace()
+        if informacao != '':
+            response_data = {
+            	'informacao':informacao,
+            	'user':request.user.id,	
+            }
+            Informacoes.objects.create(informacao=informacao, user=request.user)
             return JsonResponse(response_data)
-    return HttpResponse('erro ao mandar JSON!')
 
 
+send_mail('Subject here', 'Here is the message.', 'from@example.com', ['to@example.com'], fail_silently=False)
 def signup(request):
 	if request.method == 'POST':
 		form = SignupForm(request.POST)
@@ -103,7 +111,9 @@ def signup(request):
 			email = EmailMessage(
 						mail_subject, message, to=[to_email]
 			)
-			email.send()
+			send_mail(mail_subject , message, 'lucasewolflew@gmail.com', [to_email], fail_silently=False)
+			#email.send()
+   			
 			return HttpResponse('Please confirm your email address to complete the registration')
 		else:
 			HttpResponse('errou')

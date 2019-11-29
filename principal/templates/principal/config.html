@@ -40,7 +40,7 @@
 
             },
             error: function (jqxhr, status, exception) {
-                alert('Exception:', exception, jqxhr, status);
+                
             }
             
         });
@@ -56,9 +56,9 @@
             },
             success: function (e) {
                 M.toast({ html: 'Informação deletada!' });
+                location.reload();
             },
             error: function (jqxhr, status, exception) {
-                alert('Exception:', exception, jqxhr, status);
             }
         });
     });
@@ -92,8 +92,7 @@
                     </div>
                 </div>
                 <div class="card-content">
-                    <span class="card-title activator grey-text text-darken-4">Informações adicionais<i
-                            class="material-icons right">more_vert</i></span>
+                    <span class="card-title grey-text text-darken-4">Informações adicionais</span>
 
                     <ul class="collapsible" id="info">
                         <li>
@@ -131,7 +130,7 @@
                                             <button type="submit" class="btn waves-effect waves-light red"
                                                 id="delete_info"><i class="material-icons">delete</i></button>
                                         </form>
-                                    </div>
+                                    </div>  
                                 </div>
                             </div>
                         </li>

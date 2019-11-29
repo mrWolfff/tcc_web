@@ -316,7 +316,7 @@ def atualizarDados(request):
         form = CustomUserChangeForm(
             request.POST or None, request.FILES or None, instance=user)
         if form.is_valid():
-            form.save(commit=False)
+            form.save()
             return redirect('index')
     return render(request, 'principal/atualizar_dados.html', {'form': form, 'user': user})
 

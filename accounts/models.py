@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 class Servicos_Categoria(models.Model):
     categoria = models.TextField()
-    imagem = models.ImageField(upload_to='../media/')
+    imagem = models.ImageField(upload_to='')
 
     def __str__(self):
         return self.categoria
@@ -65,7 +65,7 @@ class CustomUser(AbstractUser):
     cidade = models.CharField(max_length=50, blank=True, null=True)
     endereço = models.CharField(max_length=150, blank=True, null=True)
     informacao = models.TextField(blank=True, null=True)
-    imagem = models.ImageField(blank=True, upload_to='media/',
+    imagem = models.ImageField(blank=True, upload_to='',
                                default="https://miro.medium.com/max/3200/1*g09N-jl7JtVjVZGcd-vL2g.jpeg", null=True)
     categoria_servico = models.ForeignKey(Servicos_Categoria, on_delete=models.CASCADE, blank=True, null=True)
     avaliacao = models.FloatField(null=True)

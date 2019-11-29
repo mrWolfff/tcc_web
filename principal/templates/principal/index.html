@@ -164,7 +164,7 @@
 			<div class="col-3"><br>
 				<div class="card hoverable">
 					<div class="card-image">
-						<img src="{{categoria.imagem}}" style="width: 200px; height: 100px;">
+						<img src="{{categoria.imagem}}" style="max-width: 200px; max-height: 100px;">
 					</div>
 					<div class="card-content">
 						<span class="card-title">
@@ -172,7 +172,7 @@
 						</span>
 						<p>{{categoria.categoria}}</p><br>
 					</div>
-					,<a href="{% url 'pesquisa' categoria.id %}">
+					<a href="{% url 'pesquisa' categoria.id %}">
 						<div class="card-action hoverable grey lighten-2">
 							<span>Ver mais</span>
 						</div>
