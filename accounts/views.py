@@ -101,7 +101,7 @@ def signup(request):
 			mail_subject = 'Ative seu E-mail no Sistema.'
 			message = render_to_string('acc_active_email.html', {
 				'user': user,
-				'domain': '127.0.0.1:8000', 
+				'domain': 'http://mrwolf.pythonanywhere.com/', 
 				'uid': urlsafe_base64_encode(force_bytes(user.pk)),
 				'token': account_activation_token.make_token(user),
 			})
