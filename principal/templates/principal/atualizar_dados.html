@@ -3,27 +3,27 @@
 {% block conteudo %}
 {% load crispy_forms_tags %}
 
-<br><br><br>
+<br><br>
 <form method="POST" enctype="multipart/form-data">
-  {% csrf_token %}
-  <div class="row">
+	{% csrf_token %}
+	<div class="row">
 		<div class="col-2">
 		</div>
 		<div class="col-8">
-			<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--3dp">
-				<div class="mdl-card mdl-cell mdl-cell--11-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
-					<div class="mdl-card__supporting-text">
-						{% crispy form %}
-						<input type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
-						
-					</div>
+			<div class="card hoverable">
+				<div class="card-content">
+					<span class="card-title">Olá {{request.user.username}}</span>
+						<h6>Por favor, preencha os campos!</h6>
+						{% crispy form %} 
+						<input type="submit" class="waves btn green" value="OK">
 				</div>
-			</section>
+
+			</div>
 		</div>
 		<div class="col-2">
 		</div>
 	</div>
-  
-  <br>
+
+	<br>
 </form>
 {% endblock %}

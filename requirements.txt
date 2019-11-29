@@ -4,3 +4,4 @@ mysqlclient
 Pillow
 django-allauth
 djangorestframework
+django-sendgrid-v5
