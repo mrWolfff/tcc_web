@@ -91,8 +91,6 @@ def config_json(request):
             Informacoes.objects.create(informacao=informacao, user=request.user)
             return JsonResponse(response_data)
 
-
-send_mail('Subject here', 'Here is the message.', 'from@example.com', ['to@example.com'], fail_silently=False)
 def signup(request):
 	if request.method == 'POST':
 		form = SignupForm(request.POST)
