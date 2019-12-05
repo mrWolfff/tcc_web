@@ -9,12 +9,11 @@
         <div class="card hoverable">
             <article class="card-group-item">
                 <header class="card-header">
-                    <h6 class="title"> <i class="material-icons">
-                            menu
-                            </i> Menu</h6>
+                    <h6 class="title"> Menu</h6>
                 </header>
                 <div class="filter-content">
                     <div class="list-group list-group-flush">
+                        <a href="{% url 'index' %}" class="list-group-item">Início </a>
                         <a href="{% url 'cadastro_demanda' %}" class="list-group-item">Criar uma nova demanda </a>
                         <a href="{% url 'demandas' %}" class="list-group-item">Minhas Demandas <span
                                 class="float-right badge badge-light round"></span> </a>
@@ -32,12 +31,11 @@
         <div class="card hoverable">
             <article class="card-group-item">
                 <header class="card-header">
-                        <h6 class="title"><i class="material-icons">
-                                menu
-                                </i> Menu</h6>
+                        <h6 class="title">Menu</h6>
                 </header>
                 <div class="filter-content">
                     <div class="list-group list-group-flush">
+                        <a href="{% url 'index' %}" class="list-group-item">Início </a>
                         <a href="{% url 'servicos' %}" class="list-group-item">Meus Serviços <span
                                 class="float-right badge badge-light round"></span> </a>
                         <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
@@ -56,7 +54,7 @@
             <div class="card hoverable">
                 <div class="card-content">
                     <span class="card-title">
-                        <a href="{% url 'messagesUser' it.id %}"><img src="{{it.from_user.imagem}}" alt=""
+                        <a href="{% url 'messagesUser' it.id %}"><img src="{{it.from_user.imagem.url}}" alt=""
                                 class="circle" style="width: 50px;height: 50px;">
                             <span class="email-title">{{ it.from_user.get_full_name }}</span></a>
                     </span>
@@ -70,7 +68,7 @@
             <div class="card carousel-indicators hoverable">
                 <div class="card-content">
                     <span class="card-title">
-                        <a href="{% url 'messagesUser' it.id %}"><img src="{{it.to_user.imagem}}" alt=""
+                        <a href="{% url 'messagesUser' it.id %}"><img src="{{it.to_user.imagem.url}}" alt=""
                                 class="circle" style="width: 50px;height: 50px;">
                             <span class="email-title">{{ it.to_user.get_full_name }}</span></a>
                     </span>

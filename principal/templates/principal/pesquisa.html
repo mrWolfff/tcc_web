@@ -1,5 +1,5 @@
 {% extends 'principal/base.html'%}
-{% block titulo %}Usuarios encontrados{% endblock%}
+{% block titulo %}Usuarios encontrados da categoria{% endblock%}
 {% block oferta %}{% endblock %}
 {% block conteudo %}
 {% load static %}
@@ -28,6 +28,7 @@
 				</header>
 				<div class="filter-content">
 					<div class="list-group list-group-flush">
+							<a href="{% url 'index' %}" class="list-group-item">Início </a>
 						<a href="{% url 'cadastro_demanda' %}" class="list-group-item">Criar uma nova demanda </a>
 						<a href="{% url 'servicos'%}" class="list-group-item">Meus Serviços <span
                   class="float-right badge badge-light round"></span> </a>
@@ -44,7 +45,7 @@
 			<div class="card-content">
 				<div class="row">
 					<div class="col-sm-2">
-						<img src="{{result.imagem}}" class="circle" style="width: 50px; height: 50px;">
+						<img src="{{result.imagem.url}}" class="circle" style="width: 50px; height: 50px;">
 					</div>
 					<div class="col-sm-10">
 						<b>Nome: </b>{{ result.get_full_name }}<br>

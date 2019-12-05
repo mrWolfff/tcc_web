@@ -1,121 +1,322 @@
 {% extends 'principal/base.html'%}
-{% block titulo %}Principal {% endblock%}
+{% block titulo %}Perfil de {{user.username}}{% endblock%}
 {% load static %}
 {% block conteudo %}
 
-	{% if user != request.user %}
-	<script language= "JavaScript">
-			location.href="{%  url 'index' %}";
-		</script>
-	{% endif %}
-	<br>
-	{% if user == request.user %}
-	<div class="row">	
-		<div class="col-9">
-			<a class="waves-effect waves-light btn modal-trigger blue" href="#modal1">Editar</a>
-			{% if request.user.categoria == 'Prestador' %}<a class="waves-effect waves-light btn modal-trigger blue" href="{% url 'config' request.user.id %}">Configurações</a>{% endif %}
-		</div>
-	</div>
-	<script type="text/javascript">
-		document.addEventListener('DOMContentLoaded', function () {
-			var elems = document.querySelectorAll('.modal');
-			var instances = M.Modal.init(elems, options);
+<script type="text/javascript">
+	document.addEventListener('DOMContentLoaded', function () {
+		var elems = document.querySelectorAll('.modal');
+		var instances = M.Modal.init(elems, options);
+	});
+	$(document).ready(function () {
+		$('.modal').modal();
+	});
+	document.addEventListener('DOMContentLoaded', function () {
+		var elems = document.querySelectorAll('.collapsible');
+		var instances = M.Collapsible.init(elems, options);
+	});
+
+	$(document).ready(function () {
+		$('.collapsible').collapsible();
+	});
+	$('#add_information').click(function () {
+		alert();
+	});
+	$(document).on('click', '#add_information', function (event) {
+		let info = $("textarea[name='informacao']").val();
+		event.preventDefault();
+		$.ajax({
+			type: 'POST',
+			url: '{% url "config_json" %}',
+			data: {
+				csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+				informacao: $("textarea[name='informacao']").val(),
+			},
+			success: function (e) {
+				M.toast({ html: 'Informação adicionada!' });
+				$("textarea[name='informacao']").val("");
+				$('#info').append('<li><div class="collapsible-header"><i class="material-icons">info</i>' + info + '</div><div class="collapsible-body"><span>' + info + '</span></div></li>');
+				$('.collapsible').collapsible();
+
+			},
+			error: function (jqxhr, status, exception) {
+
+			}
+
 		});
+	});
 
-
-		$(document).ready(function () {
-			$('.modal').modal();
-		});
-	</script>
-	<div id="modal1" class="modal modal-fixed-footer">
-		<div class="modal-content">
-			<h4>Editar Perfil</h4>
-			<form method="POST" enctype="multipart/form-data" class="form-group">
-				{% csrf_token %}
-				<div class="row">
-					<div class="col-4">
-						<img src="{{user.imagem}}" class="rounded float-left" alt="..."
-							style="max-height: 200px;max-width: 200px;">
-						<span class="mdl-chip">
-							<span class="mdl-chip__text">Trocar Imagem Perfil</span>
-						</span>
-						<input type="file" class="form-control" name="imagem">
-					</div>
-					<div class="col-4">
-						<input type="text" class="validate" value="{{user.first_name}}" name="first_name">
-						<label>Nome</label>
-						<input type="text" class="validate" value="{{user.cpf_cnpj}}" name="cpf_cnpj">
-						<label>CPF/CNPJ</label>
-						<input type="text" class="validate" value="{{user.celular}}" name="celular">
-						<label>Celular</label>
-
-					</div>
-					<div class="col-4">
-						<input type="text" class="validate" value="{{user.last_name}}" name="last_name">
-						<label>Sobrenome</label>
-						<input type="date" class="validate" value="{{user.data_nasc}}" name="data_nasc">
-						<label>Data de Nascimento</label>
-						<input type="text" class="validate" value="{{user.telefone}}" name="date">
-						<label>Telefone</label>
-					</div>
-				</div>
-		</div>
-		<div class="modal-footer">
-			<input type="submit"
-				class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
-				value="Pronto">
-			</form>
-		</div>
+</script>
+<br>
+{% if user == request.user %}
+<div class="row">
+	<div class="col-9">
+		<a class="waves-effect waves-light btn modal-trigger blue" href="#modal1">Editar</a>
+		{% if request.user.categoria == 'Prestador' %}<a class="waves-effect waves-light btn modal-trigger blue"
+			href="{% url 'config' request.user.id %}">Configurações</a>{% endif %}
 	</div>
-	{% endif %}
-	<div class="row">
-		<div class="col-sm-4">
-			<div class="card hoverable">
-				<div class="card-content">
-					<div class="card-image">
-						<img src="../media/{{user.imagem}}" class="circle" style="max-height: 200px; max-width: 220px;">
-						</div>
-					<span class="card-title">{{user.username}}</span>
-					<div class="divider"></div>
-					<div class="card-text">
-						<b>Avaliação: </b> {{user.avaliacao}}
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-sm-6">
-			<div class="card hoverable">
-				<div class="card-content">
-					<span class="card-title">Sobre {{user.get_full_name}}</span>
-					<div class="card-text">
-						<b>Nome: </b>{{user.get_full_name}}<br>
-						<b>Data de Nascimento: </b>{{user.nascimento}}<br>
-						<b></b>
-					</div>
-				</div>
-			</div>
-		</div>
+</div>
+<script type="text/javascript">
+	document.addEventListener('DOMContentLoaded', function () {
+		var elems = document.querySelectorAll('.modal');
+		var instances = M.Modal.init(elems, options);
+	});
 
-		
-	</div>
-	{% if request.user.categoria == 'Prestador' %}
-	<div class="card hoverable">
-			<div class="card-content">
-				<span class="card-title"><h5>Comentários</h5></span>
-				{% for comentario in comentarios %}
-				<span class="mdl-chip">
-						<span class="mdl-chip__text"><b>{{comentario.user_comentario.username}} </b>
-							{{comentario.comentarios}}</span>
+
+	$(document).ready(function () {
+		$('.modal').modal();
+	});
+</script>
+<div id="modal1" class="modal modal-fixed-footer">
+	<div class="modal-content">
+		<h4>Editar Perfil</h4>
+		<form method="POST" enctype="multipart/form-data" class="form-group">
+			{% csrf_token %}
+			<div class="row">
+				<div class="col-4">
+					<img src="{{user.imagem}}" class="rounded float-left" alt="..."
+						style="max-height: 200px;max-width: 200px;">
+					<span class="mdl-chip">
+						<span class="mdl-chip__text">Trocar Imagem Perfil</span>
 					</span>
-				{% endfor %}
+					<input type="file" class="form-control" name="imagem">
+				</div>
+				<div class="col-4">
+					<input type="text" class="validate" value="{{user.first_name}}" name="first_name">
+					<label>Nome</label>
+					<input type="text" class="validate" value="{{user.cpf_cnpj}}" name="cpf_cnpj">
+					<label>CPF/CNPJ</label>
+					<input type="text" class="validate" value="{{user.celular}}" name="celular">
+					<label>Celular</label>
+
+				</div>
+				<div class="col-4">
+					<input type="text" class="validate" value="{{user.last_name}}" name="last_name">
+					<label>Sobrenome</label>
+					<input type="date" class="validate" value="{{user.data_nasc}}" name="data_nasc">
+					<label>Data de Nascimento</label>
+					<input type="text" class="validate" value="{{user.telefone}}" name="date">
+					<label>Telefone</label>
+				</div>
 			</div>
-			<div class="card-action grey lighten-2">
-				{% endif %}
-				{% if request.user.categoria == 'Consumidor' %}
-				<button class="btn waves waves-light blue">Comentar</button>
-				{% endif %}
-				{% if request.user.categoria == 'Prestador' %}
+	</div>
+	<div class="modal-footer">
+		<input type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+			value="Pronto">
+		</form>
+	</div>
+</div>
+{% endif %}
+<div class="row">
+	<div class="col-sm-5">
+		<div class="card hoverable">
+			<div class="card-content">
+				<div class="card-image">
+					<img src="{{user.imagem.url}}" class="circle" style="max-height: 200px; max-width: 220px;">
+				</div>
+				<span class="card-title">{{user.username}}</span>
+				<div class="divider"></div>
+				<div class="card-text">
+					{% if user.categoria == 'Prestador'%}
+					<b>Avaliação: </b> {{user.avaliacao}}
+
+					<div id="nota">
+						<img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star1"
+							style="height: 35px; width: 35px;">
+						<img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star2"
+							style="height: 35px; width: 35px;">
+						<img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star3"
+							style="height: 35px; width: 35px;">
+						<img id="star4" src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star4"
+							style="height: 35px; width: 35px;">
+						<img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star5"
+							style="height: 35px; width: 35px;">
+					</div>
+					<input type="hidden" id="nota_value" value="{{user.avaliacao}}" name="value">
+					<script type="text/javascript">
+						$(document).ready(function () {
+							let nota = $('input[name=value]').val();
+							if (nota >= '1') {
+								$('#nota').empty();
+								$('#nota').append('<img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star1"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star2"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star3"style="height: 35px; width: 35px;"><img id="star4" src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star4"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star5"style="height: 35px; width: 35px;">');
+
+							}
+							if (nota >= "2") {
+								$('#nota').empty();
+								$('#nota').append('<img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star1"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star2"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star3"style="height: 35px; width: 35px;"><img id="star4" src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star4"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star5"style="height: 35px; width: 35px;">');
+
+							}
+							if (nota >= '3') {
+								$('#nota').empty();
+								$('#nota').append('<img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star1"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star2"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star3"style="height: 35px; width: 35px;"><img id="star4" src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star4"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star5"style="height: 35px; width: 35px;">');
+
+							}
+							if (nota >= '4') {
+								$('#nota').empty();
+								$('#nota').append('<img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star1"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star2"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star3"style="height: 35px; width: 35px;"><img id="star4" src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star4"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star5"style="height: 35px; width: 35px;">');
+
+							}
+							if (nota >= '5') {
+								$('#nota').empty();
+								$('#nota').append('<img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star1"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star2"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star3"style="height: 35px; width: 35px;"><img id="star4" src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star4"style="height: 35px; width: 35px;"><img src="https://image.flaticon.com/icons/svg/148/148841.svg" id="star5"style="height: 35px; width: 35px;">');
+
+							}
+						});
+					</script>
+					{% endif %}
+				</div>
 			</div>
 		</div>
+	</div>
+	<div class="col-sm">
+		<div class="card hoverable">
+			<div class="card-content">
+				<span class="card-title">Sobre {{user.get_full_name}}</span>
+				<div class="card-text">
+					<b>Nome: </b>{{user.get_full_name}}<br>
+					<b>Data de Nascimento: </b>{{user.nascimento}}<br>
+					<b></b>
+				</div>
+			</div>
+		</div>
+		<div class="card hoverable">
+			<div class="card-content">
+				<span class="card-title">
+					Informações Adicionais:
+				</span>
+				<ul class="collapsible" id="info">
+					{% if request.user == user %}
+					<li>
+						<div class="collapsible-header"><i class="material-icons">add</i>Adicione informações
+						</div>
+						<div class="collapsible-body">
+							<span>
+								<form method="POST">
+									{% csrf_token %}
+									<div class="row">
+										<div class="col-9">
+											<textarea class="materialize-textarea" name="informacao"
+												id="field_info"></textarea>
+										</div>
+										<button class="waves-effect -light btn green" id="add_information">OK</button>
+									</div>
+								</form>
+							</span></div>
+					</li>
+					{% endif %}
+					{% for info in informacoes %}
+					<script type="text/javascript">
+							$(document).on('click', '#delete_info{{info.id}}', function (event) {
+								event.preventDefault();
+								$.ajax({
+									type: 'POST',
+									url: '{% url "delete_info" %}',
+									data: {
+										csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+										delete: $("input[name='delete']").val(),
+									},
+									success: function (e) {
+										M.toast({ html: 'Informação deletada!' });
+										location.reload();
+									},
+									error: function (jqxhr, status, exception) {
+									}
+								});
+							});
+					</script>
+					<li>
+						<div class="collapsible-header">
+							<i class="material-icons">info</i><span>{{info.informacao}}</span>
+						</div>
+						<div class="collapsible-body">
+							<div class="row">
+								<div class="col-10">
+									{{info.informacao}}
+								</div>
+								{% if request.user == user %}
+								<div class="col-2">
+									<form method="POST" action="{% url 'delete_info' %}">
+										{% csrf_token %}
+										<input type="hidden" name="delete" value="{{info.id}}">
+										<button type="submit" class="btn waves-effect waves-light red" id="d"><i
+												class="material-icons">delete</i></button>
+									</form>
+								</div>
+								{% endif %}
+							</div>
+						</div>
+					</li>
+					{% endfor %}
+
+				</ul>
+			</div>
+		</div>
+	</div>
+
+
+
+
+</div>
+{% if user.categoria == 'Prestador' and  request.user.categoria  == 'Consumidor' %}
+<div class="card hoverable">
+	<div class="card-content">
+		<span class="card-title">
+			<h5>Comentários</h5>
+		</span>
+		<div class="divider"></div><br>
+		{% for comentario in comentarios %}
+		<span class="mdl-chip">
+			<span class="mdl-chip__text"><b>{{comentario.user_comentario.username}} </b>
+				{{comentario.comentario}}</span>
+		</span>
+		<p style="font-size: 9px;">as {{comentario.data}}</p>
+		{% endfor %}
+	</div>
+	<div class="card-action grey lighten-2">
+		{% if request.user.categoria == 'Consumidor' %}
+		<a class="waves-effect waves-light btn modal-trigger blue" href="#comentar">Comentar<i
+				class="material-icons">comment</i></a>
 		{% endif %}
+		{% if request.user.categoria == 'Prestador' %}
+	</div>
+</div>
+{% endif %}
+{% endif %}
+
+{% if request.user.categoria == 'Prestador' %}
+<div class="card hoverable">
+	<div class="card-content">
+		<span class="card-title">
+			<h5>Comentários</h5>
+		</span>
+		<div class="divider"></div><br>
+		{% for comentario in comentarios %}
+		<span class="mdl-chip">
+			<span class="mdl-chip__text"><b>{{comentario.user_comentario.username}} </b>
+				{{comentario.comentario}}</span>
+		</span>
+		<p style="font-size: 9px;">as {{comentario.data}}</p>
+		{% endfor %}
+	</div>
+	<div class="card-action grey lighten-2">
+	</div>
+</div>
+{% endif %}
+
+<div class="modal modal-fixed-footer" id="comentar">
+	<div class="modal-content">
+		<h5 class="modal-title">Comentar sobre o usuário {{user.username}}</h5>
+		<form method="POST" action="{% url 'comment_user' %}">
+			{% csrf_token %}
+			<textarea class="materialize-textarea" name='comentario'></textarea>
+			<label>Comentário</label>
+			<input type="hidden" name="user" value="{{user.id}}"><br>
+
+	</div>
+	<div class="modal-footer">
+		<button type="submit" class="waves waves-light btn green">Comentar</button>
+		</form>
+	</div>
+
+</div>
 {% endblock %}

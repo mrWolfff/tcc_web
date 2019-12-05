@@ -1,5 +1,5 @@
 {% extends 'principal/base.html'%}
-{% block titulo %}Cadastro Demanda{% endblock%}
+{% block titulo %}Meus Serviços{% endblock%}
 {% block conteudo %}
 
 
@@ -13,11 +13,12 @@
         </header>
         <div class="filter-content">
           <div class="list-group list-group-flush">
+              <a href="{% url 'index' %}" class="list-group-item">Início </a>
             <a href="{% url 'cadastro_demanda' %}" class="list-group-item">Criar uma nova demanda </a>
             <a href="{% url 'demandas' %}" class="list-group-item">Minhas Demandas <span
                 class="float-right badge badge-light round"></span> </a>
-            <a href="#" class="list-group-item">Meus Serviços <span
-                class="float-right badge badge-light round"></span> </a>
+            <a href="#" class="list-group-item">Meus Serviços <span class="float-right badge badge-light round"></span>
+            </a>
             <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
                 class="float-right badge badge-light round"></span>
             </a>
@@ -34,6 +35,7 @@
         </header>
         <div class="filter-content">
           <div class="list-group list-group-flush">
+              <a href="{% url 'index' %}" class="list-group-item">Início </a>
             <a href="{% url 'servicos' %}" class="list-group-item">Meus Serviços <span
                 class="float-right badge badge-light round"></span> </a>
             <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
@@ -54,9 +56,8 @@
       <li class="tab"><a href="#test3">Cancelados</a></li>
     </ul>
 
-    {% for servico in servicos %}
-    {% if servico.status == 'Ativo' %}
     <div id="test1" class="col s12">
+      {% for servico in servicos %}
       <div class="card hoverable">
         <div class="card-content">
           <span class="card-title">
@@ -69,76 +70,281 @@
           <b>Status: </b>{{servico.status}}.
         </div>
         <div class="card-action grey lighten-2">
-            <form method="POST" action="{% url 'servico_atual' servico.id %}">
-                {% csrf_token %}
-              <button class="btn btn-info" id="servico_atual" type="submit">Ver Serviço</button></p>
-              </form>
+          <form method="POST" action="{% url 'servico_atual' servico.id %}">
+            {% csrf_token %}
+            <button class="btn btn-info" id="servico_atual" type="submit">Ver Serviço</button></p>
+          </form>
         </div>
       </div>
+      <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+          var elems = document.querySelectorAll('.modal');
+          var instances = M.Modal.init(elems, options);
+        });
+        $(document).ready(function () {
+          $('.modal').modal();
+        });
+        $('#servico_atual').click(function (event) {
+          window.location.href = "{% url 'servico_atual' servico.id %}";
+        });
+        var instance = M.Tabs.init(el, options);
+        $(document).ready(function () {
+          $('.tabs').tabs();
+        });
+        var instance = M.Tabs.getInstance(elem);
+      </script>
+      {% endfor %}
     </div>
-    {% endif %}
-    {% if servico.status == 'Concluído' %}
     <div id="test2" class="col s12">
-        <div class="card hoverable">
+      {% for servico in servicos_concluidos %}
+      <div class="card hoverable">
+        <div class="card-content">
+          <span class="card-title">
+            <h5>Serviço sobre a demanda: {{servico.proposta.demanda}}</h5>
+          </span>
+          <b>Proposta:</b> {{servico.proposta.proposta}}.<br>
+          <b>Publicado em:</b> {{servico.data_servico}}.<br>
+          <b>Usuário:</b> {{servico.proposta.user_proposta}}.<br>
+          <b>Categoria de Serviço:</b> {{servico.proposta.demanda.categoria}}.<br>
+          <b>Status: </b>{{servico.status}}.
+          {% if request.user.categoria == 'Consumidor' %}
+          {% if servico.avaliacao == 0 %}
+          <div class="card">
             <div class="card-content">
-              <span class="card-title">
-                <h5>Serviço sobre a demanda: {{servico.proposta.demanda}}</h5>
-              </span>
-              <b>Proposta:</b> {{servico.proposta.proposta}}.<br>
-              <b>Publicado em:</b> {{servico.data_servico}}.<br>
-              <b>Usuário:</b> {{servico.proposta.user_proposta}}.<br>
-              <b>Categoria de Serviço:</b> {{servico.proposta.demanda.categoria}}.<br>
-              <b>Status: </b>{{servico.status}}.
-            </div>
-            <div class="card-action grey lighten-2">
-                <form method="POST" action="{% url 'servico_atual' servico.id %}">
-                    {% csrf_token %}
-                  <button class="btn btn-info" id="servico_atual" type="submit">Ver Serviço</button></p>
-                  </form>
+              <p class="card-title">O Prestador finalizou o serviço, agora você precisa avalia-lo.</p>
+              <a class="waves-effect waves-light btn modal-trigger green" href="#{{servico.id}}">Avaliar
+                <i class="material-icons align-top">
+                  stars
+                </i></a>
             </div>
           </div>
+          {% endif %}
+          {% endif %}
+          {% if request.user.categoria == 'Prestador' %}
+          {% if servico.avaliacao_do_prestador == 0 %}
+          <div class="card">
+            <div class="card-content">
+              <p class="card-title">O Consumidor finalizou o serviço, agora você precisa avaliar como foi o serviço.</p>
+              <a class="waves-effect waves-light btn modal-trigger green" href="#{{servico.id}}">Avaliar
+                <i class="material-icons align-top">
+                  stars
+                </i></a>
+            </div>
+          </div>
+          {% endif %}
+          {% endif %}
+        </div>
+        <div class="card-action grey lighten-2">
+          <form method="POST" action="{% url 'servico_atual' servico.id %}">
+            {% csrf_token %}
+            <button class="btn btn-info" id="servico_atual" type="submit">Ver Serviço</button></p>
+          </form>
+        </div>
+      </div>
+      <div class="modal modal-fixed-footer h-50" id="{{servico.id}}">
+        <div class="modal-content">
+          {% if request.user.categoria == 'Prestador' %}
+          <h6 class="modal-title">Avalie o Serviço prestado!</h6>
+          {% endif %}
+          {% if request.user.categoria == 'Consumidor' %}
+          <h6 class="modal-title">Avalie o Prestador sobre o serviço prestado!</h6>
+          {% endif %}
+          <br>
+          <div class="row">
+            <div class="col-1"></div>
+
+            <a href="javascript:void(0)" onclick="Avaliar(1)">
+              <img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star1{{servico.id}}"
+                style="height: 35px; width: 35px;"></a>
+
+            <a href="javascript:void(0)" onclick="Avaliar(2)">
+              <img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star2{{servico.id}}"
+                style="height: 35px; width: 35px;"></a>
+
+            <a href="javascript:void(0)" onclick="Avaliar(3)">
+              <img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star3{{servico.id}}"
+                style="height: 35px; width: 35px;"></a>
+
+            <a href="javascript:void(0)" onclick="Avaliar(4)">
+              <img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star4{{servico.id}}"
+                style="height: 35px; width: 35px;"></a>
+
+            <a href="javascript:void(0)" onclick="Avaliar(5)">
+              <img src="https://image.flaticon.com/icons/svg/149/149222.svg" id="star5{{servico.id}}"
+                style="height: 35px; width: 35px;"></a>
+          </div>
+          <label id="rating{{servico.id}}"></label>
+          <form method="POST" action="{% url 'avaliar_servico' %}">
+            {% csrf_token %}
+            <input type="hidden" name="servico" value="{{servico.id}}">
+            {% if request.user.categoria == 'Prestador' %}
+            <input id="input_rating{{servico.id}}" type="hidden" name="avaliacao_do_prestador" class="w-25">
+            {% endif %}
+            {% if request.user.categoria == 'Consumidor' %}
+            <input id="input_rating{{servico.id}}" type="hidden" name="avaliacao" class="w-25">
+            {% endif %}
+          
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn green waves waves-light">Avaliar</button>
+        </form>
+        </div>
+      </div>
+      <script type="text/javascript">
+        function Avaliar(estrela) {
+          let cont;
+          switch (estrela) {
+            case 1:
+              if ($('#star1{{servico.id}}').attr("src") == 'https://image.flaticon.com/icons/svg/148/148841.svg') {
+                $('#star1{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                $('#star2{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                $('#star3{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                $('#star4{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                $('#star5{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                cont = 0;
+                $('#rating{{servico.id}}').text(cont);
+                $('#input_rating{{servico.id}}').val(cont);
+              } else {
+                $('#star1{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                cont = 1;
+                $('#rating{{servico.id}}').text(cont);
+                $('#input_rating{{servico.id}}').val(cont);
+              }
+              break;
+            case 2:
+              if ($('#star2{{servico.id}}').attr("src") == 'https://image.flaticon.com/icons/svg/148/148841.svg') {
+                $('#star2{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                $('#star3{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                $('#star4{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                $('#star5{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                cont = 1;
+                $('#rating{{servico.id}}').text(cont);
+                $('#input_rating{{servico.id}}').val(cont);
+              } else {
+                $('#star1{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                $('#star2{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                cont = 2;
+                $('#rating{{servico.id}}').text(cont);
+                $('#input_rating{{servico.id}}').val(cont);
+              }
+              break;
+            case 3:
+              if ($('#star3{{servico.id}}').attr("src") == 'https://image.flaticon.com/icons/svg/148/148841.svg') {
+                $('#star3{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                $('#star4{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                $('#star5{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                cont = 2;
+                $('#rating{{servico.id}}').text(cont);
+                $('#input_rating{{servico.id}}').val(cont);
+              } else {
+                $('#star1{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                $('#star2{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                $('#star3{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                cont = 3;
+                $('#rating{{servico.id}}').text(cont);
+                $('#input_rating{{servico.id}}').val(cont);
+              }
+              break;
+            case 4:
+              if ($('#star4{{servico.id}}').attr("src") == 'https://image.flaticon.com/icons/svg/148/148841.svg') {
+                $('#star4{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                $('#star5{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                cont = 3;
+                $('#rating{{servico.id}}').text(cont);
+                $('#input_rating{{servico.id}}').val(cont);
+              } else {
+                $('#star1{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                $('#star2{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                $('#star3{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                $('#star4{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                cont = 4;
+                $('#rating{{servico.id}}').text(cont);
+                $('#input_rating{{servico.id}}').val(cont);
+              }
+
+              break;
+            case 5:
+              if ($('#star5{{servico.id}}').attr("src") == 'https://image.flaticon.com/icons/svg/148/148841.svg') {
+                $('#star5{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/149/149222.svg");
+                cont = 4;
+                $('#rating{{servico.id}}').text(cont);
+                $('#input_rating{{servico.id}}').val(cont);
+              } else {
+                $('#star1{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                $('#star2{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                $('#star3{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                $('#star4{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                $('#star5{{servico.id}}').attr("src", "https://image.flaticon.com/icons/svg/148/148841.svg");
+                cont = 5;
+                $('#rating{{servico.id}}').text(cont);
+                $('#input_rating{{servico.id}}').val(cont);
+                console.log(cont);
+              }
+              break;
+            default:
+              console.log("Erro");
+
+          }
+
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+          var elems = document.querySelectorAll('.modal');
+          var instances = M.Modal.init(elems, options);
+        });
+        $(document).ready(function () {
+          $('.modal').modal();
+        });
+        $('#servico_atual').click(function (event) {
+          window.location.href = "{% url 'servico_atual' servico.id %}";
+        });
+        var instance = M.Tabs.init(el, options);
+        $(document).ready(function () {
+          $('.tabs').tabs();
+        });
+        var instance = M.Tabs.getInstance(elem);
+      </script>
+      {% endfor %}
     </div>
-    {% endif %}
-    {% if servico.status == 'Cancelado' %}
     <div id="test3" class="col s12">
-        <div class="card hoverable">
-            <div class="card-content">
-              <span class="card-title">
-                <h5>Serviço sobre a demanda: {{servico.proposta.demanda}}</h5>
-              </span>
-              <b>Proposta:</b> {{servico.proposta.proposta}}.<br>
-              <b>Publicado em:</b> {{servico.data_servico}}.<br>
-              <b>Usuário:</b> {{servico.proposta.user_proposta}}.<br>
-              <b>Categoria de Serviço:</b> {{servico.proposta.demanda.categoria}}.<br>
-              <b>Status: </b>{{servico.status}}.
-            </div>
-            <div class="card-action grey lighten-2">
-              <form method="POST" action="{% url 'servico_atual' servico.id %}">
-                {% csrf_token %}
-              <button class="btn btn-info" id="servico_atual" type="submit">Ver Serviço</button></p>
-              </form>
-            </div>
-          </div>
+      {% for servico in servicos_cancelados %}
+      <div class="card hoverable">
+        <div class="card-content">
+          <span class="card-title">
+            <h5>Serviço sobre a demanda: {{servico.proposta.demanda}}</h5>
+          </span>
+          <b>Proposta:</b> {{servico.proposta.proposta}}.<br>
+          <b>Publicado em:</b> {{servico.data_servico}}.<br>
+          <b>Usuário:</b> {{servico.proposta.user_proposta}}.<br>
+          <b>Categoria de Serviço:</b> {{servico.proposta.demanda.categoria}}.<br>
+          <b>Status: </b>{{servico.status}}.
+        </div>
+        <div class="card-action grey lighten-2">
+          <form method="POST" action="{% url 'servico_atual' servico.id %}">
+            {% csrf_token %}
+            <button class="btn btn-info" id="servico_atual" type="submit">Ver Serviço</button></p>
+          </form>
+        </div>
+      </div>
+      <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+          var elems = document.querySelectorAll('.modal');
+          var instances = M.Modal.init(elems, options);
+        });
+        $(document).ready(function () {
+          $('.modal').modal();
+        });
+        $('#servico_atual').click(function (event) {
+          window.location.href = "{% url 'servico_atual' servico.id %}";
+        });
+        var instance = M.Tabs.init(el, options);
+        $(document).ready(function () {
+          $('.tabs').tabs();
+        });
+        var instance = M.Tabs.getInstance(elem);
+      </script>
+      {% endfor %}
     </div>
-    {% endif %}
-    <script type="text/javascript">
-      document.addEventListener('DOMContentLoaded', function () {
-        var elems = document.querySelectorAll('.modal');
-        var instances = M.Modal.init(elems, options);
-      });
-      $(document).ready(function () {
-        $('.modal').modal();
-      });
-      $('#servico_atual').click(function (event) {
-        window.location.href = "{% url 'servico_atual' servico.id %}";
-      });
-      var instance = M.Tabs.init(el, options);
-      $(document).ready(function () {
-        $('.tabs').tabs();
-      });
-      var instance = M.Tabs.getInstance(elem);
-    </script>
-    {% endfor %}
+
 
 
 

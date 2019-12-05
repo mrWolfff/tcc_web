@@ -1,5 +1,5 @@
 {% extends 'principal/base.html'%}
-{% block titulo %}Cadastro Demanda{% endblock%}
+{% block titulo %}Cadastro de Demanda{% endblock%}
 
 {% block conteudo %}
 {% load crispy_forms_tags %}
@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				</header>
 				<div class="filter-content">
 					<div class="list-group list-group-flush">
+							<a href="{% url 'index' %}" class="list-group-item">Início </a>
 						<a href="{% url 'cadastro_demanda' %}" class="list-group-item">Criar uma nova demanda </a>
 						<a href="{% url 'demandas' %}" class="list-group-item">Minhas Demandas <span
 								class="float-right badge badge-light round"></span> </a>

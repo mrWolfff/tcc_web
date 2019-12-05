@@ -52,12 +52,14 @@ class PropostasForm(forms.ModelForm):
     class Meta:
         model = Propostas
         fields = ('proposta', 'valor', 'data', 'data_inicio', 'data_fim', 'user_proposta', 'to_user_proposta', 'demanda')
-        widgets = {'proposta': forms.Textarea(attrs={'class': 'materialize-textarea'})}
+        widgets = { 'proposta': forms.Textarea(attrs={'class': 'materialize-textarea'}), 
+                   'valor': forms.TextInput(attrs={'type': 'number'}),
+                   }
         labels = {
             'proposta': 'Proposta: ',
             'valor': 'Valor da Proposta: *',
             'data_inicio': 'Data Inicio Serviço: ',
             'data_fim': 'Data Fim Serviço: ',
-            'demanda': 'Demanda: '
+            'demanda': 'Demanda: ',
         }
  

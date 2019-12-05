@@ -1,6 +1,8 @@
 from django.urls import path
 from .import views
 from .import webservice
+from django.conf.urls.static import static
+from django.conf import settings
 urlpatterns = [
     path('', views.index, name='index'),
 
@@ -15,9 +17,6 @@ urlpatterns = [
 
     path('atualizar/', views.atualizarDados, name='atualizar_dados'),
     path('servicos/', views.servicosRender, name='servicos'),
-    path('interesses/', views.interesses, name='interesses'),
-    path('novointeresse/<int:id>/', views.newInteresse, name='newInteresse'),
-    path('deletarinteresse/<int:id>/', views.deleteInteresse, name='delete_interesse'),
 
     path('box/', views.box_message, name='box_message'),
     path('send/<int:id>/', views.send_message, name='send_message'),
@@ -31,6 +30,7 @@ urlpatterns = [
     path('createservico/<int:id>/', views.create_servico, name='create_servico'),
     path('create_proposta/', views.create_proposta, name='create_proposta'),
     path('servico/<int:id>/', views.servico_atual, name='servico_atual'),
+    path('avaliar_servico/', views.avaliar_servico, name='avaliar_servico'),
     
     
     # """  urls webservice  """
@@ -42,4 +42,5 @@ urlpatterns = [
     path('get_categorias', webservice.get_categorias),
     path('index_mobile', webservice.index_mobile),
     path('get_user_categoria', webservice.get_user_categoria),
-]
+    path('get_message_session', webservice.get_message_session, name='get_message_session'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -21,7 +21,7 @@ class MessageSerializer(serializers.ModelSerializer):
 class MessageSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = MessageSession
-        fields = ('url', 'id', 'from_user', 'to_user')  
+        fields = ('from_user', 'to_user')  
         
 class Servicos_CategoriaSerializer(serializers.ModelSerializer):
     class Meta:

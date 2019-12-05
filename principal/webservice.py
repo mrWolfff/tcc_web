@@ -15,7 +15,7 @@ from rest_framework.status import (
     HTTP_404_NOT_FOUND,
     HTTP_200_OK
 )
-from .models import Demandas, Servicos, Message, MessageSession, Interesses, Propostas
+from .models import Demandas, Servicos, Message, MessageSession, Propostas
 from accounts.models import CustomUser, Servicos_Categoria
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
@@ -105,7 +105,7 @@ def get_demandas(request):
     return Response(status=HTTP_404_NOT_FOUND)
 
 @csrf_exempt
-@api_view(["POST"])
+@api_view(["POST"]) 
 def index_mobile(request):
     token = request.data.get('token')
     userid = request.data.get('id')
@@ -172,7 +172,23 @@ def get_user_categoria(request):
         return Response(serializer.data, status=HTTP_200_OK)
     return Response(status=HTTP_404_NOT_FOUND)
         
-
+@csrf_exempt
+@api_view(["POST"])
+def get_message_session(request):
+    token = request.data.get('token')
+    userid = request.data.get('id')
+    aux = {}
+    if user_is_valid(token, userid):
+        user = CustomUser.objects.get(id=userid)
+        search = MessageSession.objects.filter(
+        to_user=user).exclude(from_user=user)
+        if not search:
+            search = MessageSession.objects.filter(from_user=user)
+        
+        serializer = MessageSessionSerializer(search, many=True, context={'request': request})
+        #pdb.set_trace()
+        return Response(serializer.data, status=HTTP_200_OK)
+    return Response(status=HTTP_404_NOT_FOUND)
 
 
 

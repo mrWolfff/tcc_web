@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.shortcuts import redirect
 import pdb
 from django.views.generic import CreateView
-from .models import Demandas, Servicos, Message, MessageSession, Interesses, Propostas
+from .models import Demandas, Servicos, Message, MessageSession, Propostas
 from .forms import DemandasForm, MessageForm, DemandasFormEdit, PropostasForm
 from django.contrib.auth.decorators import login_required
 from accounts.models import CustomUser, Servicos_Categoria
@@ -138,7 +138,7 @@ def index(request):
         busca = request.POST.get('pesquisa')
         querys = CustomUser.objects.filter(username__icontains=busca)
     userid = get_user_model()
-    demandas = Demandas.objects.all()
+    demandas = Demandas.objects.filter(status='Ativo')
     querys = demandas
     if request.POST.get('pesquisa'):
         busca = request.POST.get('pesquisa')
@@ -171,8 +171,14 @@ def demandaRender(request):
         form = DemandasFormEdit(request.POST)
         if form.is_valid():
             form.save()
-    querys = Demandas.objects.filter(user_demanda=request.user)
-    return render(request, 'principal/demandas.html', {'querys': querys})
+    demandas = Demandas.objects.filter(user_demanda=request.user, status='Ativo')
+    demandas_inativas = Demandas.objects.filter(user_demanda=request.user, status='Inativo')
+    context = {
+        'demandas':demandas,
+        'demandas_inativas': demandas_inativas, 
+    }
+    #pdb.set_trace()
+    return render(request, 'principal/demandas.html', context)
 
 
 def editar_demanda(request, id):
@@ -213,11 +219,22 @@ def deletar_demanda(request, id):
 ########################################################################
 ## SERVICOS ############################################################
 def servicosRender(request):
-    servicos = Servicos.objects.filter(user=request.user)
+    servicos = Servicos.objects.filter(user=request.user, status='Ativo')
     if not servicos:
-        servicos = Servicos.objects.filter(user_prestador=request.user)
+        servicos = Servicos.objects.filter(user_prestador=request.user, status='Ativo')
+    servicos_concluidos = Servicos.objects.filter(user=request.user, status='Concluído')
+    if not servicos_concluidos:
+        servicos_concluidos = Servicos.objects.filter(user_prestador=request.user, status='Concluído')
+    servicos_cancelados = Servicos.objects.filter(user=request.user, status='Cancelado')
+    if not servicos_cancelados:
+        servicos_cancelados = Servicos.objects.filter(user_prestador=request.user, status='Cancelado')
+    context = {
+        'servicos_concluidos':servicos_concluidos,
+        'servicos': servicos,
+        'servicos_cancelados': servicos_cancelados,
+    }
     #pdb.set_trace()
-    return render(request, 'principal/servicos.html', {'servicos': servicos})
+    return render(request, 'principal/servicos.html', context)
 
 
 def create_servico(request, id):
@@ -226,7 +243,13 @@ def create_servico(request, id):
     try:
         Servicos.objects.get(proposta=proposta, user=request.user, user_prestador=proposta.user_proposta, status='Ativo')
     except:
-        Servicos.objects.create(proposta=proposta, user=request.user, user_prestador=proposta.user_proposta)
+        Servicos.objects.create(proposta=proposta, user=request.user, user_prestador=proposta.user_proposta, status='Ativo')
+    demanda = proposta.demanda
+    #pdb.set_trace()
+    demanda.status = 'Inativo'   
+    demanda.save()
+    proposta.set_ativo() 
+    proposta.save()
     return redirect('servicos')
 
 
@@ -235,6 +258,7 @@ def servico_atual(request, id):
     proposta = Propostas.objects.get(id=servico.proposta.id)
     demanda =  Demandas.objects.get(id=proposta.demanda.id)
     user = servico.user_prestador
+    
     if request.POST.get('proposta'):
         pass
     if request.POST.get('justificativa'):
@@ -243,20 +267,51 @@ def servico_atual(request, id):
             servico.save()
             redirect('servicos')
     if request.POST.get('avaliacao') and request.POST.get('sugestao_critica'):
-        avaliacao = request.POST.get('avaliacao')
-        sugestao_critica = request.POST.get('sugestao_critica')
-        if servico.finish_servico(avaliacao, sugestao_critica):
-            user.avaliar(avaliacao)
-            user.save()
-            demanda.set_status()
-            servico.save()
-            redirect('servicos')
+        if request.user.categoria == 'Prestador':
+            avaliacao = float(request.POST.get('avaliacao'))
+            sugestao_critica = request.POST.get('sugestao_critica')
+            if servico.finish_servico_prestador(avaliacao, sugestao_critica):
+                demanda.set_status()
+                servico.save()
+                redirect('servicos')
+        if request.user.categoria == 'Consumidor':
+            avaliacao = float(request.POST.get('avaliacao'))
+            sugestao_critica = request.POST.get('sugestao_critica')
+            if servico.finish_servico(avaliacao, sugestao_critica):
+                cont_servico = Servicos.objects.filter(user_prestador=user).count()
+                user.avaliar(avaliacao, cont_servico)
+                user.save()
+                demanda.set_status()
+                servico.save()
+                redirect('servicos')
     context = {
         'servico': servico,
         'demanda':demanda,
         'proposta': proposta,
     }
+    
     return render(request, 'principal/servico_atual.html', context)
+
+def avaliar_servico(request):
+    avaliacao = request.POST.get('avaliacao')
+    avaliacao_do_prestador = request.POST.get('avaliacao_do_prestador')
+    servico = Servicos.objects.get(id=request.POST.get('servico'))
+    user = servico.user_prestador
+    if avaliacao:
+        avaliacao = float(request.POST.get('avaliacao'))
+        cont_servico = Servicos.objects.filter(user_prestador=user).count()
+        user.avaliar(avaliacao, cont_servico)
+        user.save()
+        servico.avaliacao = avaliacao
+        servico.save()
+        return redirect('servicos')
+    if avaliacao_do_prestador:
+        avaliacao_do_prestador = float(request.POST.get('avaliacao_do_prestador'))
+        servico.avaliacao_do_prestador = avaliacao_do_prestador
+        servico.save()
+        return redirect('servicos')
+        
+    #pdb.set_trace()
 
 
 def editarServicos(request, id):
@@ -276,35 +331,6 @@ def deletarServicos(request, id):
         return redirect('index')
     return render(request, 'principal/deletardemanda.html', {'demanda': demanda})
 
-
-def interesses(request):
-    interesses = Interesses.objects.filter(user=request.user)
-    return render(request, 'principal/interesses.html', {'interesses': interesses})
-
-
-def newInteresse(request, id):
-    user = CustomUser.objects.get(id=id)
-    demanda = Demandas.objects.get(id=id)
-    if request.user.categoria == 'Prestador':
-        try:
-            Interesses.objects.get(interesse=demanda, user=request.user)
-            # GERAR MENSAGEM QUE INTERESSE JA ESTA CADASTRADO!
-        except:
-            Interesses.objects.create(user=request.user, interesse=demanda)
-            return redirect('interesses')
-    else:
-        try:
-            Interesses.objects.get(usuario_interesse=user, user=request.user)
-            # GERAR MENSAGEM QUE INTERESSE JA ESTA CADASTRADO!
-        except:
-            Interesses.objects.created(usuario_interesse=user, user=request.user)
-    return HttpResponse("Interesse já cadastrado ou Erro ao cadastrar!")
-
-
-def deleteInteresse(request, id):
-    if Interesses.objects.get(id=id).delete():
-        return redirect('interesses')
-    return HttpResponse('Erro ao deletar!')
 
 ###############################################################################
 ## ATUALIZAR DADOS USER #######################################################
@@ -352,7 +378,7 @@ def create_proposta(request):
         demanda = request.POST.get('demanda')
         response_data = {
             'proposta': proposta,
-            'valor': valor,
+            'valor': valor, 
             'data_inicio': data_inicio,
             'data_fim': data_fim,
             'user_proposta': user_proposta,
@@ -442,13 +468,13 @@ def messagesUser(request, id):
     to_user = session.from_user
     from_user = request.user
     session_user = ''
-    demandas = Demandas.objects.filter(user_demanda=to_user)
+    demandas = Demandas.objects.filter(user_demanda=to_user, status='Ativo')
     
     if to_user == from_user:
         session_user = session.to_user
     if not demandas:
         try:
-            demandas = Demandas.objects.filter(user_demanda=session_user)
+            demandas = Demandas.objects.filter(user_demanda=session_user, status='Ativo')
         except:
             print('erro')
     #pdb.set_trace()
@@ -645,7 +671,7 @@ def rejeitar_proposta(request, id):
     aux = 'Proposta: ' + proposta.proposta + ' Valor: ' + str(proposta.valor) + ' Datas: de ' + str(proposta.data_inicio) + ' até ' + str(proposta.data_fim) 
     message = Message.objects.create(message=aux, from_user=session.from_user, to_user=session.to_user, session=session)
     message.set_proposta(proposta)  
-    proposta.set_status()
+    proposta.set_ativo()
     message.save()
     proposta.save()
     #pdb.set_trace()

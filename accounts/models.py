@@ -65,22 +65,22 @@ class CustomUser(AbstractUser):
     cidade = models.CharField(max_length=50, blank=True, null=True)
     endereço = models.CharField(max_length=150, blank=True, null=True)
     informacao = models.TextField(blank=True, null=True)
-    imagem = models.ImageField(blank=True, upload_to='',
-                               default="https://miro.medium.com/max/3200/1*g09N-jl7JtVjVZGcd-vL2g.jpeg", null=True)
+    imagem = models.ImageField(blank=True, upload_to='user_images/',
+                               default="perfil_default.jpeg", null=True)
     categoria_servico = models.ForeignKey(Servicos_Categoria, on_delete=models.CASCADE, blank=True, null=True)
-    avaliacao = models.FloatField(null=True)
+    avaliacao = models.FloatField(default=0.0)
 
     def set_informacao(self, informacao):
         self.informacao = informacao
     
     def get_absolute_url(self):
-    	return "/config/%i/" % self.id
+    	return "/conta/%i/" % self.id
  
     def get_full_address(self):
         return '%s, %s, %s' % (self.endereço, self.cidade, self.estado)
     
-    def avaliar(self, avaliacao):
-        self.avaliacao = (self.avaliacao + avaliacao) / 2
+    def avaliar(self, avaliacao, cont_servicos):
+        self.avaliacao = (self.avaliacao + avaliacao) / cont_servicos
     
 class Informacoes(models.Model):
     informacao = models.TextField()
@@ -89,5 +89,6 @@ class Informacoes(models.Model):
     
     def __str__(self):
         return self.informacao
+       
 
 

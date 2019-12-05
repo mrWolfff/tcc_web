@@ -12,6 +12,7 @@
 				</header>
 				<div class="filter-content">
 					<div class="list-group list-group-flush">
+						
 						<a href="{% url 'servicos' %}" class="list-group-item">Meus Serviços <span
 								class="float-right badge badge-light round"></span> </a>
 						<a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
@@ -37,23 +38,8 @@
 		</nav>
 		<br>
 		<div class="row">
-			<div class="col-sm-9">
+			<div class="col-xs">
 				<h6>Resultados de acordo com a categoria: {{request.user.categoria_servico}}</h6>
-			</div>
-			<div class="col-sm-3">
-				<a class='dropdown-trigger btn' href='#' data-target='dropdown1'>Filtro <i
-						class="material-icons align-top">sort</i>
-				</a>
-				<ul id='dropdown1' class='dropdown-content'>
-					<form method='POST' action="{% url 'index' %}">
-						<input type="hidden" name="value" value="recents">
-						<li><a href="{% url 'index' %}" type="submit">Mais Recentes</a></li>
-					</form>
-					<form method='POST' action="{% url 'index' %}">
-							<input type="hidden" name="value" value="alpha">
-							<li><a href="{% url 'index' %}" type="submit">Orgem alfabética</a></li>
-					</form>
-				</ul>	
 			</div>
 		</div>
 
@@ -64,9 +50,9 @@
 				<span class="card-title">
 					<b>Demanda: </b>{{query.titulo}}
 				</span>
-				<p>Descrição: {{ query.descricao }}</p>
-				<p>Categoria de Serviço: {{ query.categoria }}</p>
-				<p>Usuario: {{ query.user_demanda }}</p>
+				<p><b>Descrição:</b> {{ query.descricao }}</p>
+				<p><b>Categoria de Serviço:</b> {{ query.categoria }}</p>
+				<p><b>Usuario:</b> {{ query.user_demanda }}</p>
 			</div>
 			<div class="card-action grey lighten-2">
 				<a class="waves-effect waves-light btn modal-trigger green" href="#{{query.titulo}}">Enviar Mensagem
@@ -164,7 +150,7 @@
 			<div class="col-3"><br>
 				<div class="card hoverable">
 					<div class="card-image">
-						<img src="media/{{categoria.imagem}}" style="max-width: 200px; max-height: 100px;">
+						<img src="{{categoria.imagem.url}}" style="max-width: 200px; max-height: 100px;">
 					</div>
 					<div class="card-content">
 						<span class="card-title">

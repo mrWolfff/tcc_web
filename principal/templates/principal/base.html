@@ -35,10 +35,38 @@
 			$('.tooltipped').tooltip();
 		});
 	</script>
-	<title>{% block titulo %}Base{% endblock %}</title>
+	<title>{% block titulo %}Início{% endblock %}</title>
 </head>
 
 <body>
+		<div id="help" class="modal modal-dialog modal-fixed-footer">
+				<div class="modal-content">
+					<h5 class="modal-title">Ajuda</h5>
+					<p>Bem-vindo! </p><p>
+						{% if request.user.categoria == 'Consumidor' %}
+						Você é um usuário "Consumidor", significa que você pode criar demandas, demandas representam 
+						um serviço que necessita ser feito. Para Criar uma demanda é só clicar <a href="{% url 'cadastro_demanda' %}">aqui</a>.
+						E assim, aguardar até que um usuário prestador entre em contato, ele criará uma proposta e você pode decidir se aceita ou não, se aceitar 
+						você criará um serviço. Quando o serviço for finalizado você pode concluir o serviço no sistema e avaliar o serviço prestado pelo Prestador. 
+						Se você prefere procurar por um prestador pessoalmente, na pagina principal do sistema há várias categorias disponiveis, ao escolher voce
+						terá disponiveis os usuários dessa categoria e poderá acessar o perfil dos usuários e entrar em contato com eles.
+						 
+						{% endif %}
+						{% if request.user.categoria == 'Prestador' %}
+						Você é um usuário "Prestador", significa que você é um profissional que presta determinado serviço. Para 
+						criar um serviço você pode procurar demandas na página principal e entrar em contato com o criador da demanda(Consumidor) ou aguardar um usuário Consumidor entrar em contato, portanto, é essencial ter um perfil 
+						bem organizado, você pode edita-lo <a href="{% url 'conta' request.user.id %}">aqui</a>.
+						Ao entrar em contato com um consumidor, se tiver interesse, poderá criar uma proposta de serviço para uma determinada demanda, caso o Consumidor aceite,
+						o serviço é criado. Ao finalizar a tarefa você poderá avaliar como foi o serviço como um todo.
+						{% endif %}
+						
+
+					</p>	
+				</div>
+				<div class="modal-footer grey lighten-2">
+					<a href="#!" class="modal-close waves-effect waves-green btn-flat blue">OK</a>
+				</div>
+			</div>
 	<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
 		<header class="mdl-layout__header">
 			<div class="mdl-layout__header-row">
@@ -57,15 +85,7 @@
 					</button>
 
 					<!-- Modal Structure -->
-					<div id="help" class="modal modal-fixed-footer">
-						<div class="modal-content">
-							<h4 class="modal-title">Ajuda</h4>
-							<p>A bunch of text bla bla bla bla</p>	
-						</div>
-						<div class="modal-footer grey lighten-2">
-							<a href="#!" class="modal-close waves-effect waves-green btn-flat blue">OK</a>
-						</div>
-					</div>
+					
 					<script type="text/javascript">
 						$('#new_demanda').click(function () {
 							window.location.href = "{% url 'cadastro_demanda' %}"
@@ -82,7 +102,7 @@
 						<div class="dropdown-divider"></div>
 						<a class="dropdown-item" href="{% url 'logout' %}">Sair</a>
 					</div>
-					<a href="{% url 'conta' request.user.id %}"><img class="circle" src="media/{{request.user.imagem}}"
+					<a href="{% url 'conta' request.user.id %}"><img class="circle" src="{{request.user.imagem.url}}"
 							style="width: 25px; height: 25px;"></a>
 				</div>
 
@@ -90,11 +110,11 @@
 		</header>
 		<div class="mdl-layout__drawer">
 			<div class="user-view">
-				<a href="{% url 'conta' request.user.id %}"><img class="circle" src="media/{{user.imagem}}"
+				<a href="{% url 'conta' request.user.id %}"><img class="circle" src="{{request.user.imagem.url}}"
 						style="width: 75px; height: 75px;"></a>
 				<a href="{% url 'conta' request.user.id %}"><span
-						class="black-text name">{{ user.get_full_name }}</span></a>
-				<a href="{% url 'conta' request.user.id %}"><span class="black-text email">{{ user.email }}</span></a>
+						class="black-text name">{{ request.user.get_full_name }}</span></a>
+				<a href="{% url 'conta' request.user.id %}"><span class="black-text email">{{ request.user.email }}</span></a>
 				<span class="mdl-layout-title"></span>
 			</div>
 			<div class="mdl-navigation">

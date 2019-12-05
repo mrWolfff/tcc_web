@@ -1,9 +1,6 @@
 {% extends 'principal/base.html'%}
-{% block titulo %}Demandas{% endblock%}
+{% block titulo %}Minhas Demandas{% endblock%}
 {% block conteudo %}
-
-
-
 <div class="row">
   <div class="col-3">
     <div class="card">
@@ -13,6 +10,7 @@
         </header>
         <div class="filter-content">
           <div class="list-group list-group-flush">
+              <a href="{% url 'index' %}" class="list-group-item">Início </a>
             <a href="{% url 'cadastro_demanda' %}" class="list-group-item">Criar uma nova demanda </a>
             <a href="{% url 'demandas' %}" class="list-group-item">Minhas Demandas <span
                 class="float-right badge badge-light round"></span> </a>
@@ -27,159 +25,147 @@
     </div>
   </div>
   <div class="col-9">
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js">
-      </script>
-      <ul class="tabs tabs-fixed-width tab-demo z-depth-1 hoverable">
-        <li class="tab"><a href="#test1">Ativos</a></li>
-        <li class="tab"><a href="#test2">Inativos</a></li>
-      </ul>
-    {% for query in querys %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
     <script type="text/javascript">
-      document.addEventListener('DOMContentLoaded', function () {
-        var elems = document.querySelectorAll('.modal');
-        var instances = M.Modal.init(elems, options);
-      });
-      $(document).ready(function () {
-        $('.modal').modal();
-      });
-      document.addEventListener('DOMContentLoaded', function () {
-        var elems = document.querySelectorAll('.collapsible');
-        var instances = M.Collapsible.init(elems, options);
-      });
 
-      $(document).ready(function () {
-        $('.collapsible').collapsible();
-      });
-      function fechar_modal() {
-        $('.modal').modal()
-      }
-
-      $('.card').click(function () {
-        $('#{{query.titulo}}').modal();
-      });
     </script>
-    {% if  query.status == 'Ativo' %}
+    <ul class="tabs tabs-fixed-width tab-demo z-depth-1 hoverable">
+      <li class="tab"><a href="#test1">Ativos</a></li>
+      <li class="tab"><a href="#test2">Inativos</a></li>
+    </ul>
+
+
+
     <div id="test1">
-    <div class="card hoverable modal-trigger" href="#{{query.titulo}}">
-      <div class="card-content">
-        <span class="card-title">
-          <b>Demanda: </b>{{query.titulo}}
-        </span>
-        <p>Descrição: {{ query.descricao }}</p>
-        <p>Categoria de Serviço: {{ query.categoria }}</p>
-        <p>Data de Cadastro: {{ query.data }}</p>
-        <p>Status: </p> {{query.status}}
-
-      </div>
-      <div class="card-action grey lighten-2">
-        <a class="waves-effect waves-light btn modal-trigger" href="#{{query.titulo}}">Editar
-          <i class="material-icons">
-            edit
-          </i></a>
-
-        <a class="waves-effect waves-light btn modal-trigger red" href="#{{query.id}}">Deletar
-          <i class="material-icons">
-            delete
-          </i></a>
-
-      </div>
-    </div>
-    <div id="{{query.id}}" class="modal modal-dialog modal-footer h-25">
-      <div class="modal-content h-50 ">
-        <h6>Você tem certeza que deseja excluir a demanda?</h6>
-      </div>
-      <div class="modal-footer h-0">
-        <div class="row">
-          <div class="col-4">
-            <form method="POST" action="{% url 'deletar_demanda' query.id %}">
-              {% csrf_token %}
-              <button class="waves-effect waves-light btn green">Sim</button>
-            </form>
-          </div>
-          <div class="col-4">
-            <button onclick="fechar_modal();" class="waves-effect waves-light btn red">Não</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="{{query.titulo}}" class="modal modal-fixed-footer">
-      <div class="modal-content">
-        <h4>{{query.titulo}}</h4>
-        <form method="POST" action="{% url 'editar_demanda' query.id %}">
-          {% csrf_token %}
-          <span>{{query.categoria}}</span>
-                <input id="icon_prefix" type="text" value="{{query.titulo}}"
-                name="titulo"><label for="icon_prefix">Titulo</label>
-                <textarea class="materialize-textarea"
-                name="descricao">{{query.descricao}}</textarea><label for="icon_prefix">Descrição</label>
-
-      </div>
-      <div class="modal-footer">
-        <button class="waves-effect waves-light btn green">Pronto</button>
-        </form>
-        <a class="waves-effect waves-light btn modal-trigger red" href="#{{query.id}}">Deletar
-          <i class="material-icons">
-            delete
-          </i></a>
-      </div>
-    </div>
-  </div>
-    {% endif %}
-    {% if query.status == 'Inativo' %}
-    <div id="test2" class="col s12">
-    <div class="card hoverable modal-trigger" href="#{{query.titulo}}">
+      {% for demanda in demandas %}
+      <div class="card hoverable modal-trigger" href="#{{demanda.id}}A{{demanda.id}}">
         <div class="card-content">
           <span class="card-title">
-            <b>Demanda: </b>{{query.titulo}}
+            <b>Demanda: </b>{{demanda.titulo}}
           </span>
-          <p>Descrição: {{ query.descricao }}</p>
-          <p>Categoria de Serviço: {{ query.categoria }}</p>
-          <p>Data de Cadastro: {{ query.data }}</p>
-          <p>Status:  {{query.status}}</p>
-          <p>Serviço associado: </p> {servico url}
-  
+          <p>Descrição: {{ demanda.descricao }}</p>
+          <p>Categoria de Serviço: {{ demanda.categoria }}</p>
+          <p>Data de Cadastro: {{ demanda.data }}</p>
+          <p>Status: </p> {{demanda.status}}
+
         </div>
         <div class="card-action grey lighten-2">
-  
-          <a class="waves-effect waves-light btn modal-trigger red" href="#{{query.id}}">Deletar
+          <a class="waves-effect waves-light btn modal-trigger" href="#{{demanda.id}}A{{demanda.id}}">Editar
+            <i class="material-icons">edit</i></a>
+
+          <a class="waves-effect waves-light btn modal-trigger red" href="#{{demanda.id}}">Deletar
             <i class="material-icons">
               delete
             </i></a>
-  
+
         </div>
       </div>
-      <div id="{{query.id}}" class="modal modal-dialog modal-footer h-25">
+      <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+          var elems = document.querySelectorAll('.modal');
+          var instances = M.Modal.init(elems, options);
+        });
+        $(document).ready(function () {
+          $('.modal').modal();
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+          var elems = document.querySelectorAll('.collapsible');
+          var instances = M.Collapsible.init(elems, options);
+        });
+        $(document).ready(function () {
+          $('.collapsible').collapsible();
+        });
+        function fechar_modal() {
+          $('.modal').modal()
+        }
+
+        $('.card').click(function () {
+          $('#{{demanda.id}}A{{demanda.id}}').modal();
+        });
+      </script>
+      <div id="{{demanda.id}}" class="modal modal-dialog h-25">
         <div class="modal-content h-50 ">
           <h6>Você tem certeza que deseja excluir a demanda?</h6>
-        </div>
-        <div class="modal-footer h-0">
           <div class="row">
             <div class="col-4">
-              <form method="POST" action="{% url 'deletar_demanda' query.id %}">
+              <form method="POST" action="{% url 'deletar_demanda' demanda.id %}">
                 {% csrf_token %}
-                <button class="waves-effect waves-light btn green">Sim</button>
+                <button class="waves-effect waves-light btn green hoverable" type="submit">Sim</button>
               </form>
-            </div>
+            </div>-*
             <div class="col-4">
               <button onclick="fechar_modal();" class="waves-effect waves-light btn red">Não</button>
             </div>
           </div>
         </div>
-      </div>
-          
-  
+        <div class="modal-footer h-0">
         </div>
       </div>
+      <div id="{{demanda.id}}A{{demanda.id}}" class="modal modal-fixed-footer">
+        <div class="modal-content">
+          <h4>{{demanda.titulo}}</h4>
+          <form method="POST" action="{% url 'editar_demanda' demanda.id %}">
+            {% csrf_token %}
+            <span>{{demanda.categoria}}</span>
+            <input id="icon_prefix" type="text" value="{{demanda.titulo}}" name="titulo"><label
+              for="icon_prefix">Titulo</label>
+            <textarea class="materialize-textarea" name="descricao">{{demanda.descricao}}</textarea><label
+              for="icon_prefix">Descrição</label>
+
+        </div>
+        <div class="modal-footer">
+          <button class="waves-effect waves-light btn green">Pronto</button>
+          </form>
+          <a class="waves-effect waves-light btn modal-trigger red" href="#{{demanda.id}}">Deletar
+            <i class="material-icons">
+              delete
+            </i></a>
+        </div>
+      </div>
+      {% endfor %}
     </div>
-    {% endif %}
-    {% endfor %}
+
+
+    <div id="test2" class="col s12">
+      {% for demanda in demandas_inativas %}
+      <div class="card hoverable modal-trigger" href="#{{demanda.id}}A{{demanda.id}}">
+        <div class="card-content">
+          <span class="card-title">
+            <b>Demanda: </b>{{demanda.titulo}}
+          </span>
+          <p>Descrição: {{ demanda.descricao }}</p>
+          <p>Categoria de Serviço: {{ demanda.categoria }}</p>
+          <p>Data de Cadastro: {{ demanda.data }}</p>
+          <p>Status: {{demanda.status}}</p>
+        </div>
+        <div class="card-action grey lighten-2">
+        </div>
+      </div>
+      <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+          var elems = document.querySelectorAll('.modal');
+          var instances = M.Modal.init(elems, options);
+        });
+        $(document).ready(function () {
+          $('.modal').modal();
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+          var elems = document.querySelectorAll('.collapsible');
+          var instances = M.Collapsible.init(elems, options);
+        });
+        $(document).ready(function () {
+          $('.collapsible').collapsible();
+        });
+        function fechar_modal() {
+          $('.modal').modal()
+        }
+
+        $('.card').click(function () {
+          $('#{{demanda.titulo}}{{demanda.id}}').modal();
+        });
+      </script>
+      {% endfor %}
+    </div>
   </div>
-
-  <br>
-
-
 </div>
-
-
-
 {% endblock %}

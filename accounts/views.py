@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 import pdb
 from django.urls import reverse_lazy
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, request
 from django.contrib.auth import login, authenticate
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
@@ -39,7 +39,7 @@ settings.SENDGRID_SANDBOX_MODE_IN_DEBUG=False
 def minhaConta(request, id):
 	user = CustomUser.objects.get(id=id)
 	form = ''
-	comentarios = Comentarios.objects.filter(user_prestador=user)
+	comentarios = Comentarios.objects.filter(user=user)
 	if request.user != user:
 		redirect('index')
 	if request.POST != None:
@@ -47,13 +47,15 @@ def minhaConta(request, id):
 		if form.is_valid():
 			form.save()
 			redirect('index')
+	informacoes = Informacoes.objects.filter(user=user)
 	context = {
+		'informacoes':informacoes,
 		'user':user,
 		'form':form,
 		'comentarios':comentarios,
   		'media_root': settings.MEDIA_ROOT,
 	}
-	return render(request, 'principal/conta.html', {'user': user, 'form': form})
+	return render(request, 'principal/conta.html', context)
 
 def config(request, id):
     user = CustomUser.objects.get(id=id)
@@ -61,6 +63,18 @@ def config(request, id):
         return redirect('index')
     informacoes = Informacoes.objects.filter(user=request.user)
     return render(request, 'principal/config.html', {'user':user, 'informacoes':informacoes})
+
+def comment_user(request):
+    user = CustomUser.objects.get(id=request.POST.get('user'))
+    comentario = request.POST.get('comentario')
+    #pdb.set_trace()
+    if request.POST:
+        #pdb.set_trace()
+        comment = Comentarios.objects.create(comentario=comentario, user=user, user_comentario=request.user)
+        if comment:
+            #pdb.set_trace()
+            return redirect("/conta/%i" % user.id)
+        return redirect(user.get_absolute_url)
 
 def delete_info(request):
     id = request.POST.get('delete')
@@ -91,6 +105,8 @@ def config_json(request):
             Informacoes.objects.create(informacao=informacao, user=request.user)
             return JsonResponse(response_data)
 
+
+
 def signup(request):
 	if request.method == 'POST':
 		form = SignupForm(request.POST)
@@ -101,7 +117,7 @@ def signup(request):
 			mail_subject = 'Ative seu E-mail no Sistema.'
 			message = render_to_string('acc_active_email.html', {
 				'user': user,
-				'domain': 'http://mrwolf.pythonanywhere.com/', 
+				'domain': '127.0.0.1:8000', 
 				'uid': urlsafe_base64_encode(force_bytes(user.pk)),
 				'token': account_activation_token.make_token(user),
 			})

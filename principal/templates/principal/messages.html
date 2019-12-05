@@ -1,6 +1,6 @@
 {% extends 'principal/base.html'%}
 {% block titulo %}Caixa de Mensagens {% endblock%}
-{% block conteudo %}
+{% block conteudo_full %}
 
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function () {
@@ -10,20 +10,23 @@
     $(document).ready(function () {
         $('.collapsible').collapsible();
     });
+    $('#reload').click(function(){
+        window.location.reload();
+    });
 </script>
 
 <div class="row">
-    <div class="col-3">
+    <div class="col-1"></div>
+    <div class="col-2">
         {% if request.user.categoria == 'Consumidor' %}
         <div class="card hoverable">
             <article class="card-group-item">
                 <header class="card-header">
-                    <h6 class="title"><i class="material-icons align-top">
-                            menu
-                        </i> Menu</h6>
+                    <h6 class="title"> Menu</h6>
                 </header>
                 <div class="filter-content">
                     <div class="list-group list-group-flush">
+                            <a href="{% url 'index' %}" class="list-group-item">Início </a>
                         <a href="{% url 'cadastro_demanda' %}" class="list-group-item">Criar uma nova demanda </a>
                         <a href="{% url 'demandas' %}" class="list-group-item">Minhas Demandas <span
                                 class="float-right badge badge-light round"></span> </a>
@@ -36,17 +39,17 @@
                 </div>
             </article>
         </div>
+        <button class="waves-effect waves-light btn hoverable" id="reload" onclick="location.reload();">Verificar propostas<i
+            class="material-icons">refresh</i></button>
         {% endif %}
         {% if request.user.categoria == 'Prestador' %}
         <div class="card hoverable">
             <article class="card-group-item">
-                <header class="card-header">
-                    <h6 class="title"> <i class="material-icons align-top">
-                            menu
-                        </i> Menu</h6>
+                <header class="card-header"> Menu</h6>
                 </header>
                 <div class="filter-content">
                     <div class="list-group list-group-flush">
+                            <a href="{% url 'index' %}" class="list-group-item">Início </a>
                         <a href="{% url 'servicos' %}" class="list-group-item">Meus Serviços <span
                                 class="float-right badge badge-light round"></span> </a>
                         <a href="{% url 'box_message' %}" class="list-group-item">Mensagens<span
@@ -56,34 +59,39 @@
                 </div>
             </article>
         </div>
+        
         {% endif %}
         {% if request.user.categoria  == 'Prestador'%}
         <a class="waves-effect waves-light btn modal-trigger hoverable" href="#modal">Criar uma proposta<i
-                class="material-icons">add</i></a>
+            class="material-icons">add</i></a>
         {% endif %}
     </div>
-    <div class="col-9">
+    <div class="col-8">
         <div class="card hoverable">
             <div class="card-content">
                 <div class="row">
                     <div class="col-sm-2">
                         {% if to_user != request.user %}
                         <a href="{% url 'conta' to_user.id %}">
-                            <img class="rounded" src="{{to_user.imagem}}" style="width: 40px; height: 40px;"> </a>
+                            <img class="rounded" src="{{to_user.imagem.url}}" style="width: 40px; height: 40px;"> </a>
+                            
                         {% endif %}
                         {% if to_user == request.user %}
                         <a href="{% url 'conta' session_user.id %}">
-                            <img class="rounded" src="{{session_user.imagem}}" style="width: 40px; height: 40px;"></a>
+                            <img class="rounded" src="{{session_user.imagem.url}}" style="width: 40px; height: 40px;"></a>
+                            
                         {% endif %}
                     </div>
                     <div class="col-sm">
                         {% if to_user != request.user %}
                         <a href="{% url 'conta' to_user.id %}">
-                            <span class="email-title">{{ to_user }}</span></a>
+                            <span class="email-title">{{ to_user }}</span></a><br>
+                            <span>({{to_user.categoria}})</span>
                         {% endif %}
                         {% if to_user == request.user %}
                         <a href="{% url 'conta' session_user.id %}">
-                            <span class="email-title">{{ session_user }} </span></a>
+                            <span class="email-title">{{ session_user }} </span></a><br>
+                            <span>({{session_user.categoria}})</span> 
                         {% endif %}
                     </div>
                 </div>
@@ -97,7 +105,7 @@
                         <div class="col-sm-8">
                             {% if request.user != message.from_user %}
                             <span class="mdl-chip">
-                                <span class="mdl-chip__text"><b>{{message.from_user}} </b>
+                                <span class="mdl-chip__text">
                                     {{message.message}}</span>
                             </span>
                             {% endif %}
@@ -105,7 +113,7 @@
                         <div class="col-sm">
                             {% if request.user == message.from_user %}
                             <span class="mdl-chip">
-                                <span class="mdl-chip__text"><b>{{message.from_user}} </b>
+                                <span class="mdl-chip__text">
                                     {{message.message}}</span>
                             </span>
                             {% endif %}
@@ -219,6 +227,7 @@
             </div>
         </div>
     </div>
+    <div class="col-1"></div>
 </div>
 <input type="hidden" name="from" value="{{from_user.id}}">
 <input type="hidden" name="to" value="{{to_user.id}}">
@@ -257,9 +266,9 @@
                             $('#chat_content').append('<ul class="collapsible hoverable"><li><div class="collapsible-header"><i class="material-icons"> report </i>Proposta rejeitada: '+ data[i].message +'</div><div class="collapsible-body white"><span></span><br><b>Valor proposto:</b><span> ' + data['valor'] + '  </span><br><b>A data será de </b><span>A data será ' + data['data_inicio'] + ' até ' + data['data_inicio'] + '.</span><br><b>A demanda é </b><span> ' + data['demanda'] + ' do usuario' + data['user_demanda'] + '</span><br><b>Proposta foi feita por </b><span>Proposta feita por {{propostas.user_proposta}}</span></div></li></ul>');
                         }else{
                             if (data[i].from_user == request_user) {
-                                $('#chat_content').append('<div class="row"><div class="col-sm-8"></div><div class="col-sm"><span class="mdl-chip"><span class="mdl-chip__text"><b> {{request.user}}: </b> ' + data[i].message + '</span></span></div></div>');
+                                $('#chat_content').append('<div class="row"><div class="col-sm-8"></div><div class="col-sm"><span class="mdl-chip"><span class="mdl-chip__text">' + data[i].message + '</span></span></div></div>');
                             } else {
-                                $('#chat_content').append('<div class="row"><div class="col-sm-8"><span class="mdl-chip"><span class="mdl-chip__text"><b> ' + 'user' + ': </b> ' + data[i].message + '</span></span></div><div class="col-sm"></div></div>');
+                                $('#chat_content').append('<div class="row"><div class="col-sm-8"><span class="mdl-chip"><span class="mdl-chip__text">' + data[i].message + '</span></span></div><div class="col-sm"></div></div>');
                             }
                         }
                     }
@@ -301,7 +310,7 @@
             //});
 
 
-        }, 2000);
+        }, 1500);
 
     });
     $(document).on('click', '#new_message', function (event) {
@@ -440,9 +449,9 @@
             {% csrf_token %}
             <div class="row">
                 <div class="col-6">
-                    <input type="text" class="validate" value="" name="valor">
-                    <label>Valor: </label>
-                    <label>Valor é um dado preferencial!</label>
+                    <input type="number" class="validate" value="" name="valor">
+                    <label>Valor para a proposta: </label>
+                    <label>Valor é um dado preferencial! (APENAS NÚMEROS)  </label>
                     <div class="input-field">
                         <select name="demanda">
                             <option value="" disabled selected>Escolha a demanda</option>
@@ -450,13 +459,15 @@
                             <option value="{{demanda.id}}">{{demanda}}</option>
                             {% endfor %}
                         </select>
+                        
                     </div>
+                    <label>Escolha a demanda para fazer uma proposta ao Consumidor!</label>
                 </div>
                 <div class="col-6">
                     <input type="date" class="validate" name="data_inicio">
-                    <label>Data inicio:</label>
+                    <label>Data inicio do serviço:</label>
                     <input type="date" class="validate" name="data_fim">
-                    <label>Data fim:</label>
+                    <label>Data fim do serviço:</label>
                     <input type="hidden" value="{{request.user.id}}" name="user_proposta">
                     {% if to_user != request.user %}
                     <input type="hidden" value="{{to_user.id}}" name="to_user_proposta">
