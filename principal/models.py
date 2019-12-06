@@ -134,3 +134,7 @@ class Servicos(models.Model):
             self.cancel_confirm = True
             return True
         return False
+    
+class Bug(models.Model):
+    texto = models.TextField()
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)

@@ -1,0 +1,26 @@
+{% extends 'principal/base.html' %}
+{% block titulo %}Bug{% endblock %}
+{% block conteudo %}
+
+<div class="card hoverable">
+    <div class="card-content">
+        <span class="card-title">
+            <h6>Reportar um Bug!</h6>
+        </span>
+        <p>Digite o(s) comportamento(s) inesperado(s) que você encontrou no sistema:</p>
+        <form method="POST" action="{% url 'bug' %}">
+            {% csrf_token %}
+            <label class="align-bottom">Digite...</label>
+        <textarea class="materialize-textarea col-10" name="texto"></textarea>
+        
+        <br>
+    </div>
+    <div class="card-action">
+        <button type="submit" class="waves waves-light btn green">Enviar</button>
+    </form>
+        <span>Obrigado pela sua ajuda! ;) </span>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -24,7 +24,11 @@ from rest_framework.status import (
     HTTP_200_OK
 )
 from django.core.mail import send_mail
-
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import *	
+from sendgrid.helpers.mail import MailSettings
+from sendgrid.helpers.mail import Mail
+from sendgrid.helpers.mail import to_email
 
 from django.conf import settings
 settings.SENDGRID_SANDBOX_MODE_IN_DEBUG=False
@@ -108,33 +112,61 @@ def config_json(request):
 
 
 def signup(request):
-	if request.method == 'POST':
-		form = SignupForm(request.POST)
-		if form.is_valid():
-			user = form.save(commit=False)
-			user.is_active = False
-			user.save()
-			mail_subject = 'Ative seu E-mail no Sistema.'
-			message = render_to_string('acc_active_email.html', {
-				'user': user,
-				'domain': '127.0.0.1:8000', 
-				'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-				'token': account_activation_token.make_token(user),
-			})
-			to_email = form.cleaned_data.get('email')
-			email = EmailMessage(
-						mail_subject, message, to=[to_email]
-			)
-			send_mail(mail_subject , message, 'lucasewolflew@gmail.com', [to_email], fail_silently=False)
+    form = SignupForm()
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_active = True
+            user.save()
+            if user.categoria == 'Consumidor':
+                return redirect('index')
+            else:
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                return redirect('atualizar_dados')
+    return render(request, 'signup.html', {'form': form})
+
+			#################################
+			#mail_subject = 'Ative seu E-mail no sistema.'
+			#message_html = render_to_string('acc_active_email.html', {
+				#'user': user,
+				#'domain': '127.0.0.1:8000', 
+				#'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+				#'token': account_activation_token.make_token(user),
+			#})
+			#to_email = form.cleaned_data.get('email')
+			#message = Mail(
+				#from_email='lucasewolflew@gmail.com',
+				#to_emails=to_email,
+				#subject=mail_subject,
+				#html_content=message_html,
+			#)
+			#try:
+				#pdb.set_trace()
+				#send_mail(mail_subject , message_html, 'lucasewolflew@gmail.com', [to_email], fail_silently=False)
+				#sg = SendGridAPIClient('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')
+				#response = sg.send(message)
+				#print(response.status_code)
+				#print(response.body)
+				#print(response.headers)
+			#except Exception as e:
+				#print(str(e))
+				
+   
+   
+			
+			#email = EmailMessage(
+			#			mail_subject, message, to=[to_email]
+			#)
+			#send_mail(mail_subject , message, 'lucasewolflew@gmail.com', [to_email], fail_silently=False)
 			#email.send()
    			
-			return HttpResponse('Please confirm your email address to complete the registration')
-		else:
-			HttpResponse('errou')
-	else:
-		form = SignupForm()
-	return render(request, 'signup.html', {'form': form})
-
+			#return HttpResponse('Please confirm your email address to complete the registration')
+		#else:
+			#HttpResponse('errou')
+	#else:
+		#form = SignupForm()
+  	
 
 def activate(request, uidb64, token, backend='django.contrib.auth.backends.ModelBackend'):
 	try:

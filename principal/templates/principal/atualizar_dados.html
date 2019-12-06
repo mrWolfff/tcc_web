@@ -4,12 +4,16 @@
 {% load crispy_forms_tags %}
 
 <br><br>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	
 <form method="POST" enctype="multipart/form-data">
 	{% csrf_token %}
 	<div class="row">
-		<div class="col-2">
+		<div class="col-1">
 		</div>
-		<div class="col-8">
+		<div class="col-10">
 			<div class="card hoverable">
 				<div class="card-content">
 					<span class="card-title">Olá {{request.user.username}}</span>
@@ -20,7 +24,7 @@
 
 			</div>
 		</div>
-		<div class="col-2">
+		<div class="col-1">
 		</div>
 	</div>
 

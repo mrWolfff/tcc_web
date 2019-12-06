@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.shortcuts import redirect
 import pdb
 from django.views.generic import CreateView
-from .models import Demandas, Servicos, Message, MessageSession, Propostas
+from .models import Demandas, Servicos, Message, MessageSession, Propostas, Bug
 from .forms import DemandasForm, MessageForm, DemandasFormEdit, PropostasForm
 from django.contrib.auth.decorators import login_required
 from accounts.models import CustomUser, Servicos_Categoria
@@ -90,6 +90,12 @@ def create_demanda(request):
 def baseLogin(request):
     return render(request, 'registration/baselogin.html')
 
+def bug(request):
+    bugs = Bug.objects.filter(user=request.user)
+    if request.POST:
+        Bug.objects.create(texto=request.POST.get('texto'), user=request.user)
+    #pdb.set_trace()
+    return render(request, 'principal/bug.html', {'bugs':bugs})
 
 @login_required
 def index(request):

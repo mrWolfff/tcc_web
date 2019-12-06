@@ -107,13 +107,13 @@ CHANNEL_LAYERS = {
 
 #DATABASES = {
     #'default': {
-       # 'ENGINE': 'django.db.backends.mysql',
-       # 'NAME': 'project',
-      #  'USER': 'root',
-     #   'PASSWORD': '314159',
-    #    'HOST': 'localhost',
-   #     'PORT': '',
-  #  }
+        #'ENGINE': 'django.db.backends.mysql',
+        #'NAME': 'project',
+        #'USER': 'root',
+        #'PASSWORD': '314159',
+        #'HOST': 'localhost',
+       #'PORT': '',
+    #}
 #}
 
 DATABASES = {
@@ -175,7 +175,7 @@ LOGOUT_REDIRECT_URL = '/'
 EMAIL_BACKEND = 'sendgrid_backend.SendgridBackend'
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
-SENDGRID_API_KEY = '_____________'
+SENDGRID_API_KEY = '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'
 
 SENDGRID_SANDBOX_MODE_IN_DEBUG=True
 SENDGRID_ECHO_TO_STDOUT=True

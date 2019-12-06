@@ -8,6 +8,7 @@ urlpatterns = [
 
     path('baselogin/', views.baseLogin, name='baselogin'),
     path('base/', views.base, name='base'),
+    path('bug/', views.bug, name='bug'),
 
     path('demanda/', views.demandaRender, name='demandas'),
     path('cadastrodemanda/', views.cadastroDemanda, name='cadastro_demanda'),

@@ -28,12 +28,23 @@
 			var elems = document.querySelectorAll('.tooltipped');
 			var instances = M.Tooltip.init(elems, options);
 		});
-
 		// Or with jQuery
 
 		$(document).ready(function () {
 			$('.tooltipped').tooltip();
 		});
+		
+		document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.modal');
+    var instances = M.Modal.init(elems, options);
+  });
+
+  // Or with jQuery
+
+  $(document).ready(function(){
+    $('.modal').modal();
+  });
+        
 	</script>
 	<title>{% block titulo %}Início{% endblock %}</title>
 </head>
@@ -97,8 +108,7 @@
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 						<a class="dropdown-item" href="{% url 'conta' 	request.user.id %}">Meu Perfil</a>
-						{% if request.user.categoria == 'Prestador' %}<a class="dropdown-item"
-							href="{% url 'config' request.user.id %}">Configurações</a>{% endif %}
+						
 						<div class="dropdown-divider"></div>
 						<a class="dropdown-item" href="{% url 'logout' %}">Sair</a>
 					</div>
@@ -134,6 +144,10 @@
 						info
 					</i> Serviços</a>
 				<div class="divider"></div>
+				<a class="mdl-navigation__link" href="{% url 'bug' %}"><i class="material-icons">
+					bug_report
+				</i> Reportar Bug</a>
+			<div class="divider"></div>
 				<a class="mdl-navigation__link" href="{% url 'logout' %}"><i class="material-icons">
 						logout
 					</i> Logout</a>

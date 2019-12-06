@@ -63,7 +63,7 @@ class CustomUserChangeForm(UserChangeForm):
 		self.fields['categoria_servico'].help_text = "Escolha a categoria de serviço que você realiza."
 		self.helper.layout = Layout(
         	Row(
-           		Column('cpf_cnpj', css_class='form-group col-md-10 	'),
+           		Column('cpf_cnpj', css_class='form-group col-md-10'),
 
            		css_class='form-row'
         	),
@@ -82,13 +82,9 @@ class CustomUserChangeForm(UserChangeForm):
         		css_class='form-row'
         	),
         	Row(
-        		Column('descricao', css_class='form-group col-md-8'),
-        		Column('imagem', css_class='form-group col-md-4'),
-        		css_class='form-row'
+            Column('imagem', css_class='form-group col-md-6'),
+            Column('categoria_servico', css_class='form-group col-md-6')
         	),
-        	Row(
-        		Column('categoria_servico', css_class='form-group col-md-10')
-        		)
         )
 
 class TrocaCategoria(UserChangeForm):
